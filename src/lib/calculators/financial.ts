@@ -1162,3 +1162,165 @@ export function calculateMortgageRefinance(input: RefinanceInput) {
     lifetimeSavings,
   };
 }
+
+export type EndOfServiceJurisdiction = 'kuwait' | 'uae' | 'saudi';
+export type EndOfServiceReason = 'termination' | 'resignation';
+
+export interface EndOfServiceInput {
+  jurisdiction: EndOfServiceJurisdiction;
+  reason: EndOfServiceReason;
+  monthlySalary: number;
+  serviceYears: number;
+  serviceMonths?: number;
+  unusedLeaveDays?: number;
+}
+
+export interface EndOfServiceResult {
+  jurisdiction: EndOfServiceJurisdiction;
+  reason: EndOfServiceReason;
+  totalServiceYears: number;
+  dailyRate: number;
+  daysPerMonthBasis: number;
+  first5YearsAmount: number;
+  after5YearsAmount: number;
+  grossAccrued: number;
+  cappedAccrued: number;
+  capAmount: number | null;
+  capApplied: boolean;
+  entitlementMultiplier: number;
+  gratuityAmount: number;
+  leaveEncashment: number;
+  totalFinalSettlement: number;
+  minimumServiceMet: boolean;
+}
+
+/**
+ * Calculates End-of-Service Indemnity / Gratuity for Kuwait (Law No. 6/2010),
+ * UAE (Federal Decree-Law No. 33/2021), and Saudi Arabia (Labor Law Art. 84 & 85).
+ */
+export function calculateEndOfService(input: EndOfServiceInput): EndOfServiceResult {
+  const salary = Math.max(0, input.monthlySalary);
+  const yrs = Math.max(0, input.serviceYears);
+  const mos = Math.max(0, Math.min(11, input.serviceMonths ?? 0));
+  const totalServiceYears = yrs + mos / 12;
+  const unusedLeaveDays = Math.max(0, input.unusedLeaveDays ?? 0);
+
+  if (input.jurisdiction === 'kuwait') {
+    const daysPerMonthBasis = 26;
+    const dailyRate = salary / daysPerMonthBasis;
+    const tier1Years = Math.min(totalServiceYears, 5);
+    const tier2Years = Math.max(0, totalServiceYears - 5);
+    const first5YearsAmount = tier1Years * 15 * dailyRate;
+    const after5YearsAmount = tier2Years * 26 * dailyRate;
+    const grossAccrued = first5YearsAmount + after5YearsAmount;
+    const capAmount = 18 * salary;
+    const capApplied = grossAccrued > capAmount && capAmount > 0;
+    const cappedAccrued = capApplied ? capAmount : grossAccrued;
+
+    let entitlementMultiplier = 1;
+    if (input.reason === 'resignation') {
+      if (totalServiceYears < 3) entitlementMultiplier = 0;
+      else if (totalServiceYears < 5) entitlementMultiplier = 0.5;
+      else if (totalServiceYears < 10) entitlementMultiplier = 2 / 3;
+      else entitlementMultiplier = 1;
+    }
+
+    const gratuityAmount = cappedAccrued * entitlementMultiplier;
+    const leaveEncashment = unusedLeaveDays * dailyRate;
+
+    return {
+      jurisdiction: 'kuwait',
+      reason: input.reason,
+      totalServiceYears,
+      dailyRate,
+      daysPerMonthBasis,
+      first5YearsAmount,
+      after5YearsAmount,
+      grossAccrued,
+      cappedAccrued,
+      capAmount,
+      capApplied,
+      entitlementMultiplier,
+      gratuityAmount,
+      leaveEncashment,
+      totalFinalSettlement: gratuityAmount + leaveEncashment,
+      minimumServiceMet: input.reason === 'termination' ? totalServiceYears > 0 : totalServiceYears >= 3,
+    };
+  }
+
+  if (input.jurisdiction === 'uae') {
+    const daysPerMonthBasis = 30;
+    const dailyRate = salary / daysPerMonthBasis;
+    const minimumServiceMet = totalServiceYears >= 1;
+    const tier1Years = minimumServiceMet ? Math.min(totalServiceYears, 5) : 0;
+    const tier2Years = minimumServiceMet ? Math.max(0, totalServiceYears - 5) : 0;
+    const first5YearsAmount = tier1Years * 21 * dailyRate;
+    const after5YearsAmount = tier2Years * 30 * dailyRate;
+    const grossAccrued = first5YearsAmount + after5YearsAmount;
+    const capAmount = 24 * salary;
+    const capApplied = grossAccrued > capAmount && capAmount > 0;
+    const cappedAccrued = capApplied ? capAmount : grossAccrued;
+    const entitlementMultiplier = minimumServiceMet ? 1 : 0;
+    const gratuityAmount = cappedAccrued * entitlementMultiplier;
+    const leaveEncashment = unusedLeaveDays * dailyRate;
+
+    return {
+      jurisdiction: 'uae',
+      reason: input.reason,
+      totalServiceYears,
+      dailyRate,
+      daysPerMonthBasis,
+      first5YearsAmount,
+      after5YearsAmount,
+      grossAccrued,
+      cappedAccrued,
+      capAmount,
+      capApplied,
+      entitlementMultiplier,
+      gratuityAmount,
+      leaveEncashment,
+      totalFinalSettlement: gratuityAmount + leaveEncashment,
+      minimumServiceMet,
+    };
+  }
+
+  // Saudi Arabia (Labor Law Art. 84 & 85)
+  const daysPerMonthBasis = 30;
+  const dailyRate = salary / daysPerMonthBasis;
+  const tier1Years = Math.min(totalServiceYears, 5);
+  const tier2Years = Math.max(0, totalServiceYears - 5);
+  const first5YearsAmount = tier1Years * 15 * dailyRate;
+  const after5YearsAmount = tier2Years * 30 * dailyRate;
+  const grossAccrued = first5YearsAmount + after5YearsAmount;
+
+  let entitlementMultiplier = 1;
+  if (input.reason === 'resignation') {
+    if (totalServiceYears < 2) entitlementMultiplier = 0;
+    else if (totalServiceYears < 5) entitlementMultiplier = 1 / 3;
+    else if (totalServiceYears < 10) entitlementMultiplier = 2 / 3;
+    else entitlementMultiplier = 1;
+  }
+
+  const gratuityAmount = grossAccrued * entitlementMultiplier;
+  const leaveEncashment = unusedLeaveDays * dailyRate;
+
+  return {
+    jurisdiction: 'saudi',
+    reason: input.reason,
+    totalServiceYears,
+    dailyRate,
+    daysPerMonthBasis,
+    first5YearsAmount,
+    after5YearsAmount,
+    grossAccrued,
+    cappedAccrued: grossAccrued,
+    capAmount: null,
+    capApplied: false,
+    entitlementMultiplier,
+    gratuityAmount,
+    leaveEncashment,
+    totalFinalSettlement: gratuityAmount + leaveEncashment,
+    minimumServiceMet: input.reason === 'termination' ? totalServiceYears > 0 : totalServiceYears >= 2,
+  };
+}
+

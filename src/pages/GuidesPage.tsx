@@ -6,7 +6,7 @@ import { SeoHead } from '../components/seo/SeoHead.tsx';
 
 export function GuidesPage() {
   const { slug } = useParams();
-  const { articles, calculators, ui } = useAppContext();
+  const { articles, calculators, ui, lang, l } = useAppContext();
 
   if (slug) {
     const article = articles.find((a) => a.slug === slug);
@@ -14,7 +14,7 @@ export function GuidesPage() {
       return (
         <div className="max-w-3xl mx-auto px-4 py-16 text-center">
           <h1 className="font-display text-2xl font-bold text-[#0F172A]">{ui.guides.notFound}</h1>
-          <Link to="/guides/" className="mt-4 inline-block text-sm font-semibold text-[#2563EB] hover:underline">
+          <Link to={l('/guides/')} className="mt-4 inline-block text-sm font-semibold text-[#2563EB] hover:underline">
             {ui.guides.browseAll}
           </Link>
         </div>
@@ -43,9 +43,9 @@ export function GuidesPage() {
         />
         <article className="max-w-4xl mx-auto px-4 sm:px-6 py-10 space-y-8">
           <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-[#64748B]">
-            <Link to="/" className="hover:text-[#2563EB]">{ui.nav.home}</Link>
+            <Link to={l('/')} className="hover:text-[#2563EB]">{ui.nav.home}</Link>
             <ChevronRight className="w-3.5 h-3.5 rtl:rotate-180" />
-            <Link to="/guides/" className="hover:text-[#2563EB]">{ui.guides.guidesCrumb}</Link>
+            <Link to={l('/guides/')} className="hover:text-[#2563EB]">{ui.guides.guidesCrumb}</Link>
             <ChevronRight className="w-3.5 h-3.5 rtl:rotate-180" />
             <span className="text-[#0F172A] font-medium truncate">{article.title}</span>
           </nav>
@@ -78,7 +78,7 @@ export function GuidesPage() {
                 {related.map((c) => (
                   <Link
                     key={c.slug}
-                    to={getCalculatorUrl(c)}
+                    to={getCalculatorUrl(c, undefined, lang)}
                     className="rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] hover:border-[#2563EB] p-3 transition-colors"
                   >
                     <p className="text-sm font-semibold text-[#0F172A]">{c.name}</p>
@@ -110,7 +110,7 @@ export function GuidesPage() {
           {articles.map((art) => (
             <Link
               key={art.slug}
-              to={`/guides/${art.slug}/`}
+              to={l(`/guides/${art.slug}/`)}
               className="bg-white rounded-xl border border-[#E2E8F0] p-6 hover:border-[#2563EB] transition-colors flex flex-col justify-between"
             >
               <div>

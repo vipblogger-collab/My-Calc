@@ -10,7 +10,7 @@ export const HEALTH_CALCULATORS: CalculatorDef[] = [
     description: 'Compute Body Mass Index, BMI Prime, and healthy weight range in metric or imperial units.',
     keywords: ['bmi', 'body mass index', 'healthy weight', 'obesity', 'underweight'],
     popular: true,
-    seoTitle: 'BMI Calculator – Body Mass Index & Healthy Weight Range | CalcAxis',
+    seoTitle: 'BMI Calculator – Body Mass Index & Healthy Weight Range | smartcalc.net',
     seoDescription: 'Calculate your Body Mass Index (BMI), BMI Prime, and recommended healthy weight range in pounds/feet or kilograms/centimeters.',
     formulaText: 'BMI = Weight (kg) ÷ Height (m)²',
     formulaVariables: [
@@ -58,7 +58,7 @@ export const HEALTH_CALCULATORS: CalculatorDef[] = [
     shortName: 'BMR',
     description: 'Estimate Basal Metabolic Rate using Mifflin-St Jeor and Harris-Benedict equations.',
     keywords: ['bmr', 'basal metabolic rate', 'resting calories', 'metabolism'],
-    seoTitle: 'BMR Calculator – Basal Metabolic Rate (Mifflin-St Jeor) | CalcAxis',
+    seoTitle: 'BMR Calculator – Basal Metabolic Rate (Mifflin-St Jeor) | smartcalc.net',
     seoDescription: 'Calculate your daily Basal Metabolic Rate (BMR) and baseline calorie burn across activity levels.',
     formulaText: 'Mifflin-St Jeor:  BMR = 10W + 6.25H − 5A + s  (s = +5 male, −161 female)',
     formulaVariables: [
@@ -107,7 +107,7 @@ export const HEALTH_CALCULATORS: CalculatorDef[] = [
     shortName: 'TDEE',
     description: 'Calculate Total Daily Energy Expenditure based on BMR and weekly physical activity.',
     keywords: ['tdee', 'maintenance calories', 'daily energy expenditure'],
-    seoTitle: 'TDEE Calculator – Total Daily Energy Expenditure | CalcAxis',
+    seoTitle: 'TDEE Calculator – Total Daily Energy Expenditure | smartcalc.net',
     seoDescription: 'Find your Total Daily Energy Expenditure (TDEE) to plan weight maintenance, fat loss, or lean muscle gain.',
     formulaText: 'TDEE = BMR × Activity Multiplier (1.2 to 1.9)',
     formulaVariables: [
@@ -156,7 +156,7 @@ export const HEALTH_CALCULATORS: CalculatorDef[] = [
     description: 'Estimate daily calorie targets for weight maintenance, gradual fat loss, or lean weight gain.',
     keywords: ['calorie', 'weight loss', 'calorie deficit', 'daily calories'],
     popular: true,
-    seoTitle: 'Calorie Calculator – Daily Target for Loss or Gain | CalcAxis',
+    seoTitle: 'Calorie Calculator – Daily Target for Loss or Gain | smartcalc.net',
     seoDescription: 'Calculate daily calorie needs for maintaining weight, losing 0.5–2 lbs per week, or gaining muscle mass.',
     formulaText: 'Target Calories = TDEE + Goal Offset (−500 kcal/day ≈ −1 lb/wk)',
     formulaVariables: [
@@ -204,7 +204,7 @@ export const HEALTH_CALCULATORS: CalculatorDef[] = [
     shortName: 'Ideal Weight',
     description: 'Compare healthy body weight estimates across Devine, Robinson, Miller, Hamwi, and BMI equations.',
     keywords: ['ideal weight', 'devine formula', 'healthy weight'],
-    seoTitle: 'Ideal Weight Calculator – 4 Clinical Formulas & BMI Range | CalcAxis',
+    seoTitle: 'Ideal Weight Calculator – 4 Clinical Formulas & BMI Range | smartcalc.net',
     seoDescription: 'Estimate ideal body weight based on height and sex using Devine, Robinson, Miller, Hamwi, and healthy BMI formulas.',
     formulaText: 'Devine (Male): 50 kg + 2.3 kg × (inches over 60)',
     formulaVariables: [
@@ -250,7 +250,7 @@ export const HEALTH_CALCULATORS: CalculatorDef[] = [
     shortName: 'Body Fat',
     description: 'Estimate body fat percentage, fat mass, and lean mass using the U.S. Navy circumference method.',
     keywords: ['body fat', 'us navy method', 'lean body mass', 'waist measurement'],
-    seoTitle: 'Body Fat Calculator – U.S. Navy Body Composition Estimator | CalcAxis',
+    seoTitle: 'Body Fat Calculator – U.S. Navy Body Composition Estimator | smartcalc.net',
     seoDescription: 'Calculate body fat percentage, fat mass, and lean muscle mass using the U.S. Navy tape-measure method.',
     formulaText: 'Male %BF = 495 / (1.0324 − 0.19077·log10(waist−neck) + 0.15456·log10(height)) − 450',
     formulaVariables: [
@@ -299,7 +299,7 @@ export const HEALTH_CALCULATORS: CalculatorDef[] = [
     description: 'Track gestational age in weeks and days, current trimester, estimated due date, and milestone dates.',
     keywords: ['pregnancy', 'gestational age', 'trimester', 'due date'],
     popular: true,
-    seoTitle: 'Pregnancy Calculator – Gestational Age, Trimester & Milestones | CalcAxis',
+    seoTitle: 'Pregnancy Calculator – Gestational Age, Trimester & Milestones | smartcalc.net',
     seoDescription: 'Estimate your pregnancy due date, current gestational week, trimester, and key milestone dates from LMP, conception, or due date.',
     formulaText: 'EDD = LMP + 280 days + (Cycle Length − 28 days)',
     formulaVariables: [
@@ -347,7 +347,7 @@ export const HEALTH_CALCULATORS: CalculatorDef[] = [
     shortName: 'Due Date',
     description: 'Estimate your baby’s expected arrival date, conception window, and trimester transition dates.',
     keywords: ['due date', 'baby arrival', 'naegele rule', 'edd'],
-    seoTitle: 'Due Date Calculator – Estimated Baby Arrival Date | CalcAxis',
+    seoTitle: 'Due Date Calculator – Estimated Baby Arrival Date | smartcalc.net',
     seoDescription: 'Calculate your baby’s estimated due date, conception date, and trimester milestones based on your last period and cycle length.',
     formulaText: 'Due Date = First Day of LMP + 280 + (Cycle − 28) days',
     formulaVariables: [
@@ -395,7 +395,7 @@ export const HEALTH_CALCULATORS: CalculatorDef[] = [
     shortName: 'Ovulation',
     description: 'Estimate your ovulation day, 6-day fertile window, and upcoming 3-cycle fertility calendar.',
     keywords: ['ovulation', 'fertile window', 'fertility calendar', 'cycle'],
-    seoTitle: 'Ovulation Calculator – Fertile Window & 3-Cycle Calendar | CalcAxis',
+    seoTitle: 'Ovulation Calculator – Fertile Window & 3-Cycle Calendar | smartcalc.net',
     seoDescription: 'Predict your most fertile days, next ovulation date, and 3-month cycle forecast based on cycle length.',
     formulaText: 'Ovulation Day = Period Start + (Cycle Length − 14 days)',
     formulaVariables: [
@@ -443,7 +443,7 @@ export const HEALTH_CALCULATORS: CalculatorDef[] = [
     shortName: 'Macro',
     description: 'Break daily calories into exact grams of protein, carbohydrates, and dietary fats by diet style.',
     keywords: ['macros', 'macronutrients', 'protein', 'carbs', 'keto'],
-    seoTitle: 'Macro Calculator – Daily Protein, Carbs & Fat Grams | CalcAxis',
+    seoTitle: 'Macro Calculator – Daily Protein, Carbs & Fat Grams | smartcalc.net',
     seoDescription: 'Calculate daily grams of protein, carbohydrates, and fat for Balanced, High-Protein, Low-Carb, or Keto targets.',
     formulaText: 'Protein g = (Cal × %P)/4  |  Carbs g = (Cal × %C)/4  |  Fat g = (Cal × %F)/9',
     formulaVariables: [
@@ -491,7 +491,7 @@ export const HEALTH_CALCULATORS: CalculatorDef[] = [
     shortName: 'Water Intake',
     description: 'Estimate recommended daily fluid intake in liters, ounces, and cups based on weight, exercise, and climate.',
     keywords: ['water intake', 'hydration', 'daily water', 'ounces'],
-    seoTitle: 'Water Intake Calculator – Daily Hydration Estimator | CalcAxis',
+    seoTitle: 'Water Intake Calculator – Daily Hydration Estimator | smartcalc.net',
     seoDescription: 'Calculate how much water to drink per day in liters, fluid ounces, and 8-oz glasses based on body weight and activity.',
     formulaText: 'Liters = (Weight kg × 0.033) + (Exercise mins ÷ 30 × 0.35) + Climate Bonus',
     formulaVariables: [
@@ -539,7 +539,7 @@ export const HEALTH_CALCULATORS: CalculatorDef[] = [
     shortName: 'Pace',
     description: 'Compute running pace per km/mile, speed, and projected 5K, 10K, Half, and Marathon finish times.',
     keywords: ['running pace', 'pace calculator', 'marathon splits', 'min per mile'],
-    seoTitle: 'Pace Calculator – Running Pace & Race Finish Splits | CalcAxis',
+    seoTitle: 'Pace Calculator – Running Pace & Race Finish Splits | smartcalc.net',
     seoDescription: 'Calculate running pace per kilometer and mile, speed, and finish time splits for 5K, 10K, Half Marathon, and Marathon.',
     formulaText: 'Pace = Total Time ÷ Distance',
     formulaVariables: [
@@ -587,7 +587,7 @@ export const HEALTH_CALCULATORS: CalculatorDef[] = [
     shortName: 'Heart Rate',
     description: 'Compute maximum heart rate and five Karvonen training zones using age and resting heart rate.',
     keywords: ['heart rate zones', 'karvonen', 'max heart rate', 'fat burn zone'],
-    seoTitle: 'Heart Rate Calculator – Max HR & Karvonen Training Zones | CalcAxis',
+    seoTitle: 'Heart Rate Calculator – Max HR & Karvonen Training Zones | smartcalc.net',
     seoDescription: 'Calculate estimated max heart rate (Tanaka & Fox) and personalized Zone 1–5 training BPM ranges using the Karvonen method.',
     formulaText: 'Target HR = Resting HR + %Intensity × (Max HR − Resting HR)',
     formulaVariables: [
@@ -636,7 +636,7 @@ export const HEALTH_CALCULATORS: CalculatorDef[] = [
     description: 'Assess central body fat distribution using the simple keep-your-waist-under-half-your-height rule.',
     keywords: ['waist to height', 'whtr', 'central adiposity', 'waist ratio'],
     recentlyAdded: true,
-    seoTitle: 'Waist-to-Height Ratio Calculator – Cardiometabolic Risk Screen | CalcAxis',
+    seoTitle: 'Waist-to-Height Ratio Calculator – Cardiometabolic Risk Screen | smartcalc.net',
     seoDescription: 'Calculate your waist-to-height ratio (WHtR) and compare against clinical guidelines recommending a ratio below 0.50.',
     formulaText: 'WHtR = Waist Circumference ÷ Height',
     formulaVariables: [
@@ -685,7 +685,7 @@ export const HEALTH_CALCULATORS: CalculatorDef[] = [
     description: 'Find optimal bedtimes or wake-up times aligned with 90-minute REM/non-REM sleep cycles.',
     keywords: ['sleep cycles', 'bedtime', 'wake up time', 'rem sleep'],
     recentlyAdded: true,
-    seoTitle: 'Sleep Calculator – 90-Minute Sleep Cycle Bedtime Planner | CalcAxis',
+    seoTitle: 'Sleep Calculator – 90-Minute Sleep Cycle Bedtime Planner | smartcalc.net',
     seoDescription: 'Plan when to go to sleep or wake up based on 90-minute sleep cycles and fall-asleep latency so you wake refreshed.',
     formulaText: 'Target Time = Base Time ± (Cycles × 90 min + Sleep Latency)',
     formulaVariables: [

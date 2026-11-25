@@ -18,7 +18,7 @@ export function GlobalSearch({
   autoFocus = false,
   onSelect,
 }: GlobalSearchProps) {
-  const { calculators, categories, ui } = useAppContext();
+  const { calculators, categories, ui, lang } = useAppContext();
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
@@ -47,7 +47,7 @@ export function GlobalSearch({
     setOpen(false);
     setQuery('');
     onSelect?.();
-    navigate(getCalculatorUrl(match));
+    navigate(getCalculatorUrl(match, undefined, lang));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

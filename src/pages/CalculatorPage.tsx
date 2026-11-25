@@ -7,13 +7,14 @@ import { CalculatorWidgetRouter } from '../components/calculators/widgets/Calcul
 import { AdSlot } from '../components/ads/AdSlot.tsx';
 import { SeoHead } from '../components/seo/SeoHead.tsx';
 import { CategorySlug } from '../types/calculator.ts';
+import { SITE_URL } from '../config/site.ts';
 
 export function CalculatorPage({ forcedCategory }: { forcedCategory?: CategorySlug }) {
   const params = useParams();
   const categorySlug = (forcedCategory || params.category || '') as CategorySlug;
   const calcSlug = params.slug || '';
 
-  const { calculators, categories, isBookmarked, toggleBookmark, recordRecentView, recentSlugs, ui } =
+  const { calculators, categories, isBookmarked, toggleBookmark, recordRecentView, recentSlugs, ui, lang, l } =
     useAppContext();
   const calc = useMemo(() => getCalculatorBySlug(calcSlug, calculators), [calcSlug, calculators]);
   const activeCategory =
@@ -45,7 +46,7 @@ export function CalculatorPage({ forcedCategory }: { forcedCategory?: CategorySl
       <div className="max-w-4xl mx-auto px-4 py-16 text-center">
         <h1 className="font-display text-2xl font-bold text-[#0F172A]">{ui.calculator.notFoundTitle}</h1>
         <p className="text-sm text-[#64748B] mt-2">{ui.calculator.notFoundBody}</p>
-        <Link to="/" className="mt-4 inline-block text-sm font-semibold text-[#2563EB] hover:underline">
+        <Link to={l('/')} className="mt-4 inline-block text-sm font-semibold text-[#2563EB] hover:underline">
           {ui.calculator.backHome}
         </Link>
       </div>
@@ -60,7 +61,7 @@ export function CalculatorPage({ forcedCategory }: { forcedCategory?: CategorySl
     .filter((c): c is NonNullable<typeof c> => Boolean(c))
     .slice(0, 5);
 
-  const origin = typeof window !== 'undefined' ? window.location.origin : '';
+  const origin = SITE_URL;
   const canonicalPath = getCalculatorUrl(calc, activeCategory.slug);
 
   const schemas: Record<string, unknown>[] = [
@@ -77,9 +78,9 @@ export function CalculatorPage({ forcedCategory }: { forcedCategory?: CategorySl
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: ui.nav.home, item: `${origin}/` },
-        { '@type': 'ListItem', position: 2, name: activeCategory.name, item: `${origin}/${activeCategory.slug}/` },
-        { '@type': 'ListItem', position: 3, name: calc.name, item: `${origin}${canonicalPath}` },
+        { '@type': 'ListItem', position: 1, name: ui.nav.home, item: `${origin}${l('/')}` },
+        { '@type': 'ListItem', position: 2, name: activeCategory.name, item: `${origin}${l(`/${activeCategory.slug}/`)}` },
+        { '@type': 'ListItem', position: 3, name: calc.name, item: `${origin}${l(canonicalPath)}` },
       ],
     },
   ];
@@ -118,11 +119,11 @@ export function CalculatorPage({ forcedCategory }: { forcedCategory?: CategorySl
       <div className="bg-white border-b border-[#E2E8F0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1.5 text-xs text-[#64748B] mb-3">
-            <Link to="/" className="hover:text-[#2563EB]">
+            <Link to={l('/')} className="hover:text-[#2563EB]">
               {ui.nav.home}
             </Link>
             <ChevronRight className="w-3.5 h-3.5 rtl:rotate-180" />
-            <Link to={`/${activeCategory.slug}/`} className="hover:text-[#2563EB]">
+            <Link to={l(`/${activeCategory.slug}/`)} className="hover:text-[#2563EB]">
               {activeCategory.name}
             </Link>
             <ChevronRight className="w-3.5 h-3.5 rtl:rotate-180" />
@@ -275,7 +276,7 @@ export function CalculatorPage({ forcedCategory }: { forcedCategory?: CategorySl
                 {relatedCalcs.map((rel) => (
                   <Link
                     key={rel.slug}
-                    to={getCalculatorUrl(rel)}
+                    to={getCalculatorUrl(rel, undefined, lang)}
                     className="rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] hover:border-[#2563EB] hover:bg-[#EFF6FF] p-3 transition-colors"
                   >
                     <p className="text-sm font-semibold text-[#0F172A]">{rel.name}</p>
@@ -305,7 +306,7 @@ export function CalculatorPage({ forcedCategory }: { forcedCategory?: CategorySl
                   .map((item) => (
                     <li key={item.slug}>
                       <Link
-                        to={getCalculatorUrl(item, activeCategory.slug)}
+                        to={getCalculatorUrl(item, activeCategory.slug, lang)}
                         className={`block py-0.5 transition-colors ${
                           item.slug === calc.slug
                             ? 'font-semibold text-[#2563EB]'
@@ -326,7 +327,7 @@ export function CalculatorPage({ forcedCategory }: { forcedCategory?: CategorySl
                   {recentOthers.map((item) => (
                     <li key={item.slug}>
                       <Link
-                        to={getCalculatorUrl(item)}
+                        to={getCalculatorUrl(item, undefined, lang)}
                         className="text-[#475569] hover:text-[#2563EB] block py-0.5"
                       >
                         {item.name}

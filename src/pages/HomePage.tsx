@@ -16,11 +16,12 @@ import { GlobalSearch } from '../components/search/GlobalSearch.tsx';
 import { AdSlot } from '../components/ads/AdSlot.tsx';
 import { SeoHead } from '../components/seo/SeoHead.tsx';
 import { CalculatorIcon, CategoryIcon } from '../components/ui/CategoryIcon.tsx';
+import { SITE_URL } from '../config/site.ts';
 
 const WHY_ICONS = [CheckCircle2, ShieldCheck, Zap, Smartphone, Clock, BookOpen];
 
 export function HomePage() {
-  const { calculators, categories, articles, bookmarks, recentSlugs, ui } = useAppContext();
+  const { calculators, categories, articles, bookmarks, recentSlugs, ui, lang, l } = useAppContext();
 
   const popularCalcs = calculators.filter((c) => c.popular && c.published !== false);
   const recentAdded = calculators.filter((c) => c.recentlyAdded && c.published !== false);
@@ -32,7 +33,7 @@ export function HomePage() {
     .filter((c): c is NonNullable<typeof c> => Boolean(c))
     .slice(0, 6);
 
-  const origin = typeof window !== 'undefined' ? window.location.origin : '';
+  const origin = SITE_URL;
 
   return (
     <>
@@ -45,10 +46,10 @@ export function HomePage() {
             '@context': 'https://schema.org',
             '@type': 'WebSite',
             name: ui.brandName,
-            url: origin || 'https://calcaxis.com',
+            url: `${origin}${l('/')}`,
             potentialAction: {
               '@type': 'SearchAction',
-              target: `${origin}/?q={search_term_string}`,
+              target: `${origin}${l('/')}?q={search_term_string}`,
               'query-input': 'required name=search_term_string',
             },
           },
@@ -56,7 +57,7 @@ export function HomePage() {
             '@context': 'https://schema.org',
             '@type': 'Organization',
             name: ui.brandName,
-            url: origin || 'https://calcaxis.com',
+            url: origin,
           },
         ]}
       />
@@ -81,7 +82,7 @@ export function HomePage() {
               {ui.home.shortcuts.map((s) => (
                 <Link
                   key={s.to}
-                  to={s.to}
+                  to={l(s.to)}
                   className="px-2.5 py-1 rounded-md bg-[#F8FAFC] border border-[#E2E8F0] hover:border-[#2563EB] hover:text-[#2563EB] font-medium text-[#1E293B] transition-colors"
                 >
                   {s.label}
@@ -114,7 +115,7 @@ export function HomePage() {
                   {bookmarkedCalcs.map((c) => (
                     <Link
                       key={c.slug}
-                      to={getCalculatorUrl(c)}
+                      to={getCalculatorUrl(c, undefined, lang)}
                       className="px-3 py-1.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] hover:border-[#2563EB] hover:text-[#2563EB] text-xs font-medium text-[#1E293B]"
                     >
                       {c.name}
@@ -133,7 +134,7 @@ export function HomePage() {
                   {recentlyViewedCalcs.map((c) => (
                     <Link
                       key={c.slug}
-                      to={getCalculatorUrl(c)}
+                      to={getCalculatorUrl(c, undefined, lang)}
                       className="px-3 py-1.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] hover:border-[#2563EB] hover:text-[#2563EB] text-xs font-medium text-[#1E293B]"
                     >
                       {c.name}
@@ -153,7 +154,7 @@ export function HomePage() {
               <p className="text-sm text-[#64748B] mt-1">{ui.home.popularSubtitle}</p>
             </div>
             <Link
-              to="/sitemap/"
+              to={l('/sitemap/')}
               className="text-sm font-medium text-[#2563EB] hover:underline whitespace-nowrap shrink-0"
             >
               {ui.home.browseAllPrefix} {calculators.length} {ui.home.toolsUnit}
@@ -164,7 +165,7 @@ export function HomePage() {
             {popularCalcs.map((calc) => (
               <Link
                 key={calc.slug}
-                to={getCalculatorUrl(calc)}
+                to={getCalculatorUrl(calc, undefined, lang)}
                 className="group bg-white rounded-xl border border-[#E2E8F0] p-5 hover:border-[#2563EB] hover:shadow-sm transition-all flex flex-col justify-between"
               >
                 <div>
@@ -213,7 +214,7 @@ export function HomePage() {
                           <CategoryIcon iconName={cat.iconName} className="w-5 h-5" />
                         </span>
                         <Link
-                          to={`/${cat.slug}/`}
+                          to={l(`/${cat.slug}/`)}
                           className="font-display text-lg font-bold text-[#0F172A] hover:text-[#2563EB] transition-colors"
                         >
                           {cat.name}
@@ -230,7 +231,7 @@ export function HomePage() {
                       {catCalcs.slice(0, 5).map((c) => (
                         <li key={c.slug}>
                           <Link
-                            to={getCalculatorUrl(c, cat.slug)}
+                            to={getCalculatorUrl(c, cat.slug, lang)}
                             className="text-[#1E293B] hover:text-[#2563EB] hover:underline"
                           >
                             {c.name}
@@ -241,7 +242,7 @@ export function HomePage() {
                   </div>
 
                   <Link
-                    to={`/${cat.slug}/`}
+                    to={l(`/${cat.slug}/`)}
                     className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-[#2563EB] hover:underline"
                   >
                     <span>
@@ -274,7 +275,7 @@ export function HomePage() {
             {recentAdded.map((calc) => (
               <Link
                 key={calc.slug}
-                to={getCalculatorUrl(calc)}
+                to={getCalculatorUrl(calc, undefined, lang)}
                 className="bg-white rounded-xl border border-[#E2E8F0] p-5 hover:border-[#2563EB] transition-colors"
               >
                 <p className="text-xs text-[#64748B] mb-1">
@@ -318,7 +319,7 @@ export function HomePage() {
               <h2 className="font-display text-2xl font-bold text-[#0F172A]">{ui.home.guidesTitle}</h2>
               <p className="text-sm text-[#64748B] mt-1">{ui.home.guidesSubtitle}</p>
             </div>
-            <Link to="/guides/" className="text-sm font-medium text-[#2563EB] hover:underline whitespace-nowrap shrink-0">
+            <Link to={l('/guides/')} className="text-sm font-medium text-[#2563EB] hover:underline whitespace-nowrap shrink-0">
               {ui.home.allGuides}
             </Link>
           </div>
@@ -327,7 +328,7 @@ export function HomePage() {
             {articles.slice(0, 3).map((art) => (
               <Link
                 key={art.slug}
-                to={`/guides/${art.slug}/`}
+                to={l(`/guides/${art.slug}/`)}
                 className="bg-white rounded-xl border border-[#E2E8F0] p-5 hover:border-[#2563EB] transition-colors flex flex-col justify-between"
               >
                 <div>

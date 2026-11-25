@@ -10,7 +10,7 @@ export const MATH_CALCULATORS: CalculatorDef[] = [
     description: 'Solve X% of Y, what percent X is of Y, and percentage increase or decrease instantaneously.',
     keywords: ['percentage', 'percent change', 'percent increase', 'percent decrease'],
     popular: true,
-    seoTitle: 'Percentage Calculator – Percent Of, Ratio & Percent Change | CalcAxis',
+    seoTitle: 'Percentage Calculator – Percent Of, Ratio & Percent Change | smartcalc.net',
     seoDescription: 'Calculate percentages, percentage change, increase, and decrease with clear step-by-step formulas.',
     formulaText: 'X% of Y = (X ÷ 100) × Y  |  % Change = ((New − Old) ÷ |Old|) × 100',
     formulaVariables: [
@@ -58,7 +58,7 @@ export const MATH_CALCULATORS: CalculatorDef[] = [
     shortName: 'Fraction',
     description: 'Add, subtract, multiply, and divide fractions with simplified results, mixed numbers, and decimals.',
     keywords: ['fraction', 'mixed number', 'simplify fraction', 'lcd'],
-    seoTitle: 'Fraction Calculator – Add, Subtract, Multiply & Simplify | CalcAxis',
+    seoTitle: 'Fraction Calculator – Add, Subtract, Multiply & Simplify | smartcalc.net',
     seoDescription: 'Perform exact arithmetic on fractions with automatic GCD simplification, mixed numbers, decimal equivalents, and steps.',
     formulaText: 'a/b + c/d = (ad + bc) / bd   (reduced by gcd)',
     formulaVariables: [
@@ -106,7 +106,7 @@ export const MATH_CALCULATORS: CalculatorDef[] = [
     shortName: 'Scientific',
     description: 'Interactive scientific keypad and expression evaluator with trigonometry, logs, powers, and history.',
     keywords: ['scientific calculator', 'sin', 'cos', 'log', 'factorial', 'exponent'],
-    seoTitle: 'Scientific Calculator – Trig, Logarithms, Powers & History | CalcAxis',
+    seoTitle: 'Scientific Calculator – Trig, Logarithms, Powers & History | smartcalc.net',
     seoDescription: 'Free online scientific calculator supporting DEG/RAD trigonometry, logarithms, roots, factorials, parentheses, and keyboard entry.',
     formulaText: 'PEMDAS / BODMAS order of operations with DEG or RAD mode',
     formulaVariables: [
@@ -154,7 +154,7 @@ export const MATH_CALCULATORS: CalculatorDef[] = [
     shortName: 'Basic',
     description: 'Clean everyday four-function calculator with percentage, sign toggle, memory keys, and tape.',
     keywords: ['basic calculator', 'arithmetic', 'memory', 'four function'],
-    seoTitle: 'Basic Calculator – Everyday Arithmetic & Memory Keys | CalcAxis',
+    seoTitle: 'Basic Calculator – Everyday Arithmetic & Memory Keys | smartcalc.net',
     seoDescription: 'Fast, clean online basic calculator with +, −, ×, ÷, %, M+/M−/MR/MC memory buttons, keyboard support, and history.',
     formulaText: 'Standard left-to-right / operator precedence arithmetic',
     formulaVariables: [
@@ -202,7 +202,7 @@ export const MATH_CALCULATORS: CalculatorDef[] = [
     shortName: 'Algebra',
     description: 'Solve linear equations of the form ax + b = cx + d with clear step-by-step algebraic isolation.',
     keywords: ['algebra', 'linear equation', 'solve for x', 'steps'],
-    seoTitle: 'Algebra Calculator – Linear Equation Solver with Steps | CalcAxis',
+    seoTitle: 'Algebra Calculator – Linear Equation Solver with Steps | smartcalc.net',
     seoDescription: 'Solve linear equations ax + b = cx + d step by step, handling unique, infinite, and no-solution cases.',
     formulaText: 'ax + b = cx + d  ⟹  x = (d − b) / (a − c)',
     formulaVariables: [
@@ -249,7 +249,7 @@ export const MATH_CALCULATORS: CalculatorDef[] = [
     shortName: 'Average',
     description: 'Compute arithmetic mean, median, mode, geometric mean, range, and sorted dataset from any list.',
     keywords: ['average', 'mean', 'median', 'mode', 'geometric mean'],
-    seoTitle: 'Average Calculator – Mean, Median, Mode & Range | CalcAxis',
+    seoTitle: 'Average Calculator – Mean, Median, Mode & Range | smartcalc.net',
     seoDescription: 'Enter comma or space-separated numbers to calculate mean, median, mode, geometric mean, sum, and sorted values.',
     formulaText: 'Mean = (Σ xᵢ) ÷ n',
     formulaVariables: [
@@ -296,7 +296,7 @@ export const MATH_CALCULATORS: CalculatorDef[] = [
     shortName: 'Ratio',
     description: 'Solve proportions A : B = C : D when one value is unknown, and simplify ratios automatically.',
     keywords: ['ratio', 'proportion', 'aspect ratio', 'scale'],
-    seoTitle: 'Ratio Calculator – Proportion Solver & Aspect Ratio Scaler | CalcAxis',
+    seoTitle: 'Ratio Calculator – Proportion Solver & Aspect Ratio Scaler | smartcalc.net',
     seoDescription: 'Solve A : B = C : D proportions by leaving any one field blank, or simplify whole-number ratios instantly.',
     formulaText: 'A / B = C / D  ⟹  A·D = B·C',
     formulaVariables: [
@@ -342,7 +342,7 @@ export const MATH_CALCULATORS: CalculatorDef[] = [
     shortName: 'Exponent',
     description: 'Compute xⁿ for positive, negative, zero, and fractional exponents with scientific notation.',
     keywords: ['exponent', 'power', 'scientific notation', 'x^n'],
-    seoTitle: 'Exponent Calculator – Powers & Scientific Notation | CalcAxis',
+    seoTitle: 'Exponent Calculator – Powers & Scientific Notation | smartcalc.net',
     seoDescription: 'Calculate x raised to the power n for integer, negative, and decimal exponents with step-by-step exponent laws.',
     formulaText: 'xⁿ = x · x · … · x  (n times)   |   x⁻ⁿ = 1 / xⁿ',
     formulaVariables: [
@@ -390,7 +390,7 @@ export const MATH_CALCULATORS: CalculatorDef[] = [
     shortName: 'Square Root',
     description: 'Calculate square roots and nth roots with simplified radical form for integers.',
     keywords: ['square root', 'nth root', 'radical', 'cube root'],
-    seoTitle: 'Square Root & Nth Root Calculator – Radical Simplifier | CalcAxis',
+    seoTitle: 'Square Root & Nth Root Calculator – Radical Simplifier | smartcalc.net',
     seoDescription: 'Calculate square roots, cube roots, and nth roots with exact decimal precision and simplified radical form.',
     formulaText: 'ⁿ√x = x^(1/n)',
     formulaVariables: [
@@ -438,7 +438,7 @@ export const MATH_CALCULATORS: CalculatorDef[] = [
     shortName: 'Quadratic',
     description: 'Solve ax² + bx + c = 0 for real or complex roots, discriminant, vertex, and parabola plot.',
     keywords: ['quadratic formula', 'parabola', 'discriminant', 'vertex', 'roots'],
-    seoTitle: 'Quadratic Equation Calculator – Roots, Vertex & Graph | CalcAxis',
+    seoTitle: 'Quadratic Equation Calculator – Roots, Vertex & Graph | smartcalc.net',
     seoDescription: 'Solve any quadratic equation ax² + bx + c = 0 with discriminant analysis, real or complex roots, vertex, and parabola chart.',
     formulaText: 'x = [ −b ± √(b² − 4ac) ] / 2a',
     formulaVariables: [
@@ -485,7 +485,7 @@ export const MATH_CALCULATORS: CalculatorDef[] = [
     shortName: 'Prime Number',
     description: 'Test primality, compute prime factorization, find nearest primes, and list primes in a range.',
     keywords: ['prime number', 'prime factorization', 'is prime', 'factors'],
-    seoTitle: 'Prime Number Calculator – Primality Check & Factorization | CalcAxis',
+    seoTitle: 'Prime Number Calculator – Primality Check & Factorization | smartcalc.net',
     seoDescription: 'Check if a number is prime, compute its complete prime factorization, and find neighboring prime numbers.',
     formulaText: 'n = p₁^a₁ · p₂^a₂ · … · pₖ^aₖ  (Fundamental Theorem of Arithmetic)',
     formulaVariables: [
@@ -532,7 +532,7 @@ export const MATH_CALCULATORS: CalculatorDef[] = [
     shortName: 'GCF',
     description: 'Find the Greatest Common Factor (GCD) of two or more integers with Euclidean algorithm steps.',
     keywords: ['gcf', 'gcd', 'greatest common factor', 'greatest common divisor'],
-    seoTitle: 'GCF Calculator – Greatest Common Factor with Steps | CalcAxis',
+    seoTitle: 'GCF Calculator – Greatest Common Factor with Steps | smartcalc.net',
     seoDescription: 'Calculate the Greatest Common Factor (GCF / GCD) of two or more whole numbers using the Euclidean algorithm.',
     formulaText: 'gcd(a, b) = gcd(b, a mod b)',
     formulaVariables: [
@@ -578,7 +578,7 @@ export const MATH_CALCULATORS: CalculatorDef[] = [
     shortName: 'LCM',
     description: 'Compute the Least Common Multiple of two or more integers alongside their GCF.',
     keywords: ['lcm', 'least common multiple', 'common denominator'],
-    seoTitle: 'LCM Calculator – Least Common Multiple of Multiple Numbers | CalcAxis',
+    seoTitle: 'LCM Calculator – Least Common Multiple of Multiple Numbers | smartcalc.net',
     seoDescription: 'Find the Least Common Multiple (LCM) and Greatest Common Factor (GCF) of any list of positive integers.',
     formulaText: 'lcm(a, b) = |a · b| / gcd(a, b)',
     formulaVariables: [
@@ -624,7 +624,7 @@ export const MATH_CALCULATORS: CalculatorDef[] = [
     shortName: 'Probability',
     description: 'Calculate independent event intersections, unions, complements, permutations (nPr), and combinations (nCr).',
     keywords: ['probability', 'combinations', 'permutations', 'ncr', 'npr'],
-    seoTitle: 'Probability Calculator – Events, Permutations & Combinations | CalcAxis',
+    seoTitle: 'Probability Calculator – Events, Permutations & Combinations | smartcalc.net',
     seoDescription: 'Calculate P(A and B), P(A or B), P(not A), permutations nPr, and combinations nCr accurately.',
     formulaText: 'P(A ∪ B) = P(A) + P(B) − P(A)·P(B)  |  nCr = n! / (r!(n−r)!)',
     formulaVariables: [
@@ -671,7 +671,7 @@ export const MATH_CALCULATORS: CalculatorDef[] = [
     shortName: 'Statistics',
     description: 'Compute descriptive statistics: sample & population standard deviation, variance, quartiles, IQR, and mean.',
     keywords: ['statistics', 'standard deviation', 'variance', 'quartiles', 'iqr'],
-    seoTitle: 'Statistics Calculator – Std Dev, Variance, Quartiles & Mean | CalcAxis',
+    seoTitle: 'Statistics Calculator – Std Dev, Variance, Quartiles & Mean | smartcalc.net',
     seoDescription: 'Calculate sample and population standard deviation, variance, mean, median, quartiles Q1/Q3, IQR, and range.',
     formulaText: 's = √[ Σ(xᵢ − x̄)² / (n − 1) ]   |   σ = √[ Σ(xᵢ − μ)² / n ]',
     formulaVariables: [
@@ -718,7 +718,7 @@ export const MATH_CALCULATORS: CalculatorDef[] = [
     shortName: 'Rounding',
     description: 'Round numbers to any decimal place or power of ten using Half-Up, Half-Even (Banker’s), Floor, or Ceil.',
     keywords: ['rounding', 'decimal places', 'bankers rounding', 'round'],
-    seoTitle: 'Rounding Calculator – Decimal Places & Banker’s Rounding | CalcAxis',
+    seoTitle: 'Rounding Calculator – Decimal Places & Banker’s Rounding | smartcalc.net',
     seoDescription: 'Round any number to nearest integer, tenths, hundredths, thousands, or custom decimals with selectable rounding modes.',
     formulaText: 'Modes: Half-Up | Half-Even (Banker’s) | Floor | Ceiling',
     formulaVariables: [
@@ -765,7 +765,7 @@ export const MATH_CALCULATORS: CalculatorDef[] = [
     shortName: 'Random Number',
     description: 'Generate cryptographically uniform random integers within any range with duplicate and sort controls.',
     keywords: ['random number', 'rng', 'dice', 'lottery', 'sample'],
-    seoTitle: 'Random Number Generator – Uniform Integers & Unique Sampling | CalcAxis',
+    seoTitle: 'Random Number Generator – Uniform Integers & Unique Sampling | smartcalc.net',
     seoDescription: 'Generate fair random numbers between any minimum and maximum using Web Crypto randomness with optional unique draws.',
     formulaText: 'Uniform Integer ∈ [Min, Max] via rejection-free crypto random',
     formulaVariables: [

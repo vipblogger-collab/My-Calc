@@ -79,6 +79,7 @@ const SLOT_LABELS: {
 export function AdminPage() {
   const {
     lang,
+    l,
     ui,
     categories,
     calculators,
@@ -430,11 +431,11 @@ export function AdminPage() {
                 <div>
                   <h2 className="font-display text-lg font-bold text-[#0F172A]">{selectedCalc.name}</h2>
                   <p dir="ltr" className="text-xs font-mono-tabular text-[#64748B] text-start">
-                    {getCalculatorUrl(selectedCalc)}
+                    {getCalculatorUrl(selectedCalc, undefined, lang)}
                   </p>
                 </div>
                 <Link
-                  to={getCalculatorUrl(selectedCalc)}
+                  to={getCalculatorUrl(selectedCalc, undefined, lang)}
                   className="text-xs font-semibold text-[#2563EB] hover:underline whitespace-nowrap"
                 >
                   {isAr ? 'فتح الصفحة' : 'Open Live Page'}
@@ -650,7 +651,7 @@ export function AdminPage() {
                   <div key={art.slug} className="py-3 flex items-start justify-between gap-3">
                     <div>
                       <Link
-                        to={`/guides/${art.slug}/`}
+                        to={l(`/guides/${art.slug}/`)}
                         className="text-sm font-semibold text-[#0F172A] hover:text-[#2563EB]"
                       >
                         {art.title}

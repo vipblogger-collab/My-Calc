@@ -10,7 +10,7 @@ export const FINANCIAL_CALCULATORS: CalculatorDef[] = [
     description: 'Estimate monthly mortgage payments with taxes, insurance, PMI, and a full amortization schedule.',
     keywords: ['mortgage', 'home loan', 'house payment', 'pmi', 'amortization', 'escrow'],
     popular: true,
-    seoTitle: 'Mortgage Calculator – Monthly Payment & Amortization Schedule | CalcAxis',
+    seoTitle: 'Mortgage Calculator – Monthly Payment & Amortization Schedule | smartcalc.net',
     seoDescription: 'Calculate monthly mortgage payments including principal, interest, property tax, home insurance, and PMI with interactive charts.',
     formulaText: 'M = P · [ r(1 + r)^n ] / [ (1 + r)^n − 1 ]',
     formulaVariables: [
@@ -62,7 +62,7 @@ export const FINANCIAL_CALCULATORS: CalculatorDef[] = [
     description: 'Compute periodic payments, total interest, and payoff schedule for fixed-rate loans.',
     keywords: ['loan', 'payment', 'installment', 'interest', 'biweekly', 'monthly'],
     popular: true,
-    seoTitle: 'Loan Calculator – Monthly, Biweekly & Total Interest | CalcAxis',
+    seoTitle: 'Loan Calculator – Monthly, Biweekly & Total Interest | smartcalc.net',
     seoDescription: 'Calculate fixed-rate loan payments, total interest costs, and amortization schedules for monthly, biweekly, or weekly schedules.',
     formulaText: 'PMT = P · [ r(1 + r)^n ] / [ (1 + r)^n − 1 ]',
     formulaVariables: [
@@ -113,7 +113,7 @@ export const FINANCIAL_CALCULATORS: CalculatorDef[] = [
     description: 'Calculate car loan monthly payments factoring in down payment, trade-in value, sales tax, and fees.',
     keywords: ['auto loan', 'car payment', 'vehicle finance', 'trade-in', 'sales tax'],
     popular: true,
-    seoTitle: 'Auto Loan Calculator – Car Payment & Total Cost Estimator | CalcAxis',
+    seoTitle: 'Auto Loan Calculator – Car Payment & Total Cost Estimator | smartcalc.net',
     seoDescription: 'Estimate monthly car loan payments with trade-in value, down payment, dealer fees, and state sales tax.',
     formulaText: 'Loan = Vehicle Price − Trade-In − Down Payment + Sales Tax + Fees',
     formulaVariables: [
@@ -162,7 +162,7 @@ export const FINANCIAL_CALCULATORS: CalculatorDef[] = [
     shortName: 'Personal Loan',
     description: 'Determine monthly payments, net cash proceeds after origination fees, and effective APR.',
     keywords: ['personal loan', 'origination fee', 'effective apr', 'unsecured loan'],
-    seoTitle: 'Personal Loan Calculator – Monthly Payment & Effective APR | CalcAxis',
+    seoTitle: 'Personal Loan Calculator – Monthly Payment & Effective APR | smartcalc.net',
     seoDescription: 'Calculate personal loan payments, origination fee deductions, net proceeds, and true effective APR.',
     formulaText: 'Net Proceeds = Loan Amount × (1 − Origination Fee %)',
     formulaVariables: [
@@ -212,7 +212,7 @@ export const FINANCIAL_CALCULATORS: CalculatorDef[] = [
     description: 'Project investment growth over time with recurring monthly contributions and compounding schedules.',
     keywords: ['compound interest', 'savings growth', 'apy', 'compounding', 'future value'],
     popular: true,
-    seoTitle: 'Compound Interest Calculator – Growth Chart & Yearly Schedule | CalcAxis',
+    seoTitle: 'Compound Interest Calculator – Growth Chart & Yearly Schedule | smartcalc.net',
     seoDescription: 'Calculate compound interest with regular monthly contributions, customizable compounding frequency, and year-by-year charts.',
     formulaText: 'A = P(1 + r/n)^(nt) + PMT · [((1 + i)^m − 1) / i]',
     formulaVariables: [
@@ -263,7 +263,7 @@ export const FINANCIAL_CALCULATORS: CalculatorDef[] = [
     shortName: 'Simple Interest',
     description: 'Compute non-compounding interest earned or owed over years, months, or days.',
     keywords: ['simple interest', 'i=prt', 'short term loan', 'principal'],
-    seoTitle: 'Simple Interest Calculator – I = P × r × t | CalcAxis',
+    seoTitle: 'Simple Interest Calculator – I = P × r × t | smartcalc.net',
     seoDescription: 'Calculate simple interest and total balance using principal, annual rate, and time in years, months, or days.',
     formulaText: 'I = P · r · t,   A = P + I',
     formulaVariables: [
@@ -313,7 +313,7 @@ export const FINANCIAL_CALCULATORS: CalculatorDef[] = [
     shortName: 'Savings',
     description: 'Plan emergency funds and savings goals with initial deposit, monthly additions, APY, and tax estimates.',
     keywords: ['savings', 'high yield savings', 'apy', 'emergency fund', 'goal'],
-    seoTitle: 'Savings Calculator – High-Yield Savings Growth & Tax Impact | CalcAxis',
+    seoTitle: 'Savings Calculator – High-Yield Savings Growth & Tax Impact | smartcalc.net',
     seoDescription: 'Project your savings account balance over time with recurring deposits, APY, and optional interest tax estimates.',
     formulaText: 'FV = P(1 + i)^m + PMT · [((1 + i)^m − 1) / i]',
     formulaVariables: [
@@ -363,7 +363,7 @@ export const FINANCIAL_CALCULATORS: CalculatorDef[] = [
     shortName: 'Investment',
     description: 'Forecast portfolio value with inflation-adjusted purchasing power and recurring contributions.',
     keywords: ['investment', 'portfolio', 'stock market', 'return', 'inflation adjusted'],
-    seoTitle: 'Investment Calculator – Portfolio Growth & Real Return | CalcAxis',
+    seoTitle: 'Investment Calculator – Portfolio Growth & Real Return | smartcalc.net',
     seoDescription: 'Estimate long-term investment portfolio growth with inflation adjustment, recurring deposits, and visual projections.',
     formulaText: 'Real Value = Future Value / (1 + inflation)^t',
     formulaVariables: [
@@ -412,7 +412,7 @@ export const FINANCIAL_CALCULATORS: CalculatorDef[] = [
     shortName: 'Retirement',
     description: 'Project retirement nest egg, sustainable monthly drawdown, and readiness gap across your lifespan.',
     keywords: ['retirement', '401k', 'ira', 'nest egg', 'pension', 'drawdown'],
-    seoTitle: 'Retirement Calculator – Nest Egg & Monthly Income Planner | CalcAxis',
+    seoTitle: 'Retirement Calculator – Nest Egg & Monthly Income Planner | smartcalc.net',
     seoDescription: 'Calculate how much you need to retire, project your 401(k)/IRA nest egg, and test sustainable retirement income.',
     formulaText: 'Required Nest Egg = PMT_ret · [ 1 − (1 + r)^−n ] / r',
     formulaVariables: [
@@ -461,7 +461,7 @@ export const FINANCIAL_CALCULATORS: CalculatorDef[] = [
     shortName: 'Credit Card Payoff',
     description: 'Find out how many months and how much interest it takes to eliminate credit card debt.',
     keywords: ['credit card payoff', 'apr', 'revolving debt', 'minimum payment'],
-    seoTitle: 'Credit Card Payoff Calculator – Months & Interest Saved | CalcAxis',
+    seoTitle: 'Credit Card Payoff Calculator – Months & Interest Saved | smartcalc.net',
     seoDescription: 'Calculate exact months to pay off a credit card balance, total interest charges, and payoff timeline.',
     formulaText: 'Interest_m = Balance_(m−1) × (APR ÷ 12)',
     formulaVariables: [
@@ -509,7 +509,7 @@ export const FINANCIAL_CALCULATORS: CalculatorDef[] = [
     shortName: 'Debt Payoff',
     description: 'Compare Debt Avalanche vs. Debt Snowball strategies across multiple loans and credit cards.',
     keywords: ['debt snowball', 'debt avalanche', 'debt payoff', 'multiple debts'],
-    seoTitle: 'Debt Payoff Calculator – Avalanche vs. Snowball Comparison | CalcAxis',
+    seoTitle: 'Debt Payoff Calculator – Avalanche vs. Snowball Comparison | smartcalc.net',
     seoDescription: 'Add multiple debts and compare Debt Avalanche vs. Debt Snowball payoff dates and total interest saved.',
     formulaText: 'Avalanche: max(APR) priority  |  Snowball: min(Balance) priority',
     formulaVariables: [
@@ -557,7 +557,7 @@ export const FINANCIAL_CALCULATORS: CalculatorDef[] = [
     shortName: 'Amortization',
     description: 'Generate complete monthly and annual loan amortization schedules with extra payment savings.',
     keywords: ['amortization', 'amortization schedule', 'extra payment', 'principal vs interest'],
-    seoTitle: 'Amortization Calculator – Schedule & Extra Payment Savings | CalcAxis',
+    seoTitle: 'Amortization Calculator – Schedule & Extra Payment Savings | smartcalc.net',
     seoDescription: 'Generate a full loan amortization table and calculate time and interest saved by adding extra monthly principal payments.',
     formulaText: 'Principal_m = Payment − (Balance_(m−1) × r) + Extra',
     formulaVariables: [
@@ -606,7 +606,7 @@ export const FINANCIAL_CALCULATORS: CalculatorDef[] = [
     shortName: 'Interest Rate',
     description: 'Solve for the implied annual interest rate (APR) from any loan amount, term, and monthly payment.',
     keywords: ['interest rate', 'implied apr', 'solve rate', 'loan apr'],
-    seoTitle: 'Interest Rate Calculator – Solve Implied Loan APR | CalcAxis',
+    seoTitle: 'Interest Rate Calculator – Solve Implied Loan APR | smartcalc.net',
     seoDescription: 'Find the exact annual interest rate of a loan or financing offer given the principal, monthly payment, and term.',
     formulaText: 'Solve r in:  M = P · [ r(1 + r)^n ] / [ (1 + r)^n − 1 ]',
     formulaVariables: [
@@ -655,7 +655,7 @@ export const FINANCIAL_CALCULATORS: CalculatorDef[] = [
     shortName: 'Inflation',
     description: 'Measure how annual inflation erodes purchasing power and increases future living costs.',
     keywords: ['inflation', 'purchasing power', 'cpi', 'future cost'],
-    seoTitle: 'Inflation Calculator – Future Cost & Purchasing Power | CalcAxis',
+    seoTitle: 'Inflation Calculator – Future Cost & Purchasing Power | smartcalc.net',
     seoDescription: 'Calculate the future cost of goods and purchasing power erosion over time for any annual inflation rate.',
     formulaText: 'Future Cost = Present · (1 + i)^t   |   Real Value = Present / (1 + i)^t',
     formulaVariables: [
@@ -704,7 +704,7 @@ export const FINANCIAL_CALCULATORS: CalculatorDef[] = [
     shortName: 'Salary',
     description: 'Convert pay seamlessly between hourly, daily, weekly, biweekly, semi-monthly, monthly, and annual rates.',
     keywords: ['salary', 'hourly to annual', 'paycheck', 'biweekly', 'wage'],
-    seoTitle: 'Salary Calculator – Hourly, Biweekly, Monthly & Annual Pay | CalcAxis',
+    seoTitle: 'Salary Calculator – Hourly, Biweekly, Monthly & Annual Pay | smartcalc.net',
     seoDescription: 'Convert any wage or salary across hourly, daily, weekly, biweekly, semi-monthly, monthly, and annual pay periods.',
     formulaText: 'Annual = Hourly × Hours/Week × Weeks/Year',
     formulaVariables: [
@@ -753,7 +753,7 @@ export const FINANCIAL_CALCULATORS: CalculatorDef[] = [
     description: 'Estimate federal progressive tax brackets, Social Security, Medicare, state tax, and net take-home pay.',
     keywords: ['income tax', 'tax bracket', 'take home pay', 'fica', 'effective tax rate'],
     recentlyAdded: true,
-    seoTitle: 'Income Tax Calculator – Federal Brackets & Take-Home Pay | CalcAxis',
+    seoTitle: 'Income Tax Calculator – Federal Brackets & Take-Home Pay | smartcalc.net',
     seoDescription: 'Estimate U.S. federal income tax by filing status, FICA payroll taxes, state taxes, effective rate, and net take-home pay.',
     formulaText: 'Taxable Income = Gross − Pre-Tax Contributions − Deduction',
     formulaVariables: [
@@ -802,7 +802,7 @@ export const FINANCIAL_CALCULATORS: CalculatorDef[] = [
     shortName: 'Budget',
     description: 'Organize monthly income and expenses against the 50/30/20 Needs, Wants, and Savings benchmark.',
     keywords: ['budget', '50 30 20', 'monthly expenses', 'cash flow'],
-    seoTitle: 'Budget Calculator – 50/30/20 Monthly Cash Flow Planner | CalcAxis',
+    seoTitle: 'Budget Calculator – 50/30/20 Monthly Cash Flow Planner | smartcalc.net',
     seoDescription: 'Track monthly income against housing, food, debt, wants, and savings with automatic 50/30/20 rule analysis.',
     formulaText: 'Cash Flow = Monthly Net Income − (Needs + Wants + Savings)',
     formulaVariables: [
@@ -851,7 +851,7 @@ export const FINANCIAL_CALCULATORS: CalculatorDef[] = [
     shortName: 'Net Worth',
     description: 'Tally all liquid, investment, and property assets minus liabilities to track financial health.',
     keywords: ['net worth', 'assets', 'liabilities', 'balance sheet'],
-    seoTitle: 'Net Worth Calculator – Personal Balance Sheet & Debt Ratio | CalcAxis',
+    seoTitle: 'Net Worth Calculator – Personal Balance Sheet & Debt Ratio | smartcalc.net',
     seoDescription: 'Calculate your personal net worth, total assets, total liabilities, and debt-to-asset ratio with visual charts.',
     formulaText: 'Net Worth = Total Assets − Total Liabilities',
     formulaVariables: [
@@ -899,7 +899,7 @@ export const FINANCIAL_CALCULATORS: CalculatorDef[] = [
     shortName: 'ROI',
     description: 'Calculate total Return on Investment (ROI) and annualized CAGR over any holding period.',
     keywords: ['roi', 'return on investment', 'cagr', 'annualized return'],
-    seoTitle: 'ROI Calculator – Total & Annualized Return on Investment | CalcAxis',
+    seoTitle: 'ROI Calculator – Total & Annualized Return on Investment | smartcalc.net',
     seoDescription: 'Measure net profit, total ROI percentage, and annualized CAGR for investments, projects, or business campaigns.',
     formulaText: 'ROI = (Returned − Initial) / Initial × 100  |  CAGR = (Returned / Initial)^(1/t) − 1',
     formulaVariables: [
@@ -948,7 +948,7 @@ export const FINANCIAL_CALCULATORS: CalculatorDef[] = [
     shortName: 'Mortgage Refinance',
     description: 'Compare your current mortgage against a refinance offer to find monthly savings and break-even month.',
     keywords: ['refinance', 'break even', 'mortgage rate', 'closing costs'],
-    seoTitle: 'Mortgage Refinance Calculator – Savings & Break-Even Point | CalcAxis',
+    seoTitle: 'Mortgage Refinance Calculator – Savings & Break-Even Point | smartcalc.net',
     seoDescription: 'Evaluate whether refinancing your mortgage makes financial sense with monthly savings, break-even months, and lifetime interest comparison.',
     formulaText: 'Break-Even Months = Closing Costs ÷ (Current Payment − New Payment)',
     formulaVariables: [
@@ -987,5 +987,69 @@ export const FINANCIAL_CALCULATORS: CalculatorDef[] = [
       },
     ],
     relatedSlugs: ['mortgage-calculator', 'amortization-calculator', 'loan-calculator'],
+  },
+  {
+    id: 'end-of-service-calculator',
+    slug: 'end-of-service-calculator',
+    category: 'financial-calculators',
+    name: 'End-of-Service Gratuity Calculator',
+    shortName: 'End-of-Service',
+    popular: true,
+    recentlyAdded: true,
+    description:
+      'Calculate statutory end-of-service indemnity, resignation tiers, and unused leave payout under Kuwait, UAE, and Saudi labor laws.',
+    keywords: [
+      'end of service',
+      'gratuity calculator',
+      'kuwait labor law',
+      'uae gratuity',
+      'saudi end of service',
+      'indemnity',
+    ],
+    seoTitle: 'End-of-Service Gratuity Calculator (Kuwait, UAE, Saudi Arabia) | smartcalc.net',
+    seoDescription:
+      'Estimate end-of-service benefits, resignation multipliers, statutory caps, and unused annual leave encashment for Kuwait, UAE, and Saudi Arabia.',
+    formulaText:
+      'Kuwait: (15d × Y₁₋₅ + 26d × Y₆₊) × (Salary ÷ 26) × Tier  |  UAE: (21d × Y₁₋₅ + 30d × Y₆₊) × (Basic ÷ 30)',
+    formulaVariables: [
+      { symbol: 'Y₁₋₅', description: 'Completed years (and prorated months) up to first 5 years' },
+      { symbol: 'Y₆₊', description: 'Years of service beyond the 5th year' },
+      { symbol: 'Tier', description: 'Statutory resignation multiplier (e.g., 50% or 2/3 in Kuwait; 1/3 or 2/3 in KSA)' },
+    ],
+    steps: [
+      'Select the applicable labor jurisdiction (Kuwait, UAE, or Saudi Arabia) and currency.',
+      'Choose whether the separation is an Employer Termination / Contract Expiry or a Resignation.',
+      'Enter your monthly salary (total remuneration in Kuwait/KSA, basic salary in UAE), exact years & months of service, and unused leave days.',
+    ],
+    example: {
+      title: 'Kuwait Private Sector Resignation After 6 Years (1,000 KWD/mo)',
+      inputsSummary: 'Jurisdiction: Kuwait · Reason: Resignation · Salary: 1,000 KWD · Service: 6 years · Leave: 10 days',
+      calculation: 'First 5 yrs = 5 × 15 × (1000/26) = 2,884.62; Year 6 = 1,000; Tier (5–10 yrs) = 2/3 → Gratuity = 2,589.74 KWD',
+      resultSummary: 'Net gratuity is 2,589.74 KWD plus 384.62 KWD leave payout = 2,974.36 KWD total settlement.',
+    },
+    faqs: [
+      {
+        question: 'How is Kuwait end-of-service indemnity calculated on a 26-day month?',
+        answer:
+          'Under Kuwait Labor Law No. 6 of 2010, monthly-paid workers earn 15 days of remuneration per year for the first 5 years and 1 full month per year thereafter, dividing monthly remuneration by 26 working days and capping total gratuity at 18 months of salary.',
+      },
+      {
+        question: 'Do UAE resigning employees still lose part of their gratuity?',
+        answer:
+          'Under UAE Federal Decree-Law No. 33 of 2021, employees who complete at least 1 continuous year of service receive 100% of their accrued 21/30-day gratuity on both termination and resignation, capped at 24 months of basic wage.',
+      },
+      {
+        question: 'How do Saudi Arabia Art. 85 resignation tiers work?',
+        answer:
+          'In Saudi Arabia, resigning employees receive 0% under 2 years, 1/3 between 2 and 5 years, 2/3 between 5 and 10 years, and 100% after 10 years of service.',
+      },
+    ],
+    educationalSections: [
+      {
+        heading: 'Comparing GCC End-of-Service Frameworks',
+        body: 'While all three GCC frameworks increase accrual after the fifth year of service, they differ in salary basis (total remuneration vs. basic wage), daily divisor (26 vs. 30 days), resignation multipliers, and maximum statutory caps.',
+      },
+    ],
+    relatedSlugs: ['salary-calculator', 'retirement-calculator', 'savings-calculator'],
   },
 ];

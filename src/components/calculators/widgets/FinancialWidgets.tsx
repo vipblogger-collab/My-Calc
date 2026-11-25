@@ -17,6 +17,8 @@ import {
 import {
   CompoundingFrequency,
   DebtItem,
+  EndOfServiceJurisdiction,
+  EndOfServiceReason,
   FilingStatus,
   PaymentFrequency,
   SalaryPeriod,
@@ -26,6 +28,7 @@ import {
   calculateCompoundInterest,
   calculateCreditCardPayoff,
   calculateDebtPayoff,
+  calculateEndOfService,
   calculateIncomeTax,
   calculateInflation,
   calculateInvestment,
@@ -173,6 +176,15 @@ export function FinancialWidget({ slug }: { slug: string }) {
   const [refiNewRate, setRefiNewRate] = useState('5.85');
   const [refiNewYears, setRefiNewYears] = useState('25');
   const [refiCosts, setRefiCosts] = useState('4200');
+
+  // End-of-Service Gratuity (Kuwait / UAE / Saudi Arabia)
+  const [eosJurisdiction, setEosJurisdiction] = useState<EndOfServiceJurisdiction>('kuwait');
+  const [eosReason, setEosReason] = useState<EndOfServiceReason>('resignation');
+  const [eosCurrency, setEosCurrency] = useState<'KWD' | 'AED' | 'SAR' | 'USD'>('KWD');
+  const [eosSalary, setEosSalary] = useState('1000');
+  const [eosYears, setEosYears] = useState('6');
+  const [eosMonths, setEosMonths] = useState('0');
+  const [eosLeaveDays, setEosLeaveDays] = useState('10');
 
   if (slug === 'mortgage-calculator') {
     const res = calculateMortgage({
@@ -1305,6 +1317,134 @@ export function FinancialWidget({ slug }: { slug: string }) {
               <StatTile label="Annualized CAGR" value={`${res.annualizedRoiPercent.toFixed(2)}%`} />
             </div>
             <ResultActions copyText={`ROI: ${res.roiPercent.toFixed(2)}% | CAGR: ${res.annualizedRoiPercent.toFixed(2)}% | Net Profit: ${fmtCurrency(res.netProfit)}`} />
+          </>
+        }
+      />
+    );
+  }
+
+  if (slug === 'end-of-service-calculator') {
+    const res = calculateEndOfService({
+      jurisdiction: eosJurisdiction,
+      reason: eosReason,
+      monthlySalary: parseFloat(eosSalary) || 0,
+      serviceYears: parseFloat(eosYears) || 0,
+      serviceMonths: parseFloat(eosMonths) || 0,
+      unusedLeaveDays: parseFloat(eosLeaveDays) || 0,
+    });
+
+    const decimals = eosCurrency === 'KWD' ? 3 : 2;
+    const fmtEos = (val: number) => {
+      if (!Number.isFinite(val)) return '—';
+      return `${fmtNum(val, decimals)} ${eosCurrency}`;
+    };
+
+    const handleJurisdictionChange = (next: EndOfServiceJurisdiction) => {
+      setEosJurisdiction(next);
+      if (next === 'kuwait') setEosCurrency('KWD');
+      else if (next === 'uae') setEosCurrency('AED');
+      else setEosCurrency('SAR');
+    };
+
+    const multiplierPct = `${(res.entitlementMultiplier * 100).toFixed(res.entitlementMultiplier === 2 / 3 || res.entitlementMultiplier === 1 / 3 ? 1 : 0)}%`;
+
+    return (
+      <CalcSplitLayout
+        inputs={
+          <>
+            <SelectInput
+              label="Labor Law Jurisdiction"
+              value={eosJurisdiction}
+              onChange={(v) => handleJurisdictionChange(v as EndOfServiceJurisdiction)}
+              options={[
+                { value: 'kuwait', label: 'Kuwait (Law No. 6/2010)' },
+                { value: 'uae', label: 'UAE (Decree-Law 33/2021)' },
+                { value: 'saudi', label: 'Saudi Arabia (Art. 84/85)' },
+              ]}
+            />
+            <SegmentedControl
+              label="Separation Reason"
+              value={eosReason}
+              onChange={(v) => setEosReason(v)}
+              options={[
+                { value: 'termination', label: 'Termination / Contract End' },
+                { value: 'resignation', label: 'Resignation' },
+              ]}
+            />
+            <div className="grid grid-cols-3 gap-3">
+              <div className="col-span-2">
+                <NumberInput
+                  label={eosJurisdiction === 'uae' ? 'Basic Monthly Salary' : 'Monthly Salary'}
+                  suffix={eosCurrency}
+                  value={eosSalary}
+                  onChange={setEosSalary}
+                  min={0}
+                />
+              </div>
+              <SelectInput
+                label="Currency"
+                value={eosCurrency}
+                onChange={(v) => setEosCurrency(v as 'KWD' | 'AED' | 'SAR' | 'USD')}
+                options={[
+                  { value: 'KWD', label: 'KWD' },
+                  { value: 'AED', label: 'AED' },
+                  { value: 'SAR', label: 'SAR' },
+                  { value: 'USD', label: 'USD' },
+                ]}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <NumberInput label="Years of Service" value={eosYears} onChange={setEosYears} min={0} max={60} />
+              <NumberInput label="Extra Months" value={eosMonths} onChange={setEosMonths} min={0} max={11} />
+            </div>
+            <NumberInput
+              label="Unused Annual Leave Days"
+              value={eosLeaveDays}
+              onChange={setEosLeaveDays}
+              min={0}
+            />
+          </>
+        }
+        results={
+          <>
+            <ResultHero
+              label="Total Final Settlement"
+              value={fmtEos(res.totalFinalSettlement)}
+              accent="green"
+              subtext={
+                isAr
+                  ? `صافي مكافأة نهاية الخدمة: ${fmtEos(res.gratuityAmount)} · بدل الإجازات: ${fmtEos(res.leaveEncashment)} · نسبة الاستحقاق: ${multiplierPct}`
+                  : `Net Gratuity: ${fmtEos(res.gratuityAmount)} · Leave Payout: ${fmtEos(res.leaveEncashment)} · Entitlement: ${multiplierPct}`
+              }
+            />
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              <StatTile label="Net End-of-Service Gratuity" value={fmtEos(res.gratuityAmount)} />
+              <StatTile label="Leave Balance Payout" value={fmtEos(res.leaveEncashment)} />
+              <StatTile
+                label="Daily Wage Basis"
+                value={`${fmtEos(res.dailyRate)} (÷${res.daysPerMonthBasis})`}
+              />
+              <StatTile label="Entitlement Share" value={multiplierPct} />
+              <StatTile label="First 5 Years Accrual" value={fmtEos(res.first5YearsAmount)} />
+              <StatTile label="Beyond 5 Years Accrual" value={fmtEos(res.after5YearsAmount)} />
+            </div>
+            {res.capApplied && res.capAmount !== null && (
+              <div className="rounded-lg border border-[#FDE68A] bg-[#FFFBEB] px-3.5 py-2.5 text-xs text-[#92400E]">
+                {isAr
+                  ? `تم تطبيق الحد الأقصى القانوني للمكافأة (${eosJurisdiction === 'kuwait' ? '18 شهراً' : '24 شهراً'}: ${fmtEos(res.capAmount)}).`
+                  : `Statutory maximum cap applied (${eosJurisdiction === 'kuwait' ? '18 months' : '24 months'}: ${fmtEos(res.capAmount)}).`}
+              </div>
+            )}
+            {!res.minimumServiceMet && (
+              <div className="rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] px-3.5 py-2.5 text-xs text-[#475569]">
+                {isAr
+                  ? `لم تستوفِ الحد الأدنى من سنوات الخدمة للاستحقاق عند ${eosReason === 'resignation' ? 'الاستقالة' : 'نهاية الخدمة'} في هذا النظام.`
+                  : `Minimum continuous service threshold for ${eosReason} under this jurisdiction has not been reached.`}
+              </div>
+            )}
+            <ResultActions
+              copyText={`End-of-Service (${eosJurisdiction.toUpperCase()}, ${eosReason}): Total Settlement ${fmtEos(res.totalFinalSettlement)} | Gratuity: ${fmtEos(res.gratuityAmount)} | Leave Payout: ${fmtEos(res.leaveEncashment)}`}
+            />
           </>
         }
       />

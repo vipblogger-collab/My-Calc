@@ -187,6 +187,12 @@ export const CALCULATOR_AR: Record<string, CalculatorArMeta> = {
     description: 'احسب نقطة التعادل والوفورات الشهرية والعمرية عند إعادة تمويل قرضك العقاري.',
     keywords: ['إعادة تمويل', 'نقطة التعادل', 'رهن عقاري'],
   },
+  'end-of-service-calculator': {
+    name: 'حاسبة مكافأة نهاية الخدمة',
+    shortName: 'نهاية الخدمة',
+    description: 'احسب مستحقات نهاية الخدمة وبدل الإجازات وفق قوانين العمل في الكويت والإمارات والسعودية.',
+    keywords: ['نهاية الخدمة', 'مكافأة نهاية الخدمة', 'الكويت', 'الإمارات', 'السعودية', 'استقالة'],
+  },
 
   // Health (15)
   'bmi-calculator': {
@@ -804,7 +810,7 @@ export function localizeCalculator(calc: CalculatorDef, lang: Language): Calcula
     shortName: ar.shortName,
     description: ar.description,
     keywords: [...calc.keywords, ...ar.keywords],
-    seoTitle: `${ar.name} – أداة حساب مجانية ودقيقة | CalcAxis`,
+    seoTitle: `${ar.name} – أداة حساب مجانية ودقيقة | smartcalc.net`,
     seoDescription: `${ar.description} نتائج فورية مع شرح المعادلة والأمثلة التطبيقية.`,
   };
 }

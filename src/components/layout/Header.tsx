@@ -1,21 +1,31 @@
 import { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Calculator, Globe, Menu, Search, X } from 'lucide-react';
 import { GlobalSearch } from '../search/GlobalSearch.tsx';
 import { useAppContext } from '../../context/AppContext.tsx';
+import { localizePath } from '../../i18n/routing.ts';
 
 export function Header() {
-  const { toggleLang, ui } = useAppContext();
+  const { lang, setLang, l, ui } = useAppContext();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
 
+  const handleLanguageSwitch = () => {
+    const nextLang = lang === 'en' ? 'ar' : 'en';
+    setLang(nextLang);
+    navigate(`${localizePath(location.pathname, nextLang)}${location.search}`);
+  };
+
+  const homeUrl = l('/');
   const primaryNav = [
-    { to: '/', label: ui.nav.home },
-    { to: '/financial-calculators/', label: ui.nav.financial },
-    { to: '/health-calculators/', label: ui.nav.health },
-    { to: '/math-calculators/', label: ui.nav.math },
-    { to: '/conversion-calculators/', label: ui.nav.conversions },
-    { to: '/date-calculators/', label: ui.nav.dateTime },
+    { to: homeUrl, label: ui.nav.home, isHome: true },
+    { to: l('/financial-calculators/'), label: ui.nav.financial, isHome: false },
+    { to: l('/health-calculators/'), label: ui.nav.health, isHome: false },
+    { to: l('/math-calculators/'), label: ui.nav.math, isHome: false },
+    { to: l('/conversion-calculators/'), label: ui.nav.conversions, isHome: false },
+    { to: l('/date-calculators/'), label: ui.nav.dateTime, isHome: false },
   ];
 
   return (
@@ -23,7 +33,7 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4 lg:gap-6">
         {/* Brand Zone */}
         <Link
-          to="/"
+          to={homeUrl}
           className="flex items-center gap-2.5 text-[#0F172A] whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] rounded-lg"
         >
           <span className="w-8 h-8 rounded-lg bg-[#2563EB] text-white flex items-center justify-center">
@@ -38,7 +48,7 @@ export function Header() {
             <NavLink
               key={item.to}
               to={item.to}
-              end={item.to === '/'}
+              end={item.isHome}
               className={({ isActive }) =>
                 `text-sm font-medium whitespace-nowrap shrink-0 transition-colors py-1 border-b-2 ${
                   isActive
@@ -56,7 +66,7 @@ export function Header() {
         <div className="flex items-center gap-2 shrink-0">
           <button
             type="button"
-            onClick={toggleLang}
+            onClick={handleLanguageSwitch}
             aria-label={ui.nav.switchLangAria}
             className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] hover:bg-[#EFF6FF] hover:border-[#2563EB] hover:text-[#2563EB] text-sm font-semibold text-[#1E293B] transition-colors whitespace-nowrap shrink-0"
           >
@@ -109,7 +119,7 @@ export function Header() {
             <NavLink
               key={item.to}
               to={item.to}
-              end={item.to === '/'}
+              end={item.isHome}
               onClick={() => setMobileOpen(false)}
               className={({ isActive }) =>
                 `block px-3 py-2.5 rounded-lg text-sm font-medium ${
@@ -121,21 +131,21 @@ export function Header() {
             </NavLink>
           ))}
           <NavLink
-            to="/everyday-calculators/"
+            to={l('/everyday-calculators/')}
             onClick={() => setMobileOpen(false)}
             className="block px-3 py-2.5 rounded-lg text-sm font-medium text-[#1E293B] hover:bg-[#F8FAFC]"
           >
             {ui.nav.everyday}
           </NavLink>
           <NavLink
-            to="/science-calculators/"
+            to={l('/science-calculators/')}
             onClick={() => setMobileOpen(false)}
             className="block px-3 py-2.5 rounded-lg text-sm font-medium text-[#1E293B] hover:bg-[#F8FAFC]"
           >
             {ui.nav.science}
           </NavLink>
           <NavLink
-            to="/guides/"
+            to={l('/guides/')}
             onClick={() => setMobileOpen(false)}
             className="block px-3 py-2.5 rounded-lg text-sm font-medium text-[#1E293B] hover:bg-[#F8FAFC]"
           >

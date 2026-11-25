@@ -19,6 +19,7 @@ import {
   Ruler,
   Thermometer,
   Zap,
+  Briefcase,
 } from 'lucide-react';
 
 export function CategoryIcon({
@@ -74,6 +75,7 @@ export function CalculatorIcon({
     return <Zap className={className} />;
   if (slug.includes('time') || slug.includes('countdown') || slug.includes('age'))
     return <Clock className={className} />;
+  if (slug.includes('end-of-service')) return <Briefcase className={className} />;
   if (slug.includes('tip') || slug.includes('split')) return <Coins className={className} />;
 
   switch (category) {

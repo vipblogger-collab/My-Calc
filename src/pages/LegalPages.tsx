@@ -15,7 +15,7 @@ export type LegalPageKind =
   | 'sitemap';
 
 export function LegalPages({ page }: { page: LegalPageKind }) {
-  const { calculators, categories, articles, lang, ui } = useAppContext();
+  const { calculators, categories, articles, lang, ui, l } = useAppContext();
   const isAr = lang === 'ar';
 
   const [name, setName] = useState('');
@@ -48,14 +48,14 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
           description={
             isAr
               ? 'تصفح جميع أقسام الحاسبات والأدوات الفردية والأدلة التعليمية وصفحات السياسات في مكان واحد.'
-              : 'Browse all CalcAxis calculator categories, individual calculation tools, educational guides, and legal resources in one structured index.'
+              : 'Browse all smartcalc.net calculator categories, individual calculation tools, educational guides, and legal resources in one structured index.'
           }
           canonicalPath="/sitemap/"
         />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
           <div>
             <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-[#64748B] mb-3">
-              <Link to="/" className="hover:text-[#2563EB]">
+              <Link to={l('/')} className="hover:text-[#2563EB]">
                 {ui.nav.home}
               </Link>
               <ChevronRight className="w-3.5 h-3.5 rtl:rotate-180" />
@@ -89,7 +89,7 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
                 <section key={cat.slug} className="bg-white rounded-xl border border-[#E2E8F0] p-6">
                   <div className="flex items-center justify-between gap-2 pb-3 border-b border-[#F1F5F9]">
                     <Link
-                      to={`/${cat.slug}/`}
+                      to={l(`/${cat.slug}/`)}
                       className="font-display text-lg font-bold text-[#0F172A] hover:text-[#2563EB]"
                     >
                       {cat.name}
@@ -100,7 +100,7 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
                     {list.map((c) => (
                       <li key={c.slug}>
                         <Link
-                          to={getCalculatorUrl(c, cat.slug)}
+                          to={getCalculatorUrl(c, cat.slug, lang)}
                           className="text-[#475569] hover:text-[#2563EB] hover:underline"
                         >
                           {c.name}
@@ -121,7 +121,7 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
               <ul className="mt-3 space-y-2 text-sm">
                 {articles.map((art) => (
                   <li key={art.slug}>
-                    <Link to={`/guides/${art.slug}/`} className="text-[#475569] hover:text-[#2563EB] hover:underline">
+                    <Link to={l(`/guides/${art.slug}/`)} className="text-[#475569] hover:text-[#2563EB] hover:underline">
                       {art.title}
                     </Link>
                   </li>
@@ -135,37 +135,37 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
               </h2>
               <ul className="mt-3 space-y-2 text-sm">
                 <li>
-                  <Link to="/about-us/" className="text-[#475569] hover:text-[#2563EB] hover:underline">
+                  <Link to={l('/about-us/')} className="text-[#475569] hover:text-[#2563EB] hover:underline">
                     {ui.footer.aboutUs}
                   </Link>
                 </li>
                 <li>
-                  <Link to="/contact-us/" className="text-[#475569] hover:text-[#2563EB] hover:underline">
+                  <Link to={l('/contact-us/')} className="text-[#475569] hover:text-[#2563EB] hover:underline">
                     {ui.footer.contactUs}
                   </Link>
                 </li>
                 <li>
-                  <Link to="/privacy-policy/" className="text-[#475569] hover:text-[#2563EB] hover:underline">
+                  <Link to={l('/privacy-policy/')} className="text-[#475569] hover:text-[#2563EB] hover:underline">
                     {ui.footer.privacyPolicy}
                   </Link>
                 </li>
                 <li>
-                  <Link to="/terms-of-service/" className="text-[#475569] hover:text-[#2563EB] hover:underline">
+                  <Link to={l('/terms-of-service/')} className="text-[#475569] hover:text-[#2563EB] hover:underline">
                     {ui.footer.termsOfService}
                   </Link>
                 </li>
                 <li>
-                  <Link to="/disclaimer/" className="text-[#475569] hover:text-[#2563EB] hover:underline">
+                  <Link to={l('/disclaimer/')} className="text-[#475569] hover:text-[#2563EB] hover:underline">
                     {ui.footer.disclaimer}
                   </Link>
                 </li>
                 <li>
-                  <Link to="/cookie-policy/" className="text-[#475569] hover:text-[#2563EB] hover:underline">
+                  <Link to={l('/cookie-policy/')} className="text-[#475569] hover:text-[#2563EB] hover:underline">
                     {ui.footer.cookiePolicy}
                   </Link>
                 </li>
                 <li>
-                  <Link to="/admin/" className="text-[#475569] hover:text-[#2563EB] hover:underline">
+                  <Link to={l('/admin/')} className="text-[#475569] hover:text-[#2563EB] hover:underline">
                     {ui.footer.cmsSettings}
                   </Link>
                 </li>
@@ -199,13 +199,13 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
           description={
             isAr
               ? 'أرسل ملاحظاتك أو اقترح حاسبة جديدة أو أبلغ عن مسألة حسابية.'
-              : 'Send feedback, report a formula edge case, or request a new calculator on CalcAxis.'
+              : 'Send feedback, report a formula edge case, or request a new calculator on smartcalc.net.'
           }
           canonicalPath="/contact-us/"
         />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 space-y-6">
           <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-[#64748B]">
-            <Link to="/" className="hover:text-[#2563EB]">
+            <Link to={l('/')} className="hover:text-[#2563EB]">
               {ui.nav.home}
             </Link>
             <ChevronRight className="w-3.5 h-3.5 rtl:rotate-180" />
@@ -340,13 +340,13 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
   > = {
     'about-us': {
       title: 'About Us',
-      description: 'Learn how CalcAxis builds fast, transparent, client-side online calculators with documented formulas.',
+      description: 'Learn how smartcalc.net builds fast, transparent, client-side online calculators with documented formulas.',
       canonical: '/about-us/',
       updated: '2026-01-15',
       sections: [
         {
           heading: 'Our Mission',
-          body: 'CalcAxis provides free, reliable, and transparent online calculation tools across personal finance, health and fitness, mathematics, unit conversions, dates and time, everyday planning, and engineering science.',
+          body: 'smartcalc.net provides free, reliable, and transparent online calculation tools across personal finance, health and fitness, mathematics, unit conversions, dates and time, everyday planning, and engineering science.',
         },
         {
           heading: 'Transparent Formulas & Client-Side Privacy',
@@ -360,13 +360,13 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
     },
     'privacy-policy': {
       title: 'Privacy Policy',
-      description: 'How CalcAxis handles browser storage, calculator inputs, analytics, and advertising privacy.',
+      description: 'How smartcalc.net handles browser storage, calculator inputs, analytics, and advertising privacy.',
       canonical: '/privacy-policy/',
       updated: '2026-01-15',
       sections: [
         {
           heading: 'Calculator Input Privacy',
-          body: 'All calculations—including financial figures, body measurements, dates, and equations—run locally in your web browser. CalcAxis does not require registration and does not transmit your personal calculation inputs to a backend database.',
+          body: 'All calculations—including financial figures, body measurements, dates, and equations—run locally in your web browser. smartcalc.net does not require registration and does not transmit your personal calculation inputs to a backend database.',
         },
         {
           heading: 'Local Browser Storage',
@@ -380,27 +380,27 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
     },
     'terms-of-service': {
       title: 'Terms of Service',
-      description: 'Terms governing use of CalcAxis online calculators, formulas, and educational guides.',
+      description: 'Terms governing use of smartcalc.net online calculators, formulas, and educational guides.',
       canonical: '/terms-of-service/',
       updated: '2026-01-15',
       sections: [
         {
           heading: 'Acceptance of Terms',
-          body: 'By accessing or using CalcAxis, you agree to use these calculators and educational guides solely for lawful informational and planning purposes.',
+          body: 'By accessing or using smartcalc.net, you agree to use these calculators and educational guides solely for lawful informational and planning purposes.',
         },
         {
           heading: 'Informational Nature & Accuracy',
-          body: 'While we carefully test every formula and unit constant, CalcAxis provides tools “as is” without warranties of uninterrupted availability or suitability for regulated filings, medical diagnosis, or binding contracts. Always double-check critical figures with qualified professionals.',
+          body: 'While we carefully test every formula and unit constant, smartcalc.net provides tools “as is” without warranties of uninterrupted availability or suitability for regulated filings, medical diagnosis, or binding contracts. Always double-check critical figures with qualified professionals.',
         },
         {
           heading: 'Intellectual Property',
-          body: 'The CalcAxis interface, educational guides, and curated tool documentation remain the property of CalcAxis. You are welcome to print or export your own calculation results for personal or business reference.',
+          body: 'The smartcalc.net interface, educational guides, and curated tool documentation remain the property of smartcalc.net. You are welcome to print or export your own calculation results for personal or business reference.',
         },
       ],
     },
     disclaimer: {
       title: 'Disclaimer',
-      description: 'Important financial, medical, tax, and exchange-rate disclaimers for CalcAxis calculators.',
+      description: 'Important financial, medical, tax, and exchange-rate disclaimers for smartcalc.net calculators.',
       canonical: '/disclaimer/',
       updated: '2026-01-15',
       sections: [
@@ -420,13 +420,13 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
     },
     'cookie-policy': {
       title: 'Cookie Policy',
-      description: 'Information on essential browser storage and optional advertising cookies on CalcAxis.',
+      description: 'Information on essential browser storage and optional advertising cookies on smartcalc.net.',
       canonical: '/cookie-policy/',
       updated: '2026-01-15',
       sections: [
         {
           heading: 'Essential Storage',
-          body: 'CalcAxis uses minimal browser storage (localStorage) strictly for functional preferences you choose—such as bookmarked calculators and recently viewed tools. No user-tracking login cookies are set by the core application.',
+          body: 'smartcalc.net uses minimal browser storage (localStorage) strictly for functional preferences you choose—such as bookmarked calculators and recently viewed tools. No user-tracking login cookies are set by the core application.',
         },
         {
           heading: 'Advertising Cookies',
@@ -434,7 +434,7 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
         },
         {
           heading: 'Managing Cookies',
-          body: 'You can clear or block cookies and site storage at any time via your browser’s privacy preferences without losing access to CalcAxis calculators.',
+          body: 'You can clear or block cookies and site storage at any time via your browser’s privacy preferences without losing access to smartcalc.net calculators.',
         },
       ],
     },
@@ -443,13 +443,13 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
   const contentMapAr: typeof contentMapEn = {
     'about-us': {
       title: 'من نحن',
-      description: 'تعرّف على كيفية بناء CalcAxis لحاسبات سريعة وشفافة تعمل في المتصفح مع توثيق المعادلات.',
+      description: 'تعرّف على كيفية بناء smartcalc.net لحاسبات سريعة وشفافة تعمل في المتصفح مع توثيق المعادلات.',
       canonical: '/about-us/',
       updated: '2026-01-15',
       sections: [
         {
           heading: 'رسالتنا',
-          body: 'توفر منصة CalcAxis أدوات حساب مجانية وموثوقة وشفافة عبر التمويل الشخصي، الصحة واللياقة، الرياضيات، تحويل الوحدات، التواريخ والوقت، التخطيط اليومي، والعلوم والهندسة.',
+          body: 'توفر منصة smartcalc.net أدوات حساب مجانية وموثوقة وشفافة عبر التمويل الشخصي، الصحة واللياقة، الرياضيات، تحويل الوحدات، التواريخ والوقت، التخطيط اليومي، والعلوم والهندسة.',
         },
         {
           heading: 'معادلات شفافة وخصوصية تامة',
@@ -463,13 +463,13 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
     },
     'privacy-policy': {
       title: 'سياسة الخصوصية',
-      description: 'كيف تتعامل CalcAxis مع تخزين المتصفح ومدخلات الحاسبة وخصوصية الإعلانات.',
+      description: 'كيف تتعامل smartcalc.net مع تخزين المتصفح ومدخلات الحاسبة وخصوصية الإعلانات.',
       canonical: '/privacy-policy/',
       updated: '2026-01-15',
       sections: [
         {
           heading: 'خصوصية مدخلات الحاسبة',
-          body: 'تُجرى جميع الحسابات — بما فيها الأرقام المالية وقياسات الجسم والتواريخ والمعادلات — محلياً داخل متصفحك. لا تتطلب CalcAxis تسجيلاً ولا ترسل مدخلاتك الشخصية إلى قواعد بيانات خلفية.',
+          body: 'تُجرى جميع الحسابات — بما فيها الأرقام المالية وقياسات الجسم والتواريخ والمعادلات — محلياً داخل متصفحك. لا تتطلب smartcalc.net تسجيلاً ولا ترسل مدخلاتك الشخصية إلى قواعد بيانات خلفية.',
         },
         {
           heading: 'التخزين المحلي للمتصفح',
@@ -483,13 +483,13 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
     },
     'terms-of-service': {
       title: 'شروط الاستخدام',
-      description: 'الشروط المنظمة لاستخدام حاسبات ومعادلات وأدلة CalcAxis الإلكترونية.',
+      description: 'الشروط المنظمة لاستخدام حاسبات ومعادلات وأدلة smartcalc.net الإلكترونية.',
       canonical: '/terms-of-service/',
       updated: '2026-01-15',
       sections: [
         {
           heading: 'قبول الشروط',
-          body: 'بوصولك إلى CalcAxis أو استخدامها، فإنك توافق على استخدام الحاسبات والأدلة التعليمية لأغراض المعلومات والتخطيط المشروعة فقط.',
+          body: 'بوصولك إلى smartcalc.net أو استخدامها، فإنك توافق على استخدام الحاسبات والأدلة التعليمية لأغراض المعلومات والتخطيط المشروعة فقط.',
         },
         {
           heading: 'الطابع الإرشادي والدقة',
@@ -497,7 +497,7 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
         },
         {
           heading: 'الملكية الفكرية',
-          body: 'تظل واجهة CalcAxis والأدلة التعليمية وتوثيق الأدوات مملوكة للمنصة، مع الترحيب بطباعة أو تصدير نتائج حساباتك للاستخدام الشخصي أو المهني.',
+          body: 'تظل واجهة smartcalc.net والأدلة التعليمية وتوثيق الأدوات مملوكة للمنصة، مع الترحيب بطباعة أو تصدير نتائج حساباتك للاستخدام الشخصي أو المهني.',
         },
       ],
     },
@@ -529,7 +529,7 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
       sections: [
         {
           heading: 'التخزين الأساسي',
-          body: 'تستخدم CalcAxis تخزين المتصفح (localStorage) فقط لحفظ تفضيلاتك مثل اللغة المختارة والحاسبات المحفوظة وأحدث الأدوات، دون ملفات تتبع لتسجيل الدخول.',
+          body: 'تستخدم smartcalc.net تخزين المتصفح (localStorage) فقط لحفظ تفضيلاتك مثل اللغة المختارة والحاسبات المحفوظة وأحدث الأدوات، دون ملفات تتبع لتسجيل الدخول.',
         },
         {
           heading: 'ملفات تعريف الارتباط الإعلانية',
@@ -554,7 +554,7 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
       />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 space-y-6">
         <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-[#64748B]">
-          <Link to="/" className="hover:text-[#2563EB]">
+          <Link to={l('/')} className="hover:text-[#2563EB]">
             {ui.nav.home}
           </Link>
           <ChevronRight className="w-3.5 h-3.5 rtl:rotate-180" />

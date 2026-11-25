@@ -6,11 +6,12 @@ import { useAppContext } from '../context/AppContext.tsx';
 import { AdSlot } from '../components/ads/AdSlot.tsx';
 import { SeoHead } from '../components/seo/SeoHead.tsx';
 import { CalculatorIcon, CategoryIcon } from '../components/ui/CategoryIcon.tsx';
+import { SITE_URL } from '../config/site.ts';
 
 export function CategoryPage({ forcedCategory }: { forcedCategory?: string }) {
   const params = useParams();
   const categorySlug = forcedCategory || params.category || '';
-  const { calculators, categories, ui } = useAppContext();
+  const { calculators, categories, ui, lang, l } = useAppContext();
   const category = categories.find((c) => c.slug === categorySlug);
   const [filterText, setFilterText] = useState('');
 
@@ -32,14 +33,14 @@ export function CategoryPage({ forcedCategory }: { forcedCategory?: string }) {
       <div className="max-w-4xl mx-auto px-4 py-16 text-center">
         <h1 className="font-display text-2xl font-bold text-[#0F172A]">{ui.category.notFoundTitle}</h1>
         <p className="text-sm text-[#64748B] mt-2">{ui.category.notFoundBody}</p>
-        <Link to="/" className="mt-4 inline-block text-sm font-semibold text-[#2563EB] hover:underline">
+        <Link to={l('/')} className="mt-4 inline-block text-sm font-semibold text-[#2563EB] hover:underline">
           {ui.category.returnHome}
         </Link>
       </div>
     );
   }
 
-  const origin = typeof window !== 'undefined' ? window.location.origin : '';
+  const origin = SITE_URL;
 
   return (
     <>
@@ -52,8 +53,8 @@ export function CategoryPage({ forcedCategory }: { forcedCategory?: string }) {
             '@context': 'https://schema.org',
             '@type': 'BreadcrumbList',
             itemListElement: [
-              { '@type': 'ListItem', position: 1, name: ui.nav.home, item: `${origin}/` },
-              { '@type': 'ListItem', position: 2, name: category.name, item: `${origin}/${category.slug}/` },
+              { '@type': 'ListItem', position: 1, name: ui.nav.home, item: `${origin}${l('/')}` },
+              { '@type': 'ListItem', position: 2, name: category.name, item: `${origin}${l(`/${category.slug}/`)}` },
             ],
           },
         ]}
@@ -62,7 +63,7 @@ export function CategoryPage({ forcedCategory }: { forcedCategory?: string }) {
       <div className="bg-white border-b border-[#E2E8F0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-[#64748B] mb-4">
-            <Link to="/" className="hover:text-[#2563EB]">
+            <Link to={l('/')} className="hover:text-[#2563EB]">
               {ui.nav.home}
             </Link>
             <ChevronRight className="w-3.5 h-3.5 rtl:rotate-180" />
@@ -124,7 +125,7 @@ export function CategoryPage({ forcedCategory }: { forcedCategory?: string }) {
             {categoryCalcs.map((calc) => (
               <Link
                 key={calc.slug}
-                to={getCalculatorUrl(calc, category.slug)}
+                to={getCalculatorUrl(calc, category.slug, lang)}
                 className="group bg-white rounded-xl border border-[#E2E8F0] p-5 hover:border-[#2563EB] hover:shadow-sm transition-all flex flex-col justify-between"
               >
                 <div>

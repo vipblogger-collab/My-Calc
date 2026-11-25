@@ -20,7 +20,7 @@ export function AdSlot({
   minHeightClass,
   className = '',
 }: AdSlotProps) {
-  const { adConfig, ui } = useAppContext();
+  const { adConfig, ui, l } = useAppContext();
   const insRef = useRef<HTMLModElement | null>(null);
 
   const unitId = adConfig.slots[slotKey];
@@ -85,7 +85,7 @@ export function AdSlot({
         <p className="text-[11px] text-[#94A3B8]">{ui.ads.reservedHint}</p>
       </div>
       <Link
-        to="/admin/"
+        to={l('/admin/')}
         className="text-xs font-medium text-[#2563EB] hover:underline whitespace-nowrap shrink-0"
       >
         {ui.ads.configureUnit}

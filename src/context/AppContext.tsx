@@ -5,6 +5,7 @@ import { CATEGORIES } from '../data/categories.ts';
 import { ARTICLES } from '../data/articles.ts';
 import { UI_COPY } from '../i18n/translations.ts';
 import { localizeArticle, localizeCalculator, localizeCategory } from '../i18n/calculatorAr.ts';
+import { extractLangFromPath, localizePath } from '../i18n/routing.ts';
 
 const DEFAULT_AD_CONFIG: AdConfig = {
   enabled: true,
@@ -35,6 +36,7 @@ interface AppContextValue {
   lang: Language;
   setLang: (next: Language) => void;
   toggleLang: () => void;
+  l: (path: string) => string;
   ui: (typeof UI_COPY)[Language];
   categories: CategoryDef[];
   calculators: CalculatorDef[];
@@ -66,6 +68,8 @@ function safeLoad<T>(key: string, fallback: T): T {
 
 function getInitialLang(): Language {
   try {
+    const pathLang = extractLangFromPath(window.location.pathname).lang;
+    if (pathLang) return pathLang;
     const params = new URLSearchParams(window.location.search);
     const q = params.get('lang');
     if (q === 'ar' || q === 'en') return q;
@@ -165,6 +169,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [articleOverrides, lang]);
 
   const toggleLang = () => setLang((prev) => (prev === 'en' ? 'ar' : 'en'));
+  const l = (path: string) => localizePath(path, lang);
   const ui = UI_COPY[lang];
 
   const toggleBookmark = (slug: string) => {
@@ -211,6 +216,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         lang,
         setLang,
         toggleLang,
+        l,
         ui,
         categories,
         calculators,

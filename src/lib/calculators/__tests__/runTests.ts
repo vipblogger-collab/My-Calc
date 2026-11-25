@@ -278,3 +278,49 @@ test('Everyday & Science: Tip, Discount, Sales Tax, GPA, Ohm Law, KE, Voltage Di
   const vd = calculateVoltageDivider(10, 1000, 1000);
   approx(vd.vOut, 5, 0.001);
 });
+
+test('Financial: End-of-Service Gratuity (Kuwait, UAE, Saudi Arabia)', async () => {
+  const { calculateEndOfService } = await import('../financial.ts');
+
+  // Kuwait: 6 yrs resignation @ 1000 KWD, 10 unused leave days
+  // Tier1 = 5*15*(1000/26) = 2884.615; Tier2 = 1*1000 = 1000; Gross = 3884.615; Multiplier = 2/3 -> 2589.744
+  const kwResign = calculateEndOfService({
+    jurisdiction: 'kuwait',
+    reason: 'resignation',
+    monthlySalary: 1000,
+    serviceYears: 6,
+    serviceMonths: 0,
+    unusedLeaveDays: 10,
+  });
+  approx(kwResign.gratuityAmount, (5 * 15 * (1000 / 26) + 1000) * (2 / 3), 0.01);
+  approx(kwResign.leaveEncashment, 10 * (1000 / 26), 0.01);
+
+  // Kuwait 18-month cap on long termination (25 years @ 1000 KWD -> 5*15/26 + 20 = 22.88 mos -> capped at 18 mos)
+  const kwCap = calculateEndOfService({
+    jurisdiction: 'kuwait',
+    reason: 'termination',
+    monthlySalary: 1000,
+    serviceYears: 25,
+  });
+  assert.equal(kwCap.capApplied, true);
+  approx(kwCap.gratuityAmount, 18000, 0.01);
+
+  // UAE: 6 years @ 12000 AED basic -> 5*21*(400) + 1*30*(400) = 42000 + 12000 = 54000
+  const uaeRes = calculateEndOfService({
+    jurisdiction: 'uae',
+    reason: 'resignation',
+    monthlySalary: 12000,
+    serviceYears: 6,
+  });
+  approx(uaeRes.gratuityAmount, 54000, 0.01);
+  assert.equal(uaeRes.entitlementMultiplier, 1);
+
+  // Saudi Arabia: 3 years resignation @ 9000 SAR -> 3 * 15 * (9000/30) = 13500; 1/3 multiplier = 4500
+  const ksaResign = calculateEndOfService({
+    jurisdiction: 'saudi',
+    reason: 'resignation',
+    monthlySalary: 9000,
+    serviceYears: 3,
+  });
+  approx(ksaResign.gratuityAmount, 4500, 0.01);
+});

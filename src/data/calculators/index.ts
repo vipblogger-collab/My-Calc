@@ -1,4 +1,4 @@
-import { CalculatorDef, CategorySlug } from '../../types/calculator.ts';
+import { CalculatorDef, CategorySlug, Language } from '../../types/calculator.ts';
 import { FINANCIAL_CALCULATORS } from './financial.ts';
 import { HEALTH_CALCULATORS } from './health.ts';
 import { MATH_CALCULATORS } from './math.ts';
@@ -7,6 +7,7 @@ import { DATE_TIME_CALCULATORS } from './dateTime.ts';
 import { EVERYDAY_CALCULATORS } from './everyday.ts';
 import { SCIENCE_CALCULATORS } from './science.ts';
 import { CALCULATOR_AR } from '../../i18n/calculatorAr.ts';
+import { localizePath } from '../../i18n/routing.ts';
 
 export const ALL_CALCULATORS: CalculatorDef[] = [
   ...FINANCIAL_CALCULATORS,
@@ -18,9 +19,14 @@ export const ALL_CALCULATORS: CalculatorDef[] = [
   ...SCIENCE_CALCULATORS,
 ];
 
-export function getCalculatorUrl(calc: CalculatorDef, overrideCategory?: CategorySlug): string {
+export function getCalculatorUrl(
+  calc: CalculatorDef,
+  overrideCategory?: CategorySlug,
+  lang?: Language
+): string {
   const cat = overrideCategory || calc.category;
-  return `/${cat}/${calc.slug}/`;
+  const base = `/${cat}/${calc.slug}/`;
+  return lang ? localizePath(base, lang) : base;
 }
 
 export function getCalculatorBySlug(slug: string, list: CalculatorDef[] = ALL_CALCULATORS): CalculatorDef | undefined {

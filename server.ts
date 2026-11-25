@@ -7,6 +7,9 @@ import dotenv from 'dotenv';
 import { CATEGORIES } from './src/data/categories.ts';
 import { ALL_CALCULATORS, getCalculatorUrl } from './src/data/calculators/index.ts';
 import { ARTICLES } from './src/data/articles.ts';
+import { localizePath } from './src/i18n/routing.ts';
+import { injectSeoIntoHtml } from './src/seo/routeMeta.ts';
+import { SITE_NAME, SITE_URL } from './src/config/site.ts';
 
 dotenv.config({ quiet: true });
 
@@ -58,6 +61,22 @@ function resolveServerHost(): string {
     if (arg.startsWith('--host=')) return arg.slice('--host='.length);
   }
   return '0.0.0.0';
+}
+
+function isHtmlPageRequest(req: express.Request): boolean {
+  if (req.method !== 'GET') return false;
+  const reqPath = req.path;
+  if (
+    reqPath.startsWith('/api/') ||
+    reqPath.startsWith('/@') ||
+    reqPath.startsWith('/src/') ||
+    reqPath.startsWith('/node_modules/')
+  ) {
+    return false;
+  }
+  if (path.extname(reqPath) !== '') return false;
+  const accept = req.headers.accept || '';
+  return accept.includes('text/html') || accept === '*/*' || accept === '';
 }
 
 async function startServer() {
@@ -143,45 +162,62 @@ async function startServer() {
   });
 
   // SEO robots.txt
-  app.get('/robots.txt', (req, res) => {
-    const baseUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
+  app.get('/robots.txt', (_req, res) => {
+    const baseUrl = (process.env.SITE_URL || SITE_URL).replace(/\/$/, '');
     res.type('text/plain');
-    res.send(`User-agent: *\nAllow: /\nDisallow: /admin\n\nSitemap: ${baseUrl.replace(/\/$/, '')}/sitemap.xml\n`);
+    res.send(
+      `User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /en/admin\nDisallow: /ar/admin\n\nSitemap: ${baseUrl}/sitemap.xml\n`
+    );
   });
 
-  // Dynamic XML Sitemap indexing every category, calculator, guide, and legal page
-  app.get('/sitemap.xml', (req, res) => {
-    const baseUrl = (process.env.APP_URL || `${req.protocol}://${req.get('host')}`).replace(/\/$/, '');
+  // Dynamic Bilingual XML Sitemap (/en/... & /ar/... with xhtml:link hreflang alternates)
+  app.get('/sitemap.xml', (_req, res) => {
+    const baseUrl = (process.env.SITE_URL || SITE_URL).replace(/\/$/, '');
     const today = new Date().toISOString().slice(0, 10);
 
-    const urls: { loc: string; priority: string; changefreq: string }[] = [
-      { loc: `${baseUrl}/`, priority: '1.0', changefreq: 'weekly' },
-      { loc: `${baseUrl}/guides/`, priority: '0.8', changefreq: 'weekly' },
-      { loc: `${baseUrl}/about-us/`, priority: '0.5', changefreq: 'monthly' },
-      { loc: `${baseUrl}/contact-us/`, priority: '0.5', changefreq: 'monthly' },
-      { loc: `${baseUrl}/privacy-policy/`, priority: '0.4', changefreq: 'yearly' },
-      { loc: `${baseUrl}/terms-of-service/`, priority: '0.4', changefreq: 'yearly' },
-      { loc: `${baseUrl}/disclaimer/`, priority: '0.4', changefreq: 'yearly' },
-      { loc: `${baseUrl}/cookie-policy/`, priority: '0.4', changefreq: 'yearly' },
-      { loc: `${baseUrl}/sitemap/`, priority: '0.5', changefreq: 'weekly' },
+    const neutralPages: { path: string; priority: string; changefreq: string }[] = [
+      { path: '/', priority: '1.0', changefreq: 'weekly' },
+      { path: '/guides/', priority: '0.8', changefreq: 'weekly' },
+      { path: '/about-us/', priority: '0.5', changefreq: 'monthly' },
+      { path: '/contact-us/', priority: '0.5', changefreq: 'monthly' },
+      { path: '/privacy-policy/', priority: '0.4', changefreq: 'yearly' },
+      { path: '/terms-of-service/', priority: '0.4', changefreq: 'yearly' },
+      { path: '/disclaimer/', priority: '0.4', changefreq: 'yearly' },
+      { path: '/cookie-policy/', priority: '0.4', changefreq: 'yearly' },
+      { path: '/sitemap/', priority: '0.5', changefreq: 'weekly' },
     ];
 
     for (const cat of CATEGORIES) {
-      urls.push({ loc: `${baseUrl}/${cat.slug}/`, priority: '0.9', changefreq: 'weekly' });
+      neutralPages.push({ path: `/${cat.slug}/`, priority: '0.9', changefreq: 'weekly' });
     }
     for (const calc of ALL_CALCULATORS) {
-      urls.push({ loc: `${baseUrl}${getCalculatorUrl(calc)}`, priority: '0.8', changefreq: 'monthly' });
+      neutralPages.push({ path: getCalculatorUrl(calc), priority: '0.8', changefreq: 'monthly' });
     }
     for (const art of ARTICLES) {
-      urls.push({ loc: `${baseUrl}/guides/${art.slug}/`, priority: '0.7', changefreq: 'monthly' });
+      neutralPages.push({ path: `/guides/${art.slug}/`, priority: '0.7', changefreq: 'monthly' });
     }
 
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls
-      .map(
-        (u) =>
-          `  <url>\n    <loc>${u.loc}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${u.changefreq}</changefreq>\n    <priority>${u.priority}</priority>\n  </url>`
-      )
-      .join('\n')}\n</urlset>`;
+    const entries: string[] = [];
+    for (const page of neutralPages) {
+      const enLoc = `${baseUrl}${localizePath(page.path, 'en')}`;
+      const arLoc = `${baseUrl}${localizePath(page.path, 'ar')}`;
+      const alternates =
+        `    <xhtml:link rel="alternate" hreflang="en" href="${enLoc}"/>\n` +
+        `    <xhtml:link rel="alternate" hreflang="ar" href="${arLoc}"/>\n` +
+        `    <xhtml:link rel="alternate" hreflang="x-default" href="${enLoc}"/>`;
+
+      for (const loc of [enLoc, arLoc]) {
+        entries.push(
+          `  <url>\n    <loc>${loc}</loc>\n${alternates}\n    <lastmod>${today}</lastmod>\n    <changefreq>${page.changefreq}</changefreq>\n    <priority>${page.priority}</priority>\n  </url>`
+        );
+      }
+    }
+
+    const xml =
+      `<?xml version="1.0" encoding="UTF-8"?>\n` +
+      `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n` +
+      `${entries.join('\n')}\n` +
+      `</urlset>`;
 
     res.type('application/xml');
     res.send(xml);
@@ -204,6 +240,15 @@ async function startServer() {
     app.use(async (req, res, next) => {
       try {
         const vite = await vitePromise;
+        if (isHtmlPageRequest(req)) {
+          const indexPath = path.resolve(__dirname, 'index.html');
+          const rawHtml = fs.readFileSync(indexPath, 'utf-8');
+          const baseUrl = (process.env.SITE_URL || SITE_URL).replace(/\/$/, '');
+          const seoHtml = injectSeoIntoHtml(rawHtml, req.path, baseUrl);
+          const transformed = await vite.transformIndexHtml(req.originalUrl, seoHtml);
+          res.status(200).set('Content-Type', 'text/html').end(transformed);
+          return;
+        }
         vite.middlewares(req, res, next);
       } catch (err) {
         next(err);
@@ -211,24 +256,27 @@ async function startServer() {
     });
 
     httpServer.listen(PORT, HOST, () => {
-      console.log(`CalcAxis server listening on http://${HOST}:${PORT}`);
+      console.log(`${SITE_NAME} server listening on http://${HOST}:${PORT}`);
     });
 
     await vitePromise;
   } else {
     const distDir = path.resolve(__dirname, 'dist');
-    app.use(express.static(distDir));
-    app.get('*', (_req, res) => {
+    app.use(express.static(distDir, { index: false }));
+    app.get('*', (req, res) => {
       const indexFile = path.join(distDir, 'index.html');
       if (fs.existsSync(indexFile)) {
-        res.sendFile(indexFile);
+        const rawHtml = fs.readFileSync(indexFile, 'utf-8');
+        const baseUrl = (process.env.SITE_URL || SITE_URL).replace(/\/$/, '');
+        const seoHtml = injectSeoIntoHtml(rawHtml, req.path, baseUrl);
+        res.status(200).set('Content-Type', 'text/html').end(seoHtml);
       } else {
         res.status(404).send('Build output not found. Run npm run build first.');
       }
     });
 
     httpServer.listen(PORT, HOST, () => {
-      console.log(`CalcAxis server listening on http://${HOST}:${PORT}`);
+      console.log(`${SITE_NAME} server listening on http://${HOST}:${PORT}`);
     });
   }
 }

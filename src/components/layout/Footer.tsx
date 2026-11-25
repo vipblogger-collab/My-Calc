@@ -3,7 +3,7 @@ import { Calculator } from 'lucide-react';
 import { useAppContext } from '../../context/AppContext.tsx';
 
 export function Footer() {
-  const { categories, ui } = useAppContext();
+  const { categories, ui, l } = useAppContext();
   const year = new Date().getFullYear();
 
   return (
@@ -11,7 +11,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pb-10 border-b border-[#1E293B]">
           <div>
-            <Link to="/" className="inline-flex items-center gap-2.5 text-white">
+            <Link to={l('/')} className="inline-flex items-center gap-2.5 text-white">
               <span className="w-8 h-8 rounded-lg bg-[#2563EB] flex items-center justify-center">
                 <Calculator className="w-4 h-4 text-white" />
               </span>
@@ -26,7 +26,7 @@ export function Footer() {
               {categories.map((cat) => (
                 <li key={cat.slug}>
                   <Link
-                    to={`/${cat.slug}/`}
+                    to={l(`/${cat.slug}/`)}
                     className="text-[#94A3B8] hover:text-white transition-colors"
                   >
                     {cat.name}
@@ -40,12 +40,12 @@ export function Footer() {
             <h3 className="text-sm font-semibold text-white mb-3">{ui.footer.resourcesHeading}</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link to="/guides/" className="text-[#94A3B8] hover:text-white transition-colors">
+                <Link to={l('/guides/')} className="text-[#94A3B8] hover:text-white transition-colors">
                   {ui.footer.guides}
                 </Link>
               </li>
               <li>
-                <Link to="/sitemap/" className="text-[#94A3B8] hover:text-white transition-colors">
+                <Link to={l('/sitemap/')} className="text-[#94A3B8] hover:text-white transition-colors">
                   {ui.footer.htmlSitemap}
                 </Link>
               </li>
@@ -55,7 +55,7 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <Link to="/admin/" className="text-[#94A3B8] hover:text-white transition-colors">
+                <Link to={l('/admin/')} className="text-[#94A3B8] hover:text-white transition-colors">
                   {ui.footer.cmsSettings}
                 </Link>
               </li>
@@ -66,32 +66,32 @@ export function Footer() {
             <h3 className="text-sm font-semibold text-white mb-3">{ui.footer.companyHeading}</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link to="/about-us/" className="text-[#94A3B8] hover:text-white transition-colors">
+                <Link to={l('/about-us/')} className="text-[#94A3B8] hover:text-white transition-colors">
                   {ui.footer.aboutUs}
                 </Link>
               </li>
               <li>
-                <Link to="/contact-us/" className="text-[#94A3B8] hover:text-white transition-colors">
+                <Link to={l('/contact-us/')} className="text-[#94A3B8] hover:text-white transition-colors">
                   {ui.footer.contactUs}
                 </Link>
               </li>
               <li>
-                <Link to="/privacy-policy/" className="text-[#94A3B8] hover:text-white transition-colors">
+                <Link to={l('/privacy-policy/')} className="text-[#94A3B8] hover:text-white transition-colors">
                   {ui.footer.privacyPolicy}
                 </Link>
               </li>
               <li>
-                <Link to="/terms-of-service/" className="text-[#94A3B8] hover:text-white transition-colors">
+                <Link to={l('/terms-of-service/')} className="text-[#94A3B8] hover:text-white transition-colors">
                   {ui.footer.termsOfService}
                 </Link>
               </li>
               <li>
-                <Link to="/disclaimer/" className="text-[#94A3B8] hover:text-white transition-colors">
+                <Link to={l('/disclaimer/')} className="text-[#94A3B8] hover:text-white transition-colors">
                   {ui.footer.disclaimer}
                 </Link>
               </li>
               <li>
-                <Link to="/cookie-policy/" className="text-[#94A3B8] hover:text-white transition-colors">
+                <Link to={l('/cookie-policy/')} className="text-[#94A3B8] hover:text-white transition-colors">
                   {ui.footer.cookiePolicy}
                 </Link>
               </li>
