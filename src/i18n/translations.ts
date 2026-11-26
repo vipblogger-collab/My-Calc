@@ -2,7 +2,7 @@ import { Language } from '../types/calculator.ts';
 
 export const UI_COPY = {
   en: {
-    brandName: 'smartcalc.net',
+    brandName: 'mysmartcalc.net',
     nav: {
       home: 'Home',
       financial: 'Financial',
@@ -29,7 +29,7 @@ export const UI_COPY = {
       trySearching: 'Try searching by topic like "mortgage", "bmi", "percentage", "currency", or "business days".',
     },
     home: {
-      seoTitle: 'smartcalc.net – Free Online Calculators for Everyday Life',
+      seoTitle: 'mysmartcalc.net – Free Online Calculators for Everyday Life',
       seoDesc: 'Simple, accurate, and powerful online calculators for finance, health, mathematics, unit conversions, dates, everyday life, and science.',
       heroTitle: 'Free Online Calculators for Everyday Life',
       heroSubtitle: 'Simple, accurate, and powerful calculators to help you make smarter financial, health, mathematical, and everyday decisions.',
@@ -47,7 +47,7 @@ export const UI_COPY = {
       calculatorsSuffix: 'calculators',
       recentlyAddedTitle: 'Recently Added Calculators',
       newRelease: 'New release',
-      whyTitle: 'Why Use smartcalc.net Calculators?',
+      whyTitle: 'Why Use mysmartcalc.net Calculators?',
       whySubtitle: 'Built for precision, speed, and clarity—without account walls or clutter.',
       guidesTitle: 'Practical Guides & Tutorials',
       guidesSubtitle: 'Deep-dive explainers on formulas, financial decisions, health equations, and unit standards.',
@@ -105,7 +105,7 @@ export const UI_COPY = {
     calculator: {
       notFoundTitle: 'Calculator Not Found',
       notFoundBody: 'We couldn’t find that calculator. Browse all categories or use search above.',
-      backHome: 'Back to smartcalc.net Home',
+      backHome: 'Back to mysmartcalc.net Home',
       bookmark: 'Bookmark',
       bookmarked: 'Bookmarked',
       formulaHeading: 'Calculation Formula',
@@ -167,7 +167,7 @@ export const UI_COPY = {
       termsOfService: 'Terms of Service',
       disclaimer: 'Disclaimer',
       cookiePolicy: 'Cookie Policy',
-      copyrightSuffix: 'smartcalc.net. All rights reserved. Calculations are provided for informational use.',
+      copyrightSuffix: 'mysmartcalc.net. All rights reserved. Calculations are provided for informational use.',
       noAccountNote: 'No account required · Fast client-side math',
     },
     notFound: {
@@ -178,7 +178,7 @@ export const UI_COPY = {
     },
   },
   ar: {
-    brandName: 'smartcalc.net',
+    brandName: 'mysmartcalc.net',
     nav: {
       home: 'الرئيسية',
       financial: 'المالية',
@@ -205,7 +205,7 @@ export const UI_COPY = {
       trySearching: 'جرّب البحث بكلمات مثل: "الرهن"، "مؤشر كتلة الجسم"، "النسبة"، "العملات"، أو "أيام العمل".',
     },
     home: {
-      seoTitle: 'smartcalc.net – حاسبات إلكترونية مجانية للحياة اليومية',
+      seoTitle: 'mysmartcalc.net – حاسبات إلكترونية مجانية للحياة اليومية',
       seoDesc: 'حاسبات دقيقة وسريعة وسهلة الاستخدام للتمويل، الصحة، الرياضيات، تحويل الوحدات، التواريخ، الحياة اليومية، والعلوم.',
       heroTitle: 'حاسبات إلكترونية مجانية للحياة اليومية',
       heroSubtitle: 'أدوات حساب بسيطة ودقيقة وفعّالة لمساعدتك على اتخاذ قرارات مالية وصحية ورياضية ويومية أكثر ذكاءً.',
@@ -223,7 +223,7 @@ export const UI_COPY = {
       calculatorsSuffix: '',
       recentlyAddedTitle: 'الحاسبات المضافة حديثاً',
       newRelease: 'إصدار جديد',
-      whyTitle: 'لماذا تستخدم حاسبات smartcalc.net؟',
+      whyTitle: 'لماذا تستخدم حاسبات mysmartcalc.net؟',
       whySubtitle: 'مصممة للدقة والسرعة والوضوح — دون تسجيل حسابات أو تعقيد.',
       guidesTitle: 'أدلة وشروحات عملية',
       guidesSubtitle: 'شروحات متعمقة للمعادلات والقرارات المالية والحسابات الصحية ومعايير القياس.',
@@ -343,7 +343,7 @@ export const UI_COPY = {
       termsOfService: 'شروط الاستخدام',
       disclaimer: 'إخلاء المسؤولية',
       cookiePolicy: 'سياسة ملفات تعريف الارتباط',
-      copyrightSuffix: 'smartcalc.net. جميع الحقوق محفوظة. النتائج مقدمة لأغراض المعلومات والتخطيط.',
+      copyrightSuffix: 'mysmartcalc.net. جميع الحقوق محفوظة. النتائج مقدمة لأغراض المعلومات والتخطيط.',
       noAccountNote: 'لا يتطلب تسجيلاً · حسابات سريعة في المتصفح',
     },
     notFound: {

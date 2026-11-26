@@ -48,7 +48,7 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
           description={
             isAr
               ? 'تصفح جميع أقسام الحاسبات والأدوات الفردية والأدلة التعليمية وصفحات السياسات في مكان واحد.'
-              : 'Browse all smartcalc.net calculator categories, individual calculation tools, educational guides, and legal resources in one structured index.'
+              : 'Browse all mysmartcalc.net calculator categories, individual calculation tools, educational guides, and legal resources in one structured index.'
           }
           canonicalPath="/sitemap/"
         />
@@ -199,7 +199,7 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
           description={
             isAr
               ? 'أرسل ملاحظاتك أو اقترح حاسبة جديدة أو أبلغ عن مسألة حسابية.'
-              : 'Send feedback, report a formula edge case, or request a new calculator on smartcalc.net.'
+              : 'Send feedback, report a formula edge case, or request a new calculator on mysmartcalc.net.'
           }
           canonicalPath="/contact-us/"
         />
@@ -340,13 +340,13 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
   > = {
     'about-us': {
       title: 'About Us',
-      description: 'Learn how smartcalc.net builds fast, transparent, client-side online calculators with documented formulas.',
+      description: 'Learn how mysmartcalc.net builds fast, transparent, client-side online calculators with documented formulas.',
       canonical: '/about-us/',
       updated: '2026-01-15',
       sections: [
         {
           heading: 'Our Mission',
-          body: 'smartcalc.net provides free, reliable, and transparent online calculation tools across personal finance, health and fitness, mathematics, unit conversions, dates and time, everyday planning, and engineering science.',
+          body: 'mysmartcalc.net provides free, reliable, and transparent online calculation tools across personal finance, health and fitness, mathematics, unit conversions, dates and time, everyday planning, and engineering science.',
         },
         {
           heading: 'Transparent Formulas & Client-Side Privacy',
@@ -360,13 +360,13 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
     },
     'privacy-policy': {
       title: 'Privacy Policy',
-      description: 'How smartcalc.net handles browser storage, calculator inputs, analytics, and advertising privacy.',
+      description: 'How mysmartcalc.net handles browser storage, calculator inputs, analytics, and advertising privacy.',
       canonical: '/privacy-policy/',
       updated: '2026-01-15',
       sections: [
         {
           heading: 'Calculator Input Privacy',
-          body: 'All calculations—including financial figures, body measurements, dates, and equations—run locally in your web browser. smartcalc.net does not require registration and does not transmit your personal calculation inputs to a backend database.',
+          body: 'All calculations—including financial figures, body measurements, dates, and equations—run locally in your web browser. mysmartcalc.net does not require registration and does not transmit your personal calculation inputs to a backend database.',
         },
         {
           heading: 'Local Browser Storage',
@@ -380,27 +380,27 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
     },
     'terms-of-service': {
       title: 'Terms of Service',
-      description: 'Terms governing use of smartcalc.net online calculators, formulas, and educational guides.',
+      description: 'Terms governing use of mysmartcalc.net online calculators, formulas, and educational guides.',
       canonical: '/terms-of-service/',
       updated: '2026-01-15',
       sections: [
         {
           heading: 'Acceptance of Terms',
-          body: 'By accessing or using smartcalc.net, you agree to use these calculators and educational guides solely for lawful informational and planning purposes.',
+          body: 'By accessing or using mysmartcalc.net, you agree to use these calculators and educational guides solely for lawful informational and planning purposes.',
         },
         {
           heading: 'Informational Nature & Accuracy',
-          body: 'While we carefully test every formula and unit constant, smartcalc.net provides tools “as is” without warranties of uninterrupted availability or suitability for regulated filings, medical diagnosis, or binding contracts. Always double-check critical figures with qualified professionals.',
+          body: 'While we carefully test every formula and unit constant, mysmartcalc.net provides tools “as is” without warranties of uninterrupted availability or suitability for regulated filings, medical diagnosis, or binding contracts. Always double-check critical figures with qualified professionals.',
         },
         {
           heading: 'Intellectual Property',
-          body: 'The smartcalc.net interface, educational guides, and curated tool documentation remain the property of smartcalc.net. You are welcome to print or export your own calculation results for personal or business reference.',
+          body: 'The mysmartcalc.net interface, educational guides, and curated tool documentation remain the property of mysmartcalc.net. You are welcome to print or export your own calculation results for personal or business reference.',
         },
       ],
     },
     disclaimer: {
       title: 'Disclaimer',
-      description: 'Important financial, medical, tax, and exchange-rate disclaimers for smartcalc.net calculators.',
+      description: 'Important financial, medical, tax, and exchange-rate disclaimers for mysmartcalc.net calculators.',
       canonical: '/disclaimer/',
       updated: '2026-01-15',
       sections: [
@@ -420,13 +420,13 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
     },
     'cookie-policy': {
       title: 'Cookie Policy',
-      description: 'Information on essential browser storage and optional advertising cookies on smartcalc.net.',
+      description: 'Information on essential browser storage and optional advertising cookies on mysmartcalc.net.',
       canonical: '/cookie-policy/',
       updated: '2026-01-15',
       sections: [
         {
           heading: 'Essential Storage',
-          body: 'smartcalc.net uses minimal browser storage (localStorage) strictly for functional preferences you choose—such as bookmarked calculators and recently viewed tools. No user-tracking login cookies are set by the core application.',
+          body: 'mysmartcalc.net uses minimal browser storage (localStorage) strictly for functional preferences you choose—such as bookmarked calculators and recently viewed tools. No user-tracking login cookies are set by the core application.',
         },
         {
           heading: 'Advertising Cookies',
@@ -434,7 +434,7 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
         },
         {
           heading: 'Managing Cookies',
-          body: 'You can clear or block cookies and site storage at any time via your browser’s privacy preferences without losing access to smartcalc.net calculators.',
+          body: 'You can clear or block cookies and site storage at any time via your browser’s privacy preferences without losing access to mysmartcalc.net calculators.',
         },
       ],
     },
@@ -443,13 +443,13 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
   const contentMapAr: typeof contentMapEn = {
     'about-us': {
       title: 'من نحن',
-      description: 'تعرّف على كيفية بناء smartcalc.net لحاسبات سريعة وشفافة تعمل في المتصفح مع توثيق المعادلات.',
+      description: 'تعرّف على كيفية بناء mysmartcalc.net لحاسبات سريعة وشفافة تعمل في المتصفح مع توثيق المعادلات.',
       canonical: '/about-us/',
       updated: '2026-01-15',
       sections: [
         {
           heading: 'رسالتنا',
-          body: 'توفر منصة smartcalc.net أدوات حساب مجانية وموثوقة وشفافة عبر التمويل الشخصي، الصحة واللياقة، الرياضيات، تحويل الوحدات، التواريخ والوقت، التخطيط اليومي، والعلوم والهندسة.',
+          body: 'توفر منصة mysmartcalc.net أدوات حساب مجانية وموثوقة وشفافة عبر التمويل الشخصي، الصحة واللياقة، الرياضيات، تحويل الوحدات، التواريخ والوقت، التخطيط اليومي، والعلوم والهندسة.',
         },
         {
           heading: 'معادلات شفافة وخصوصية تامة',
@@ -463,13 +463,13 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
     },
     'privacy-policy': {
       title: 'سياسة الخصوصية',
-      description: 'كيف تتعامل smartcalc.net مع تخزين المتصفح ومدخلات الحاسبة وخصوصية الإعلانات.',
+      description: 'كيف تتعامل mysmartcalc.net مع تخزين المتصفح ومدخلات الحاسبة وخصوصية الإعلانات.',
       canonical: '/privacy-policy/',
       updated: '2026-01-15',
       sections: [
         {
           heading: 'خصوصية مدخلات الحاسبة',
-          body: 'تُجرى جميع الحسابات — بما فيها الأرقام المالية وقياسات الجسم والتواريخ والمعادلات — محلياً داخل متصفحك. لا تتطلب smartcalc.net تسجيلاً ولا ترسل مدخلاتك الشخصية إلى قواعد بيانات خلفية.',
+          body: 'تُجرى جميع الحسابات — بما فيها الأرقام المالية وقياسات الجسم والتواريخ والمعادلات — محلياً داخل متصفحك. لا تتطلب mysmartcalc.net تسجيلاً ولا ترسل مدخلاتك الشخصية إلى قواعد بيانات خلفية.',
         },
         {
           heading: 'التخزين المحلي للمتصفح',
@@ -483,13 +483,13 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
     },
     'terms-of-service': {
       title: 'شروط الاستخدام',
-      description: 'الشروط المنظمة لاستخدام حاسبات ومعادلات وأدلة smartcalc.net الإلكترونية.',
+      description: 'الشروط المنظمة لاستخدام حاسبات ومعادلات وأدلة mysmartcalc.net الإلكترونية.',
       canonical: '/terms-of-service/',
       updated: '2026-01-15',
       sections: [
         {
           heading: 'قبول الشروط',
-          body: 'بوصولك إلى smartcalc.net أو استخدامها، فإنك توافق على استخدام الحاسبات والأدلة التعليمية لأغراض المعلومات والتخطيط المشروعة فقط.',
+          body: 'بوصولك إلى mysmartcalc.net أو استخدامها، فإنك توافق على استخدام الحاسبات والأدلة التعليمية لأغراض المعلومات والتخطيط المشروعة فقط.',
         },
         {
           heading: 'الطابع الإرشادي والدقة',
@@ -497,7 +497,7 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
         },
         {
           heading: 'الملكية الفكرية',
-          body: 'تظل واجهة smartcalc.net والأدلة التعليمية وتوثيق الأدوات مملوكة للمنصة، مع الترحيب بطباعة أو تصدير نتائج حساباتك للاستخدام الشخصي أو المهني.',
+          body: 'تظل واجهة mysmartcalc.net والأدلة التعليمية وتوثيق الأدوات مملوكة للمنصة، مع الترحيب بطباعة أو تصدير نتائج حساباتك للاستخدام الشخصي أو المهني.',
         },
       ],
     },
@@ -529,7 +529,7 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
       sections: [
         {
           heading: 'التخزين الأساسي',
-          body: 'تستخدم smartcalc.net تخزين المتصفح (localStorage) فقط لحفظ تفضيلاتك مثل اللغة المختارة والحاسبات المحفوظة وأحدث الأدوات، دون ملفات تتبع لتسجيل الدخول.',
+          body: 'تستخدم mysmartcalc.net تخزين المتصفح (localStorage) فقط لحفظ تفضيلاتك مثل اللغة المختارة والحاسبات المحفوظة وأحدث الأدوات، دون ملفات تتبع لتسجيل الدخول.',
         },
         {
           heading: 'ملفات تعريف الارتباط الإعلانية',

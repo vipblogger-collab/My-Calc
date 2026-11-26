@@ -9,7 +9,7 @@ export const SCIENCE_CALCULATORS: CalculatorDef[] = [
     shortName: 'Physics',
     description: 'Solve 1D constant-acceleration kinematics for final velocity, displacement, and average speed.',
     keywords: ['physics', 'kinematics', 'velocity', 'acceleration', 'displacement'],
-    seoTitle: 'Physics Calculator – Kinematics (Velocity, Acceleration & Displacement) | smartcalc.net',
+    seoTitle: 'Physics Calculator – Kinematics (Velocity, Acceleration & Displacement) | mysmartcalc.net',
     seoDescription: 'Calculate final velocity, displacement, and average velocity from initial velocity, constant acceleration, and time.',
     formulaText: 'v = u + a·t   |   s = u·t + ½·a·t²',
     formulaVariables: [
@@ -50,7 +50,7 @@ export const SCIENCE_CALCULATORS: CalculatorDef[] = [
     shortName: 'Speed Distance Time',
     description: 'Solve for speed, distance, or travel time with unit conversion across m/s, km/h, mph, km, and miles.',
     keywords: ['speed distance time', 'travel time', 'average speed', 'd=vt'],
-    seoTitle: 'Speed, Distance & Time Calculator – Multi-Unit Solver | smartcalc.net',
+    seoTitle: 'Speed, Distance & Time Calculator – Multi-Unit Solver | mysmartcalc.net',
     seoDescription: 'Solve for speed, distance, or travel time with automatic unit handling for mph, km/h, m/s, miles, kilometers, and hours.',
     formulaText: 'Distance = Speed × Time   |   Speed = Distance ÷ Time',
     formulaVariables: [
@@ -90,7 +90,7 @@ export const SCIENCE_CALCULATORS: CalculatorDef[] = [
     shortName: 'Force',
     description: 'Solve Newton’s Second Law (F = m · a) for Force, Mass, or Acceleration in N, kN, lbf, kg, and lbs.',
     keywords: ['force', 'newton second law', 'f=ma', 'newtons', 'lbf'],
-    seoTitle: 'Force Calculator – Newton’s Second Law (F = m·a) | smartcalc.net',
+    seoTitle: 'Force Calculator – Newton’s Second Law (F = m·a) | mysmartcalc.net',
     seoDescription: 'Calculate net force, mass, or acceleration using F = m·a with automatic unit conversions between Newtons, kilonewtons, and pound-force.',
     formulaText: 'F = m · a',
     formulaVariables: [
@@ -129,7 +129,7 @@ export const SCIENCE_CALCULATORS: CalculatorDef[] = [
     shortName: 'Density',
     description: 'Solve ρ = m / V for Density, Mass, or Volume across kg/m³, g/cm³, and lb/ft³.',
     keywords: ['density', 'mass volume', 'specific gravity', 'kg/m3', 'g/cm3'],
-    seoTitle: 'Density Calculator – Mass, Volume & Specific Gravity | smartcalc.net',
+    seoTitle: 'Density Calculator – Mass, Volume & Specific Gravity | mysmartcalc.net',
     seoDescription: 'Calculate material density, mass, or volume using ρ = m/V with unit conversions and specific gravity relative to water.',
     formulaText: 'ρ = m / V',
     formulaVariables: [
@@ -169,7 +169,7 @@ export const SCIENCE_CALCULATORS: CalculatorDef[] = [
     shortName: 'Pressure',
     description: 'Solve P = F / A for Pressure, Force, or Contact Area across Pa, kPa, bar, psi, m², and in².',
     keywords: ['pressure', 'force over area', 'p=f/a', 'pascals', 'psi'],
-    seoTitle: 'Pressure Calculator – Force & Area Solver (P = F/A) | smartcalc.net',
+    seoTitle: 'Pressure Calculator – Force & Area Solver (P = F/A) | mysmartcalc.net',
     seoDescription: 'Calculate pressure, applied force, or surface area using P = F/A with instant conversion across Pascals, bar, and psi.',
     formulaText: 'P = F / A',
     formulaVariables: [
@@ -208,7 +208,7 @@ export const SCIENCE_CALCULATORS: CalculatorDef[] = [
     shortName: 'Kinetic Energy',
     description: 'Solve KE = ½ m v² for Kinetic Energy, Mass, or Velocity across Joules, kJ, kcal, kg, m/s, and mph.',
     keywords: ['kinetic energy', '1/2 mv2', 'joules', 'velocity'],
-    seoTitle: 'Kinetic Energy Calculator – KE = ½mv² Solver | smartcalc.net',
+    seoTitle: 'Kinetic Energy Calculator – KE = ½mv² Solver | mysmartcalc.net',
     seoDescription: 'Calculate translational kinetic energy, mass, or speed using KE = ½mv² with instant unit conversion.',
     formulaText: 'KE = ½ · m · v²',
     formulaVariables: [
@@ -247,7 +247,7 @@ export const SCIENCE_CALCULATORS: CalculatorDef[] = [
     shortName: 'Potential Energy',
     description: 'Solve gravitational potential energy PE = m g h with Earth, Moon, Mars, or custom gravity.',
     keywords: ['potential energy', 'mgh', 'gravitational energy', 'height'],
-    seoTitle: 'Potential Energy Calculator – Gravitational PE = mgh | smartcalc.net',
+    seoTitle: 'Potential Energy Calculator – Gravitational PE = mgh | mysmartcalc.net',
     seoDescription: 'Calculate gravitational potential energy, mass, or elevation height using PE = m·g·h with planetary gravity presets.',
     formulaText: 'PE = m · g · h',
     formulaVariables: [
@@ -288,7 +288,7 @@ export const SCIENCE_CALCULATORS: CalculatorDef[] = [
     shortName: "Ohm's Law",
     description: 'Enter any two of Voltage (V), Current (I), Resistance (R), or Power (P) to solve the remaining two.',
     keywords: ['ohms law', 'voltage current resistance', 'electrical power', 'circuits'],
-    seoTitle: "Ohm's Law Calculator – Voltage, Current, Resistance & Power | smartcalc.net",
+    seoTitle: "Ohm's Law Calculator – Voltage, Current, Resistance & Power | mysmartcalc.net",
     seoDescription: "Solve Ohm's Law and Joule's power law by entering any two known electrical values (V, I, R, or P) with mV/V/kV and mA/A/Ω/kΩ units.",
     formulaText: 'V = I · R   |   P = V · I = I² · R = V² / R',
     formulaVariables: [
@@ -329,7 +329,7 @@ export const SCIENCE_CALCULATORS: CalculatorDef[] = [
     shortName: 'Voltage',
     description: 'Compute voltage drop via Ohm’s Law (V = I·R) or resistive Voltage Divider output (Vout).',
     keywords: ['voltage', 'voltage divider', 'voltage drop', 'v=ir'],
-    seoTitle: 'Voltage Calculator – Ohm’s Law & Voltage Divider | smartcalc.net',
+    seoTitle: 'Voltage Calculator – Ohm’s Law & Voltage Divider | mysmartcalc.net',
     seoDescription: 'Calculate circuit voltage from current and resistance (V = I·R) or compute output voltage of a two-resistor voltage divider.',
     formulaText: 'Ohm: V = I · R   |   Divider: V_out = V_in · R₂ / (R₁ + R₂)',
     formulaVariables: [
@@ -367,7 +367,7 @@ export const SCIENCE_CALCULATORS: CalculatorDef[] = [
     shortName: 'Power',
     description: 'Calculate Mechanical Power (P = Work ÷ Time = Force × Velocity) and Electrical Power (P = V × I).',
     keywords: ['power', 'watts', 'horsepower', 'mechanical power', 'electrical power'],
-    seoTitle: 'Power Calculator – Mechanical & Electrical Power (W, kW, hp) | smartcalc.net',
+    seoTitle: 'Power Calculator – Mechanical & Electrical Power (W, kW, hp) | mysmartcalc.net',
     seoDescription: 'Calculate mechanical power from work/time or force/velocity, and electrical power from voltage and current in Watts, kW, and hp.',
     formulaText: 'P = W / t = F · v   |   P_elec = V · I',
     formulaVariables: [

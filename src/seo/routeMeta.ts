@@ -27,81 +27,81 @@ const STATIC_PAGE_META: Record<
 > = {
   '/about-us': {
     en: {
-      title: 'About Us | smartcalc.net',
-      description: 'Learn how smartcalc.net builds fast, transparent, client-side online calculators with documented formulas.',
+      title: 'About Us | mysmartcalc.net',
+      description: 'Learn how mysmartcalc.net builds fast, transparent, client-side online calculators with documented formulas.',
     },
     ar: {
-      title: 'من نحن | smartcalc.net',
-      description: 'تعرّف على كيفية بناء smartcalc.net لحاسبات سريعة وشفافة تعمل في المتصفح مع توثيق المعادلات.',
+      title: 'من نحن | mysmartcalc.net',
+      description: 'تعرّف على كيفية بناء mysmartcalc.net لحاسبات سريعة وشفافة تعمل في المتصفح مع توثيق المعادلات.',
     },
   },
   '/contact-us': {
     en: {
-      title: 'Contact Us | smartcalc.net',
-      description: 'Send feedback, report a formula edge case, or request a new calculator on smartcalc.net.',
+      title: 'Contact Us | mysmartcalc.net',
+      description: 'Send feedback, report a formula edge case, or request a new calculator on mysmartcalc.net.',
     },
     ar: {
-      title: 'تواصل معنا | smartcalc.net',
+      title: 'تواصل معنا | mysmartcalc.net',
       description: 'أرسل ملاحظاتك أو اقترح حاسبة جديدة أو أبلغ عن مسألة حسابية.',
     },
   },
   '/privacy-policy': {
     en: {
-      title: 'Privacy Policy | smartcalc.net',
-      description: 'How smartcalc.net handles browser storage, calculator inputs, analytics, and advertising privacy.',
+      title: 'Privacy Policy | mysmartcalc.net',
+      description: 'How mysmartcalc.net handles browser storage, calculator inputs, analytics, and advertising privacy.',
     },
     ar: {
-      title: 'سياسة الخصوصية | smartcalc.net',
-      description: 'كيف تتعامل smartcalc.net مع تخزين المتصفح ومدخلات الحاسبة وخصوصية الإعلانات.',
+      title: 'سياسة الخصوصية | mysmartcalc.net',
+      description: 'كيف تتعامل mysmartcalc.net مع تخزين المتصفح ومدخلات الحاسبة وخصوصية الإعلانات.',
     },
   },
   '/terms-of-service': {
     en: {
-      title: 'Terms of Service | smartcalc.net',
-      description: 'Terms governing use of smartcalc.net online calculators, formulas, and educational guides.',
+      title: 'Terms of Service | mysmartcalc.net',
+      description: 'Terms governing use of mysmartcalc.net online calculators, formulas, and educational guides.',
     },
     ar: {
-      title: 'شروط الاستخدام | smartcalc.net',
-      description: 'الشروط المنظمة لاستخدام حاسبات ومعادلات وأدلة smartcalc.net الإلكترونية.',
+      title: 'شروط الاستخدام | mysmartcalc.net',
+      description: 'الشروط المنظمة لاستخدام حاسبات ومعادلات وأدلة mysmartcalc.net الإلكترونية.',
     },
   },
   '/disclaimer': {
     en: {
-      title: 'Disclaimer | smartcalc.net',
-      description: 'Important financial, medical, tax, and exchange-rate disclaimers for smartcalc.net calculators.',
+      title: 'Disclaimer | mysmartcalc.net',
+      description: 'Important financial, medical, tax, and exchange-rate disclaimers for mysmartcalc.net calculators.',
     },
     ar: {
-      title: 'إخلاء المسؤولية | smartcalc.net',
+      title: 'إخلاء المسؤولية | mysmartcalc.net',
       description: 'إفصاحات مهمة حول الحسابات المالية والطبية والضريبية وأسعار الصرف.',
     },
   },
   '/cookie-policy': {
     en: {
-      title: 'Cookie Policy | smartcalc.net',
-      description: 'Information on essential browser storage and optional advertising cookies on smartcalc.net.',
+      title: 'Cookie Policy | mysmartcalc.net',
+      description: 'Information on essential browser storage and optional advertising cookies on mysmartcalc.net.',
     },
     ar: {
-      title: 'سياسة ملفات تعريف الارتباط | smartcalc.net',
+      title: 'سياسة ملفات تعريف الارتباط | mysmartcalc.net',
       description: 'معلومات حول التخزين الأساسي في المتصفح وملفات تعريف الارتباط الإعلانية الاختيارية.',
     },
   },
   '/sitemap': {
     en: {
-      title: 'HTML Sitemap | smartcalc.net',
-      description: 'Browse all smartcalc.net calculator categories, individual calculation tools, educational guides, and legal resources.',
+      title: 'HTML Sitemap | mysmartcalc.net',
+      description: 'Browse all mysmartcalc.net calculator categories, individual calculation tools, educational guides, and legal resources.',
     },
     ar: {
-      title: 'خريطة الموقع | smartcalc.net',
+      title: 'خريطة الموقع | mysmartcalc.net',
       description: 'تصفح جميع أقسام الحاسبات والأدوات الفردية والأدلة التعليمية وصفحات السياسات في مكان واحد.',
     },
   },
   '/admin': {
     en: {
-      title: 'Content & Ad Settings | smartcalc.net',
+      title: 'Content & Ad Settings | mysmartcalc.net',
       description: 'Manage calculator metadata, educational guides, and AdSense ad slot placements.',
     },
     ar: {
-      title: 'إعدادات المحتوى والإعلانات | smartcalc.net',
+      title: 'إعدادات المحتوى والإعلانات | mysmartcalc.net',
       description: 'إدارة بيانات الحاسبات والأدلة التعليمية ومواضع إعلانات AdSense.',
     },
   },

@@ -810,7 +810,7 @@ export function localizeCalculator(calc: CalculatorDef, lang: Language): Calcula
     shortName: ar.shortName,
     description: ar.description,
     keywords: [...calc.keywords, ...ar.keywords],
-    seoTitle: `${ar.name} – أداة حساب مجانية ودقيقة | smartcalc.net`,
+    seoTitle: `${ar.name} – أداة حساب مجانية ودقيقة | mysmartcalc.net`,
     seoDescription: `${ar.description} نتائج فورية مع شرح المعادلة والأمثلة التطبيقية.`,
   };
 }

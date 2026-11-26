@@ -10,7 +10,7 @@ export const EVERYDAY_CALCULATORS: CalculatorDef[] = [
     shortName: 'Tip',
     description: 'Compute tip amount, total bill, and per-person split with quick tip percentage presets.',
     keywords: ['tip', 'gratuity', 'restaurant bill', 'split tip'],
-    seoTitle: 'Tip Calculator – Gratuity & Per-Person Bill Split | smartcalc.net',
+    seoTitle: 'Tip Calculator – Gratuity & Per-Person Bill Split | mysmartcalc.net',
     seoDescription: 'Calculate restaurant tip amounts, total bill, and per-person shares for 10%, 15%, 18%, 20%, or custom tip percentages.',
     formulaText: 'Tip = Bill × (Tip% ÷ 100)   |   Per Person = (Bill + Tip) ÷ People',
     formulaVariables: [
@@ -50,7 +50,7 @@ export const EVERYDAY_CALCULATORS: CalculatorDef[] = [
     shortName: 'Discount',
     description: 'Calculate sale price, total savings, stacked coupon discounts, and optional sales tax.',
     keywords: ['discount', 'sale price', 'percent off', 'coupon', 'stacked discount'],
-    seoTitle: 'Discount Calculator – Sale Price, Stacked Coupons & Tax | smartcalc.net',
+    seoTitle: 'Discount Calculator – Sale Price, Stacked Coupons & Tax | mysmartcalc.net',
     seoDescription: 'Calculate final price after percentage discounts, additional stackable promo codes, and optional sales tax.',
     formulaText: 'Subtotal = Price × (1 − d₁) × (1 − d₂)   |   Final = Subtotal × (1 + Tax)',
     formulaVariables: [
@@ -89,7 +89,7 @@ export const EVERYDAY_CALCULATORS: CalculatorDef[] = [
     shortName: 'Sales Tax',
     description: 'Calculate after-tax checkout totals or reverse-extract pre-tax price from a tax-inclusive receipt.',
     keywords: ['sales tax', 'vat', 'reverse tax', 'before tax'],
-    seoTitle: 'Sales Tax Calculator – Forward & Reverse Pre-Tax Solver | smartcalc.net',
+    seoTitle: 'Sales Tax Calculator – Forward & Reverse Pre-Tax Solver | mysmartcalc.net',
     seoDescription: 'Add sales tax to a pre-tax price or reverse-calculate original net price and tax from any tax-inclusive total.',
     formulaText: 'Total = Net × (1 + r)   |   Reverse Net = Total ÷ (1 + r)',
     formulaVariables: [
@@ -126,7 +126,7 @@ export const EVERYDAY_CALCULATORS: CalculatorDef[] = [
     shortName: 'Electricity Cost',
     description: 'Estimate daily, monthly, and annual kWh usage and utility costs for any appliance.',
     keywords: ['electricity cost', 'kwh', 'wattage', 'power bill', 'appliance cost'],
-    seoTitle: 'Electricity Cost Calculator – Appliance kWh & Utility Bill | smartcalc.net',
+    seoTitle: 'Electricity Cost Calculator – Appliance kWh & Utility Bill | mysmartcalc.net',
     seoDescription: 'Calculate how much an appliance or computer costs per day, month, and year based on wattage, hours used, and $/kWh rate.',
     formulaText: 'Daily Cost = (Watts × Hours/Day ÷ 1,000) × Rate ($/kWh)',
     formulaVariables: [
@@ -165,7 +165,7 @@ export const EVERYDAY_CALCULATORS: CalculatorDef[] = [
     shortName: 'Fuel Cost',
     description: 'Estimate total fuel required and trip gas cost for one-way or round-trip driving.',
     keywords: ['fuel cost', 'gas trip', 'road trip cost', 'mpg'],
-    seoTitle: 'Fuel Cost Calculator – Road Trip Gas & Fuel Estimator | smartcalc.net',
+    seoTitle: 'Fuel Cost Calculator – Road Trip Gas & Fuel Estimator | mysmartcalc.net',
     seoDescription: 'Calculate total fuel volume and trip gas cost based on distance, vehicle efficiency (MPG or L/100km), and fuel price.',
     formulaText: 'Trip Cost = (Distance ÷ MPG) × Fuel Price',
     formulaVariables: [
@@ -204,7 +204,7 @@ export const EVERYDAY_CALCULATORS: CalculatorDef[] = [
     shortName: 'GPA',
     description: 'Calculate weighted semester and cumulative college/high-school GPA across dynamic course rows.',
     keywords: ['gpa', 'grade point average', 'cumulative gpa', 'college credits'],
-    seoTitle: 'GPA Calculator – Semester & Cumulative GPA Tracker | smartcalc.net',
+    seoTitle: 'GPA Calculator – Semester & Cumulative GPA Tracker | mysmartcalc.net',
     seoDescription: 'Add courses, credit hours, and letter grades to calculate semester GPA and updated cumulative GPA.',
     formulaText: 'GPA = Σ(Credit Hours × Grade Points) ÷ Σ(Credit Hours)',
     formulaVariables: [
@@ -243,7 +243,7 @@ export const EVERYDAY_CALCULATORS: CalculatorDef[] = [
     shortName: 'Grade',
     description: 'Compute current weighted course average and the exact score needed on the final exam.',
     keywords: ['grade calculator', 'weighted grade', 'final exam calculator', 'class grade'],
-    seoTitle: 'Grade Calculator – Weighted Average & Final Exam Target | smartcalc.net',
+    seoTitle: 'Grade Calculator – Weighted Average & Final Exam Target | mysmartcalc.net',
     seoDescription: 'Calculate your weighted course grade across exams and assignments and find what score you need on the final exam.',
     formulaText: 'Needed Final = (Target × 100 − Σ(Scoreᵢ × Weightᵢ)) ÷ Remaining Weight',
     formulaVariables: [
@@ -282,7 +282,7 @@ export const EVERYDAY_CALCULATORS: CalculatorDef[] = [
     shortName: 'Split Bill',
     description: 'Split group restaurant or utility bills cleanly with separate tax, tip, and pre/post-tax tip toggle.',
     keywords: ['split bill', 'group check', 'dinner split', 'per person'],
-    seoTitle: 'Split Bill Calculator – Group Check, Tax & Tip Splitter | smartcalc.net',
+    seoTitle: 'Split Bill Calculator – Group Check, Tax & Tip Splitter | mysmartcalc.net',
     seoDescription: 'Divide a group bill accurately including separate sales tax, tip percentage, and per-person totals.',
     formulaText: 'Per Person = (Subtotal + Tax + Tip) ÷ People',
     formulaVariables: [
@@ -320,7 +320,7 @@ export const EVERYDAY_CALCULATORS: CalculatorDef[] = [
     shortName: 'Wedding Budget',
     description: 'Allocate total wedding budget across venue, catering, attire, photography, flowers, music, and buffer.',
     keywords: ['wedding budget', 'wedding planner', 'cost per guest', 'venue budget'],
-    seoTitle: 'Wedding Budget Calculator – Category Allocations & Cost Per Guest | smartcalc.net',
+    seoTitle: 'Wedding Budget Calculator – Category Allocations & Cost Per Guest | mysmartcalc.net',
     seoDescription: 'Plan your wedding budget across major vendor categories with customizable percentages, cost per guest, and breakdown chart.',
     formulaText: 'Category Allocation = Total Budget × (Category % ÷ 100)',
     formulaVariables: [
@@ -358,7 +358,7 @@ export const EVERYDAY_CALCULATORS: CalculatorDef[] = [
     shortName: 'Moving Cost',
     description: 'Estimate relocation costs by home size, mileage, DIY truck vs. containers vs. full-service movers.',
     keywords: ['moving cost', 'relocation', 'movers estimate', 'moving truck'],
-    seoTitle: 'Moving Cost Calculator – Local & Long-Distance Estimate | smartcalc.net',
+    seoTitle: 'Moving Cost Calculator – Local & Long-Distance Estimate | mysmartcalc.net',
     seoDescription: 'Estimate moving expenses by home size, distance, service tier (DIY, container, full-service), packing, and specialty items.',
     formulaText: 'Estimate = Base Size/Tier + (Distance × Mile Rate) + Packing + Specialty',
     formulaVariables: [

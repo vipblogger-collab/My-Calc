@@ -10,7 +10,7 @@ export const DATE_TIME_CALCULATORS: CalculatorDef[] = [
     description: 'Compute exact chronological age in years, months, days, total weeks, hours, and days to next birthday.',
     keywords: ['age', 'birthday', 'chronological age', 'how old'],
     popular: true,
-    seoTitle: 'Age Calculator – Exact Years, Months, Days & Next Birthday | smartcalc.net',
+    seoTitle: 'Age Calculator – Exact Years, Months, Days & Next Birthday | mysmartcalc.net',
     seoDescription: 'Calculate exact chronological age from date of birth to today or any target date, including leap years and next birthday countdown.',
     formulaText: 'Age = Target Date − Birth Date  (exact Gregorian calendar Y / M / D)',
     formulaVariables: [
@@ -50,7 +50,7 @@ export const DATE_TIME_CALCULATORS: CalculatorDef[] = [
     description: 'Find exact years, months, days, total weeks, and weekdays between any two calendar dates.',
     keywords: ['date calculator', 'date difference', 'duration between dates', 'years months days'],
     popular: true,
-    seoTitle: 'Date Difference Calculator – Years, Months & Days Between Dates | smartcalc.net',
+    seoTitle: 'Date Difference Calculator – Years, Months & Days Between Dates | mysmartcalc.net',
     seoDescription: 'Calculate the exact calendar span between two dates in years, months, days, total days, and workdays.',
     formulaText: 'Span = |End Date − Start Date|',
     formulaVariables: [
@@ -89,7 +89,7 @@ export const DATE_TIME_CALCULATORS: CalculatorDef[] = [
     shortName: 'Days Between',
     description: 'Count exact days, weeks, hours, and minutes separating any two dates.',
     keywords: ['days between dates', 'day counter', 'how many days'],
-    seoTitle: 'Days Between Dates Calculator – Exact Day & Week Counter | smartcalc.net',
+    seoTitle: 'Days Between Dates Calculator – Exact Day & Week Counter | mysmartcalc.net',
     seoDescription: 'Count the exact number of days, weeks, hours, and minutes between any two calendar dates.',
     formulaText: 'Days = (UTC_End − UTC_Start) ÷ 86,400,000 ms',
     formulaVariables: [
@@ -127,7 +127,7 @@ export const DATE_TIME_CALCULATORS: CalculatorDef[] = [
     shortName: 'Time Duration',
     description: 'Calculate exact elapsed hours, minutes, seconds, and decimal hours between two timestamps.',
     keywords: ['time duration', 'hours between times', 'elapsed time', 'timesheet'],
-    seoTitle: 'Time Duration Calculator – Elapsed Hours, Minutes & Decimal Hours | smartcalc.net',
+    seoTitle: 'Time Duration Calculator – Elapsed Hours, Minutes & Decimal Hours | mysmartcalc.net',
     seoDescription: 'Calculate elapsed days, hours, minutes, seconds, and decimal billing hours between any two dates and times.',
     formulaText: 'Elapsed = End Timestamp − Start Timestamp',
     formulaVariables: [
@@ -164,7 +164,7 @@ export const DATE_TIME_CALCULATORS: CalculatorDef[] = [
     shortName: 'Business Days',
     description: 'Count weekdays between two dates with automatic exclusion of weekends and US federal holidays.',
     keywords: ['business days', 'workdays', 'exclude holidays', 'weekends'],
-    seoTitle: 'Business Days Calculator – Workdays Excluding Weekends & Holidays | smartcalc.net',
+    seoTitle: 'Business Days Calculator – Workdays Excluding Weekends & Holidays | mysmartcalc.net',
     seoDescription: 'Count exact business days between two dates while automatically excluding Saturdays, Sundays, and observed US federal holidays.',
     formulaText: 'Business Days = Total Days − Weekend Days − Observed Holidays',
     formulaVariables: [
@@ -202,7 +202,7 @@ export const DATE_TIME_CALCULATORS: CalculatorDef[] = [
     shortName: 'Countdown',
     description: 'Live ticking countdown in days, hours, minutes, and seconds to any target event or deadline.',
     keywords: ['countdown', 'timer', 'days until', 'event countdown'],
-    seoTitle: 'Countdown Calculator – Live Days, Hours & Seconds Timer | smartcalc.net',
+    seoTitle: 'Countdown Calculator – Live Days, Hours & Seconds Timer | mysmartcalc.net',
     seoDescription: 'Create a live real-time countdown to any upcoming launch, wedding, vacation, or deadline.',
     formulaText: 'Remaining = Target Timestamp − Current Time',
     formulaVariables: [
@@ -239,7 +239,7 @@ export const DATE_TIME_CALCULATORS: CalculatorDef[] = [
     shortName: 'Working Days',
     description: 'Add or subtract a specific number of business days from any start date, skipping weekends and holidays.',
     keywords: ['working days', 'add business days', 'delivery date', 'deadline'],
-    seoTitle: 'Working Days Calculator – Add or Subtract Business Days | smartcalc.net',
+    seoTitle: 'Working Days Calculator – Add or Subtract Business Days | mysmartcalc.net',
     seoDescription: 'Find the exact target date after adding or subtracting working days while skipping weekends and federal holidays.',
     formulaText: 'Result Date = Start Date ± N Business Days',
     formulaVariables: [
@@ -277,7 +277,7 @@ export const DATE_TIME_CALCULATORS: CalculatorDef[] = [
     shortName: 'Date Add/Subtract',
     description: 'Add or subtract any combination of years, months, weeks, and days to or from a calendar date.',
     keywords: ['add days to date', 'subtract dates', 'date math', 'future date'],
-    seoTitle: 'Date Add/Subtract Calculator – Calendar Date Math | smartcalc.net',
+    seoTitle: 'Date Add/Subtract Calculator – Calendar Date Math | mysmartcalc.net',
     seoDescription: 'Add or subtract years, months, weeks, and days from any starting date with automatic leap-year handling.',
     formulaText: 'Target Date = Start Date ± (Years, Months, Weeks, Days)',
     formulaVariables: [
@@ -315,7 +315,7 @@ export const DATE_TIME_CALCULATORS: CalculatorDef[] = [
     shortName: 'Week Number',
     description: 'Find the ISO-8601 week number, ISO week-year, day of year, days remaining, and calendar quarter.',
     keywords: ['week number', 'iso week', 'day of year', 'quarter'],
-    seoTitle: 'Week Number Calculator – ISO-8601 Week & Day of Year | smartcalc.net',
+    seoTitle: 'Week Number Calculator – ISO-8601 Week & Day of Year | mysmartcalc.net',
     seoDescription: 'Look up the ISO-8601 week number (1–53), day of the year, days left in the year, and calendar quarter for any date.',
     formulaText: 'ISO Week 1 = Week containing Jan 4 (first Thursday of the year)',
     formulaVariables: [
@@ -353,7 +353,7 @@ export const DATE_TIME_CALCULATORS: CalculatorDef[] = [
     shortName: 'Time Zone',
     description: 'Convert dates and times across global IANA time zones with automatic Daylight Saving Time handling.',
     keywords: ['time zone converter', 'utc', 'est to pst', 'gmt', 'world clock'],
-    seoTitle: 'Time Zone Converter – DST-Aware Global Meeting Planner | smartcalc.net',
+    seoTitle: 'Time Zone Converter – DST-Aware Global Meeting Planner | mysmartcalc.net',
     seoDescription: 'Convert any date and time between global cities and IANA time zones with automatic Daylight Saving Time adjustments.',
     formulaText: 'Target Local Time = Instant(Source Date/Time, Source Zone) → Target Zone',
     formulaVariables: [

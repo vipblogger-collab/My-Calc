@@ -23,7 +23,7 @@ function makeUnitConverterDef(params: {
     description: params.description,
     keywords: params.keywords,
     popular: params.popular,
-    seoTitle: `${params.name} – Instant Accurate Unit Conversion | smartcalc.net`,
+    seoTitle: `${params.name} – Instant Accurate Unit Conversion | mysmartcalc.net`,
     seoDescription: `${params.description} Supports instant unit swapping and full reference table.`,
     formulaText: params.formulaText,
     formulaVariables: [
@@ -295,7 +295,7 @@ export const CONVERSION_CALCULATORS: CalculatorDef[] = [
     description: 'Convert 30+ world currencies using live exchange rates with transparent last-updated timestamps.',
     keywords: ['currency converter', 'exchange rate', 'usd to eur', 'forex'],
     popular: true,
-    seoTitle: 'Currency Converter – Live Exchange Rates & Multi-Currency Table | smartcalc.net',
+    seoTitle: 'Currency Converter – Live Exchange Rates & Multi-Currency Table | mysmartcalc.net',
     seoDescription: 'Convert USD, EUR, GBP, JPY, CAD, AUD, INR, and 30+ global currencies using live exchange rate data with last-updated timestamps.',
     formulaText: 'Target Amount = Source Amount × (Rate_Target / Rate_Base)',
     formulaVariables: [
