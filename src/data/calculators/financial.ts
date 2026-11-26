@@ -1117,4 +1117,70 @@ export const FINANCIAL_CALCULATORS: CalculatorDef[] = [
     ],
     relatedSlugs: ['savings-calculator', 'investment-calculator', 'net-worth-calculator'],
   },
+  {
+    id: 'vat-calculator',
+    slug: 'vat-calculator',
+    category: 'financial-calculators',
+    name: 'VAT Calculator (Value Added Tax)',
+    shortName: 'VAT Calculator',
+    popular: true,
+    recentlyAdded: true,
+    description:
+      'Add VAT, extract VAT from a gross total, or calculate monthly input/output VAT clearing with automatic standard VAT rates across all world countries, custom rate control, discounts, and 168 world currencies.',
+    keywords: [
+      'vat calculator',
+      'value added tax calculator',
+      'add vat',
+      'remove vat',
+      'extract vat',
+      'monthly vat settlement',
+      'saudi vat 15%',
+      'country vat rates',
+    ],
+    seoTitle: 'VAT Calculator (All World Countries & Custom Rate) | mysmartcalc.net',
+    seoDescription:
+      'Free online Value Added Tax (VAT) calculator supporting all world countries with automatic standard VAT rates, custom rate selection, add/extract modes, discounts, and monthly VAT clearing.',
+    formulaText:
+      'Add VAT: Gross = Net × (1 + r)  |  Extract VAT: Net = Gross ÷ (1 + r)  |  Monthly Clearing: Net VAT = Output VAT − Input VAT',
+    formulaVariables: [
+      { symbol: 'r', description: 'VAT / tax rate as a decimal (Rate % ÷ 100)' },
+      { symbol: 'Net', description: 'Pre-tax taxable base (after any optional discount)' },
+      { symbol: 'Gross', description: 'Total price inclusive of VAT' },
+    ],
+    steps: [
+      'Select your country from the complete world list to automatically apply its standard VAT rate and local currency.',
+      'Adjust the VAT / tax rate percentage directly or click a quick preset (0%, 5%, 10%, 14%, 15%, 16%, 19%, 20%).',
+      'Choose Add VAT, Extract VAT from Total, or Monthly VAT Clearing, enter your amounts, and review or export the breakdown.',
+    ],
+    example: {
+      title: 'Adding & Extracting 15% VAT in Saudi Arabia (SAR)',
+      inputsSummary: 'Country: Saudi Arabia (15% VAT) · Net Unit Price: 1,000 SAR · Quantity: 1',
+      calculation: 'Add VAT: 1,000 × 1.15 = 1,150.00 SAR (VAT = 150.00 SAR)  |  Extract VAT: 1,150 ÷ 1.15 = 1,000.00 SAR',
+      resultSummary: 'A net price of 1,000 SAR equals 1,150 SAR inclusive of 15% VAT (150 SAR tax).',
+    },
+    faqs: [
+      {
+        question: 'How do you extract VAT from a VAT-inclusive price?',
+        answer:
+          'Divide the VAT-inclusive total by (1 + VAT rate). For example, with a 15% VAT rate, divide 1,150 by 1.15 to recover the exact net amount of 1,000, leaving 150 as VAT.',
+      },
+      {
+        question: 'Can I select any country or customize the VAT rate?',
+        answer:
+          'Yes. Choosing any country from the searchable world country selector loads its standard national VAT/GST rate and currency automatically, and you can override the percentage at any time.',
+      },
+      {
+        question: 'What does Monthly VAT Clearing calculate?',
+        answer:
+          'Monthly VAT Clearing subtracts deductible Input VAT paid on business purchases from Output VAT collected on sales to determine whether net tax is payable to the tax authority or refundable as a credit.',
+      },
+    ],
+    educationalSections: [
+      {
+        heading: 'Add VAT, Reverse VAT Extraction & Monthly Tax Settlement',
+        body: 'Invoicing requires accurate forward addition (Net × (1 + r)), accounting requires reverse extraction from inclusive receipts (Gross ÷ (1 + r)), and periodic business tax returns rely on netting Output VAT collected against deductible Input VAT.',
+      },
+    ],
+    relatedSlugs: ['sales-tax-calculator', 'discount-calculator', 'roi-calculator'],
+  },
 ];

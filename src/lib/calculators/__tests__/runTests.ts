@@ -490,4 +490,74 @@ test('Financial: Zakat Calculator (Cash, Gold & Silver at 2.5%)', async () => {
   approx(aboveMetals.totalZakatDue, 327.5, 0.01);
 });
 
+test('Financial: VAT Calculator (World Country Rates, Add, Extract, Discount, Settlement)', async () => {
+  const { calculateVatLine, calculateVatSettlement, getCountryVatInfo } = await import('../vat.ts');
+
+  const sa = getCountryVatInfo('SA');
+  assert.equal(sa.standardVatRate, 15);
+  assert.equal(sa.currencyCode, 'SAR');
+  assert.equal(sa.hasVat, true);
+
+  const ae = getCountryVatInfo('AE');
+  assert.equal(ae.standardVatRate, 5);
+  assert.equal(ae.currencyCode, 'AED');
+
+  const kw = getCountryVatInfo('KW');
+  assert.equal(kw.standardVatRate, 0);
+  assert.equal(kw.hasVat, false);
+
+  const gb = getCountryVatInfo('GB');
+  assert.equal(gb.standardVatRate, 20);
+  assert.equal(gb.currencyCode, 'GBP');
+
+  // Add 15% VAT with quantity and percentage discount: 2 * 500 = 1000, 10% discount -> net 900 -> VAT 135 -> Total 1035
+  const added = calculateVatLine({
+    mode: 'add',
+    unitAmount: 500,
+    quantity: 2,
+    vatRatePercent: 15,
+    discountType: 'percent',
+    discountValue: 10,
+  });
+  approx(added.grossBeforeDiscount, 1000, 0.01);
+  approx(added.discountAmount, 100, 0.01);
+  approx(added.netAmount, 900, 0.01);
+  approx(added.vatAmount, 135, 0.01);
+  approx(added.totalAmount, 1035, 0.01);
+
+  // Extract 15% VAT from 1150 -> Net 1000, VAT 150
+  const extracted = calculateVatLine({
+    mode: 'extract',
+    unitAmount: 1150,
+    quantity: 1,
+    vatRatePercent: 15,
+  });
+  approx(extracted.netAmount, 1000, 0.01);
+  approx(extracted.vatAmount, 150, 0.01);
+  approx(extracted.totalAmount, 1150, 0.01);
+
+  // Monthly settlement (inclusive): Sales 11,500 (VAT 1,500), Purchases 5,750 (VAT 750) -> Net Payable 750
+  const settlePayable = calculateVatSettlement({
+    salesAmount: 11500,
+    purchasesAmount: 5750,
+    vatRatePercent: 15,
+    amountsIncludeVat: true,
+  });
+  approx(settlePayable.outputVat, 1500, 0.01);
+  approx(settlePayable.inputVat, 750, 0.01);
+  approx(settlePayable.netVatPayable, 750, 0.01);
+  assert.equal(settlePayable.isRefundDue, false);
+
+  // Monthly settlement refund case: Sales 2,300 (VAT 300), Purchases 5,750 (VAT 750) -> -450 refund
+  const settleRefund = calculateVatSettlement({
+    salesAmount: 2300,
+    purchasesAmount: 5750,
+    vatRatePercent: 15,
+    amountsIncludeVat: true,
+  });
+  approx(settleRefund.netVatPayable, -450, 0.01);
+  assert.equal(settleRefund.isRefundDue, true);
+});
+
+
 

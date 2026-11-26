@@ -7,6 +7,7 @@ import { DateTimeWidget } from './DateTimeWidgets.tsx';
 import { EverydayWidget } from './EverydayWidgets.tsx';
 import { ScienceWidget } from './ScienceWidgets.tsx';
 import { ZakatWidget } from './ZakatWidget.tsx';
+import { VatWidget } from './VatWidget.tsx';
 
 export function CalculatorWidgetRouter({
   slug,
@@ -18,6 +19,9 @@ export function CalculatorWidgetRouter({
   // Handle shared cross-category or dedicated modular slugs cleanly
   if (slug === 'zakat-calculator') {
     return <ZakatWidget />;
+  }
+  if (slug === 'vat-calculator') {
+    return <VatWidget />;
   }
   if (slug === 'tip-calculator' || slug === 'discount-calculator' || slug === 'grade-calculator') {
     return <EverydayWidget slug={slug} />;
