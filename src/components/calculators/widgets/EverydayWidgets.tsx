@@ -17,6 +17,7 @@ import {
 } from '../../../lib/calculators/everyday.ts';
 import {
   CalcSplitLayout,
+  CurrencySelector,
   ErrorAlert,
   FieldLabel,
   NumberInput,
@@ -24,8 +25,8 @@ import {
   SegmentedControl,
   SelectInput,
   StatTile,
-  fmtCurrency,
   fmtNum,
+  useCurrencyFormat,
 } from './FormPrimitives.tsx';
 import { ResultActions } from '../ResultActions.tsx';
 import { useAppContext } from '../../../context/AppContext.tsx';
@@ -35,6 +36,7 @@ const CHART_COLORS = ['#2563EB', '#0F172A', '#16A34A', '#D97706', '#0284C7', '#6
 export function EverydayWidget({ slug }: { slug: string }) {
   const { lang } = useAppContext();
   const isAr = lang === 'ar';
+  const { currencySymbol, fmtMoney } = useCurrencyFormat();
   // Tip & Split Bill
   const [bill, setBill] = useState('120');
   const [tipPct, setTipPct] = useState('18');
@@ -107,7 +109,8 @@ export function EverydayWidget({ slug }: { slug: string }) {
       <CalcSplitLayout
         inputs={
           <>
-            <NumberInput label="Bill Amount" prefix="$" value={bill} onChange={setBill} min={0} />
+            <CurrencySelector />
+            <NumberInput label="Bill Amount" prefix={currencySymbol} value={bill} onChange={setBill} min={0} />
             <div>
               <FieldLabel label="Tip Percentage" />
               <div className="flex gap-1.5 mb-2">
@@ -135,20 +138,20 @@ export function EverydayWidget({ slug }: { slug: string }) {
           <>
             <ResultHero
               label="Total Per Person"
-              value={fmtCurrency(res.totalPerPerson)}
+              value={fmtMoney(res.totalPerPerson)}
               subtext={
                 isAr
-                  ? `إجمالي الفاتورة: ${fmtCurrency(res.totalBill)} (الإكرامية: ${fmtCurrency(res.tipAmount)})`
-                  : `Total Bill: ${fmtCurrency(res.totalBill)} (Tip: ${fmtCurrency(res.tipAmount)})`
+                  ? `إجمالي الفاتورة: ${fmtMoney(res.totalBill)} (الإكرامية: ${fmtMoney(res.tipAmount)})`
+                  : `Total Bill: ${fmtMoney(res.totalBill)} (Tip: ${fmtMoney(res.tipAmount)})`
               }
             />
             <div className="grid grid-cols-3 gap-3">
-              <StatTile label="Tip Amount" value={fmtCurrency(res.tipAmount)} />
-              <StatTile label="Tip / Person" value={fmtCurrency(res.tipPerPerson)} />
-              <StatTile label="Total Bill" value={fmtCurrency(res.totalBill)} />
+              <StatTile label="Tip Amount" value={fmtMoney(res.tipAmount)} />
+              <StatTile label="Tip / Person" value={fmtMoney(res.tipPerPerson)} />
+              <StatTile label="Total Bill" value={fmtMoney(res.totalBill)} />
             </div>
             <ResultActions
-              copyText={`Bill: ${fmtCurrency(parseFloat(bill) || 0)} | Tip (${tipPct}%): ${fmtCurrency(res.tipAmount)} | Total: ${fmtCurrency(res.totalBill)} | Per Person: ${fmtCurrency(res.totalPerPerson)}`}
+              copyText={`Bill: ${fmtMoney(parseFloat(bill) || 0)} | Tip (${tipPct}%): ${fmtMoney(res.tipAmount)} | Total: ${fmtMoney(res.totalBill)} | Per Person: ${fmtMoney(res.totalPerPerson)}`}
               onReset={() => {
                 setBill('120');
                 setTipPct('18');
@@ -173,7 +176,8 @@ export function EverydayWidget({ slug }: { slug: string }) {
       <CalcSplitLayout
         inputs={
           <>
-            <NumberInput label="Pre-Tax Subtotal" prefix="$" value={bill} onChange={setBill} min={0} />
+            <CurrencySelector />
+            <NumberInput label="Pre-Tax Subtotal" prefix={currencySymbol} value={bill} onChange={setBill} min={0} />
             <NumberInput label="Sales Tax" suffix="%" value={taxPct} onChange={setTaxPct} min={0} />
             <NumberInput label="Tip Percentage" suffix="%" value={tipPct} onChange={setTipPct} min={0} />
             <SegmentedControl
@@ -192,20 +196,20 @@ export function EverydayWidget({ slug }: { slug: string }) {
           <>
             <ResultHero
               label="Each Person Owes"
-              value={fmtCurrency(res.perPersonTotal)}
+              value={fmtMoney(res.perPersonTotal)}
               subtext={
                 isAr
-                  ? `الإجمالي الكلي: ${fmtCurrency(res.total)} · الضريبة: ${fmtCurrency(res.tax)} · الإكرامية: ${fmtCurrency(res.tip)}`
-                  : `Grand Total: ${fmtCurrency(res.total)} · Tax: ${fmtCurrency(res.tax)} · Tip: ${fmtCurrency(res.tip)}`
+                  ? `الإجمالي الكلي: ${fmtMoney(res.total)} · الضريبة: ${fmtMoney(res.tax)} · الإكرامية: ${fmtMoney(res.tip)}`
+                  : `Grand Total: ${fmtMoney(res.total)} · Tax: ${fmtMoney(res.tax)} · Tip: ${fmtMoney(res.tip)}`
               }
             />
             <div className="grid grid-cols-3 gap-3">
-              <StatTile label="Tax Amount" value={fmtCurrency(res.tax)} />
-              <StatTile label="Total Tip" value={fmtCurrency(res.tip)} />
-              <StatTile label="Tip / Person" value={fmtCurrency(res.perPersonTip)} />
+              <StatTile label="Tax Amount" value={fmtMoney(res.tax)} />
+              <StatTile label="Total Tip" value={fmtMoney(res.tip)} />
+              <StatTile label="Tip / Person" value={fmtMoney(res.perPersonTip)} />
             </div>
             <ResultActions
-              copyText={`Subtotal: ${fmtCurrency(parseFloat(bill) || 0)} | Tax: ${fmtCurrency(res.tax)} | Tip: ${fmtCurrency(res.tip)} | Total: ${fmtCurrency(res.total)} | Per Person (${people}): ${fmtCurrency(res.perPersonTotal)}`}
+              copyText={`Subtotal: ${fmtMoney(parseFloat(bill) || 0)} | Tax: ${fmtMoney(res.tax)} | Tip: ${fmtMoney(res.tip)} | Total: ${fmtMoney(res.total)} | Per Person (${people}): ${fmtMoney(res.perPersonTotal)}`}
             />
           </>
         }
@@ -224,7 +228,8 @@ export function EverydayWidget({ slug }: { slug: string }) {
       <CalcSplitLayout
         inputs={
           <>
-            <NumberInput label="Original Price" prefix="$" value={origPrice} onChange={setOrigPrice} min={0} />
+            <CurrencySelector />
+            <NumberInput label="Original Price" prefix={currencySymbol} value={origPrice} onChange={setOrigPrice} min={0} />
             <NumberInput label="Primary Discount" suffix="%" value={disc1} onChange={setDisc1} min={0} max={100} />
             <NumberInput label="Extra Stacked Coupon (Optional)" suffix="%" value={disc2} onChange={setDisc2} min={0} max={100} />
             <NumberInput label="Sales Tax (Optional)" suffix="%" value={discTax} onChange={setDiscTax} min={0} />
@@ -234,21 +239,21 @@ export function EverydayWidget({ slug }: { slug: string }) {
           <>
             <ResultHero
               label="Final Checkout Price"
-              value={fmtCurrency(res.finalPrice)}
+              value={fmtMoney(res.finalPrice)}
               accent="green"
               subtext={
                 isAr
-                  ? `توفر ${fmtCurrency(res.totalSavings)} (خصم فعلي ${res.effectiveDiscountPercent.toFixed(1)}%)`
-                  : `You save ${fmtCurrency(res.totalSavings)} (${res.effectiveDiscountPercent.toFixed(1)}% off)`
+                  ? `توفر ${fmtMoney(res.totalSavings)} (خصم فعلي ${res.effectiveDiscountPercent.toFixed(1)}%)`
+                  : `You save ${fmtMoney(res.totalSavings)} (${res.effectiveDiscountPercent.toFixed(1)}% off)`
               }
             />
             <div className="grid grid-cols-3 gap-3">
-              <StatTile label="Sale Subtotal" value={fmtCurrency(res.subtotal)} />
-              <StatTile label="Total Savings" value={fmtCurrency(res.totalSavings)} />
-              <StatTile label="Sales Tax" value={fmtCurrency(res.taxAmount)} />
+              <StatTile label="Sale Subtotal" value={fmtMoney(res.subtotal)} />
+              <StatTile label="Total Savings" value={fmtMoney(res.totalSavings)} />
+              <StatTile label="Sales Tax" value={fmtMoney(res.taxAmount)} />
             </div>
             <ResultActions
-              copyText={`Original: ${fmtCurrency(parseFloat(origPrice) || 0)} | Final: ${fmtCurrency(res.finalPrice)} | Savings: ${fmtCurrency(res.totalSavings)} (${res.effectiveDiscountPercent.toFixed(1)}%)`}
+              copyText={`Original: ${fmtMoney(parseFloat(origPrice) || 0)} | Final: ${fmtMoney(res.finalPrice)} | Savings: ${fmtMoney(res.totalSavings)} (${res.effectiveDiscountPercent.toFixed(1)}%)`}
             />
           </>
         }
@@ -262,6 +267,7 @@ export function EverydayWidget({ slug }: { slug: string }) {
       <CalcSplitLayout
         inputs={
           <>
+            <CurrencySelector />
             <SegmentedControl
               label="Calculation Direction"
               value={taxMode}
@@ -273,7 +279,7 @@ export function EverydayWidget({ slug }: { slug: string }) {
             />
             <NumberInput
               label={taxMode === 'forward' ? 'Pre-Tax Price' : 'Tax-Inclusive Total'}
-              prefix="$"
+              prefix={currencySymbol}
               value={taxAmountIn}
               onChange={setTaxAmountIn}
               min={0}
@@ -285,16 +291,16 @@ export function EverydayWidget({ slug }: { slug: string }) {
           <>
             <ResultHero
               label={taxMode === 'forward' ? 'Total After Tax' : 'Extracted Pre-Tax Price'}
-              value={fmtCurrency(taxMode === 'forward' ? res.totalPrice : res.preTaxPrice)}
-              subtext={`${isAr ? 'قيمة ضريبة المبيعات:' : 'Sales tax amount:'} ${fmtCurrency(res.taxAmount)}`}
+              value={fmtMoney(taxMode === 'forward' ? res.totalPrice : res.preTaxPrice)}
+              subtext={`${isAr ? 'قيمة ضريبة المبيعات:' : 'Sales tax amount:'} ${fmtMoney(res.taxAmount)}`}
             />
             <div className="grid grid-cols-3 gap-3">
-              <StatTile label="Pre-Tax Net" value={fmtCurrency(res.preTaxPrice)} />
-              <StatTile label="Tax Amount" value={fmtCurrency(res.taxAmount)} />
-              <StatTile label="Gross Total" value={fmtCurrency(res.totalPrice)} />
+              <StatTile label="Pre-Tax Net" value={fmtMoney(res.preTaxPrice)} />
+              <StatTile label="Tax Amount" value={fmtMoney(res.taxAmount)} />
+              <StatTile label="Gross Total" value={fmtMoney(res.totalPrice)} />
             </div>
             <ResultActions
-              copyText={`Pre-Tax: ${fmtCurrency(res.preTaxPrice)} | Tax (${salesTaxRate}%): ${fmtCurrency(res.taxAmount)} | Total: ${fmtCurrency(res.totalPrice)}`}
+              copyText={`Pre-Tax: ${fmtMoney(res.preTaxPrice)} | Tax (${salesTaxRate}%): ${fmtMoney(res.taxAmount)} | Total: ${fmtMoney(res.totalPrice)}`}
             />
           </>
         }
@@ -312,6 +318,7 @@ export function EverydayWidget({ slug }: { slug: string }) {
       <CalcSplitLayout
         inputs={
           <>
+            <CurrencySelector />
             <div>
               <FieldLabel label="Common Appliance Presets" />
               <div className="flex flex-wrap gap-1.5">
@@ -334,27 +341,27 @@ export function EverydayWidget({ slug }: { slug: string }) {
             </div>
             <NumberInput label="Power Consumption" suffix="W" value={watts} onChange={setWatts} min={0} />
             <NumberInput label="Usage per Day" suffix="hrs" value={hoursDay} onChange={setHoursDay} min={0} max={24} />
-            <NumberInput label="Electricity Rate" prefix="$" suffix="/kWh" value={kwhRate} onChange={setKwhRate} min={0} step="0.01" />
+            <NumberInput label="Electricity Rate" prefix={currencySymbol} suffix="/kWh" value={kwhRate} onChange={setKwhRate} min={0} step="0.01" />
           </>
         }
         results={
           <>
             <ResultHero
               label="Estimated Monthly Electricity Cost (30 Days)"
-              value={fmtCurrency(res.costPerMonth)}
+              value={fmtMoney(res.costPerMonth)}
               subtext={
                 isAr
-                  ? `${fmtNum(res.kwhPerMonth, 2)} كيلوواط ساعة/شهر · ${fmtCurrency(res.costPerYear)} سنوياً`
-                  : `${fmtNum(res.kwhPerMonth, 2)} kWh/month · ${fmtCurrency(res.costPerYear)} per year`
+                  ? `${fmtNum(res.kwhPerMonth, 2)} كيلوواط ساعة/شهر · ${fmtMoney(res.costPerYear)} سنوياً`
+                  : `${fmtNum(res.kwhPerMonth, 2)} kWh/month · ${fmtMoney(res.costPerYear)} per year`
               }
             />
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               <StatTile label="Daily Usage" value={`${fmtNum(res.kwhPerDay, 2)} kWh`} />
-              <StatTile label="Daily Cost" value={fmtCurrency(res.costPerDay)} />
+              <StatTile label="Daily Cost" value={fmtMoney(res.costPerDay)} />
               <StatTile label="Annual Usage" value={`${fmtNum(res.kwhPerYear, 1)} kWh`} />
             </div>
             <ResultActions
-              copyText={`Electricity Cost (${watts}W, ${hoursDay}h/day @ $${kwhRate}/kWh): ${fmtCurrency(res.costPerDay)}/day, ${fmtCurrency(res.costPerMonth)}/mo, ${fmtCurrency(res.costPerYear)}/yr`}
+              copyText={`Electricity Cost (${watts}W, ${hoursDay}h/day @ ${currencySymbol}${kwhRate}/kWh): ${fmtMoney(res.costPerDay)}/day, ${fmtMoney(res.costPerMonth)}/mo, ${fmtMoney(res.costPerYear)}/yr`}
             />
           </>
         }
@@ -373,9 +380,10 @@ export function EverydayWidget({ slug }: { slug: string }) {
       <CalcSplitLayout
         inputs={
           <>
+            <CurrencySelector />
             <NumberInput label="One-Way Trip Distance" suffix="mi / km" value={tripDist} onChange={setTripDist} min={0} />
             <NumberInput label="Fuel Efficiency" suffix="MPG / km·L⁻¹" value={fuelEff} onChange={setFuelEff} min={0.1} />
-            <NumberInput label="Fuel Price" prefix="$" suffix="/ unit" value={fuelPrice} onChange={setFuelPrice} min={0} step="0.01" />
+            <NumberInput label="Fuel Price" prefix={currencySymbol} suffix="/ unit" value={fuelPrice} onChange={setFuelPrice} min={0} step="0.01" />
             <label className="flex items-center gap-2 text-sm text-[#1E293B]">
               <input
                 type="checkbox"
@@ -390,7 +398,7 @@ export function EverydayWidget({ slug }: { slug: string }) {
           <>
             <ResultHero
               label="Estimated Trip Fuel Cost"
-              value={fmtCurrency(res.totalCost)}
+              value={fmtMoney(res.totalCost)}
               subtext={
                 isAr
                   ? `يتطلب ${fmtNum(res.fuelNeeded, 2)} غالون/لتر لمسافة ${fmtNum(res.effectiveDistance, 1)} وحدة مسافة`
@@ -399,10 +407,10 @@ export function EverydayWidget({ slug }: { slug: string }) {
             />
             <div className="grid grid-cols-2 gap-3">
               <StatTile label="Fuel Volume Needed" value={fmtNum(res.fuelNeeded, 2)} />
-              <StatTile label="Fuel Cost per Distance Unit" value={fmtCurrency(res.costPerDistanceUnit, 3)} />
+              <StatTile label="Fuel Cost per Distance Unit" value={fmtMoney(res.costPerDistanceUnit, 3)} />
             </div>
             <ResultActions
-              copyText={`Trip Fuel Cost: ${fmtCurrency(res.totalCost)} (${fmtNum(res.fuelNeeded, 2)} units for ${res.effectiveDistance} distance)`}
+              copyText={`Trip Fuel Cost: ${fmtMoney(res.totalCost)} (${fmtNum(res.fuelNeeded, 2)} units for ${res.effectiveDistance} distance)`}
             />
           </>
         }
@@ -666,7 +674,8 @@ export function EverydayWidget({ slug }: { slug: string }) {
       <CalcSplitLayout
         inputs={
           <>
-            <NumberInput label="Total Wedding Budget" prefix="$" value={weddingTotal} onChange={setWeddingTotal} min={0} />
+            <CurrencySelector />
+            <NumberInput label="Total Wedding Budget" prefix={currencySymbol} value={weddingTotal} onChange={setWeddingTotal} min={0} />
             <NumberInput label="Estimated Guest Count" value={weddingGuests} onChange={setWeddingGuests} min={1} step={1} />
             <div className="space-y-2 pt-2">
               <div className="flex justify-between text-xs">
@@ -705,11 +714,11 @@ export function EverydayWidget({ slug }: { slug: string }) {
           <>
             <ResultHero
               label="Cost Per Guest"
-              value={fmtCurrency(budget / guests)}
+              value={fmtMoney(budget / guests)}
               subtext={
                 isAr
-                  ? `إجمالي الميزانية: ${fmtCurrency(budget)} لعدد ${guests} ضيفاً`
-                  : `Total Budget: ${fmtCurrency(budget)} across ${guests} guests`
+                  ? `إجمالي الميزانية: ${fmtMoney(budget)} لعدد ${guests} ضيفاً`
+                  : `Total Budget: ${fmtMoney(budget)} across ${guests} guests`
               }
             />
             <div className="h-56 w-full">
@@ -720,7 +729,7 @@ export function EverydayWidget({ slug }: { slug: string }) {
                       <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(v) => fmtCurrency(Number(v))} />
+                  <Tooltip formatter={(v) => fmtMoney(Number(v))} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -735,13 +744,13 @@ export function EverydayWidget({ slug }: { slug: string }) {
                     {r.name} ({r.pct}%)
                   </span>
                   <span className="font-mono-tabular font-semibold text-[#0F172A]">
-                    {fmtCurrency(r.amount)}
+                    {fmtMoney(r.amount)}
                   </span>
                 </div>
               ))}
             </div>
             <ResultActions
-              copyText={`Wedding Budget ${fmtCurrency(budget)} (${guests} guests, ${fmtCurrency(budget / guests)}/guest)`}
+              copyText={`Wedding Budget ${fmtMoney(budget)} (${guests} guests, ${fmtMoney(budget / guests)}/guest)`}
             />
           </>
         }
@@ -762,6 +771,7 @@ export function EverydayWidget({ slug }: { slug: string }) {
     <CalcSplitLayout
       inputs={
         <>
+          <CurrencySelector />
           <SelectInput
             label="Home Size"
             value={moveSize}
@@ -796,17 +806,17 @@ export function EverydayWidget({ slug }: { slug: string }) {
         <>
           <ResultHero
             label="Estimated Moving Cost Range"
-            value={`${fmtCurrency(resMove.estimatedLow, 0)} – ${fmtCurrency(resMove.estimatedHigh, 0)}`}
-            subtext={`${isAr ? 'متوسط التقدير:' : 'Midpoint estimate:'} ${fmtCurrency(resMove.estimatedMid, 0)}`}
+            value={`${fmtMoney(resMove.estimatedLow, 0)} – ${fmtMoney(resMove.estimatedHigh, 0)}`}
+            subtext={`${isAr ? 'متوسط التقدير:' : 'Midpoint estimate:'} ${fmtMoney(resMove.estimatedMid, 0)}`}
           />
           <div className="grid grid-cols-2 gap-3">
-            <StatTile label="Base Labor / Truck" value={fmtCurrency(resMove.baseLabor, 0)} />
-            <StatTile label="Distance Charge" value={fmtCurrency(resMove.distanceCost, 0)} />
-            <StatTile label="Packing Services" value={fmtCurrency(resMove.packingCost, 0)} />
-            <StatTile label="Specialty Handling" value={fmtCurrency(resMove.specialtyCost, 0)} />
+            <StatTile label="Base Labor / Truck" value={fmtMoney(resMove.baseLabor, 0)} />
+            <StatTile label="Distance Charge" value={fmtMoney(resMove.distanceCost, 0)} />
+            <StatTile label="Packing Services" value={fmtMoney(resMove.packingCost, 0)} />
+            <StatTile label="Specialty Handling" value={fmtMoney(resMove.specialtyCost, 0)} />
           </div>
           <ResultActions
-            copyText={`Moving Estimate (${moveSize}, ${moveDistance} mi, ${moveTier}): ${fmtCurrency(resMove.estimatedLow, 0)} - ${fmtCurrency(resMove.estimatedHigh, 0)}`}
+            copyText={`Moving Estimate (${moveSize}, ${moveDistance} mi, ${moveTier}): ${fmtMoney(resMove.estimatedLow, 0)} - ${fmtMoney(resMove.estimatedHigh, 0)}`}
           />
         </>
       }

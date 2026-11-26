@@ -25,6 +25,7 @@ const DEFAULT_AD_CONFIG: AdConfig = {
 
 const STORAGE_KEYS = {
   lang: 'calcaxis_lang_v1',
+  currency: 'calcaxis_currency_v1',
   bookmarks: 'calcaxis_bookmarks_v1',
   recent: 'calcaxis_recent_v1',
   adConfig: 'calcaxis_ad_config_v1',
@@ -36,6 +37,8 @@ interface AppContextValue {
   lang: Language;
   setLang: (next: Language) => void;
   toggleLang: () => void;
+  currencyCode: string;
+  setCurrencyCode: (next: string) => void;
   l: (path: string) => string;
   ui: (typeof UI_COPY)[Language];
   categories: CategoryDef[];
@@ -81,8 +84,19 @@ function getInitialLang(): Language {
   return 'en';
 }
 
+function getInitialCurrency(): string {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEYS.currency);
+    if (saved && /^[A-Z]{3}$/.test(saved)) return saved;
+  } catch {
+    // ignore storage errors
+  }
+  return 'USD';
+}
+
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLang] = useState<Language>(getInitialLang);
+  const [currencyCode, setCurrencyCodeState] = useState<string>(getInitialCurrency);
   const [bookmarks, setBookmarks] = useState<string[]>(() =>
     safeLoad<string[]>(STORAGE_KEYS.bookmarks, [])
   );
@@ -108,6 +122,21 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       // ignore
     }
   }, [lang]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.currency, currencyCode);
+    } catch {
+      // ignore
+    }
+  }, [currencyCode]);
+
+  const setCurrencyCode = (next: string) => {
+    const upper = next.trim().toUpperCase();
+    if (/^[A-Z]{3}$/.test(upper)) {
+      setCurrencyCodeState(upper);
+    }
+  };
 
   useEffect(() => {
     try {
@@ -216,6 +245,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         lang,
         setLang,
         toggleLang,
+        currencyCode,
+        setCurrencyCode,
         l,
         ui,
         categories,

@@ -40,7 +40,17 @@ import {
   convertLinearUnit,
   convertTemperature,
   convertFuelEconomy,
+  convertCurrencyAmount,
 } from '../conversion.ts';
+import {
+  ACTIVE_WORLD_CURRENCY_CODES,
+  buildCurrencyCatalog,
+  formatCompactMoneyAxis,
+  formatConvertedCurrency,
+  formatMoney,
+  getCurrencyName,
+  getCurrencySymbol,
+} from '../currencies.ts';
 import {
   calculateAge,
   calculateBusinessDays,
@@ -221,6 +231,39 @@ test('Conversion: Length, Weight, Temperature, Fuel Economy inverse', () => {
   approx(convertTemperature(0, 'C', 'K'), 273.15, 0.001);
   approx(convertFuelEconomy(10, 'l100km', 'kml'), 10, 0.001);
   approx(convertFuelEconomy(5, 'l100km', 'kml'), 20, 0.001);
+
+  assert.ok(ACTIVE_WORLD_CURRENCY_CODES.size >= 165);
+  assert.ok(ACTIVE_WORLD_CURRENCY_CODES.has('KWD'));
+  assert.ok(ACTIVE_WORLD_CURRENCY_CODES.has('SAR'));
+  assert.ok(ACTIVE_WORLD_CURRENCY_CODES.has('KPW'));
+  assert.ok(ACTIVE_WORLD_CURRENCY_CODES.has('XCG'));
+
+  const catalogEn = buildCurrencyCatalog(Array.from(ACTIVE_WORLD_CURRENCY_CODES), 'en');
+  const catalogAr = buildCurrencyCatalog(Array.from(ACTIVE_WORLD_CURRENCY_CODES), 'ar');
+  assert.equal(catalogEn.length, ACTIVE_WORLD_CURRENCY_CODES.size);
+  assert.equal(catalogAr.length, ACTIVE_WORLD_CURRENCY_CODES.size);
+  assert.ok(getCurrencyName('KWD', 'ar').includes('كويتي'));
+  assert.ok(getCurrencyName('JPY', 'en').toLowerCase().includes('yen'));
+
+  const fx = convertCurrencyAmount(100, 'SAR', 'KWD', { USD: 1, SAR: 3.75, KWD: 0.31 });
+  approx(fx.converted, 100 * (0.31 / 3.75), 0.001);
+  assert.equal(formatConvertedCurrency(12.345, 'KWD'), '12.345');
+  assert.equal(formatConvertedCurrency(0.000123, 'USD'), '0.000123');
+
+  assert.equal(getCurrencySymbol('USD'), '$');
+  assert.equal(getCurrencySymbol('EUR'), '€');
+  assert.equal(getCurrencySymbol('GBP'), '£');
+  assert.equal(getCurrencySymbol('CAD'), 'C$');
+  assert.equal(getCurrencySymbol('KWD'), 'KWD');
+
+  assert.equal(formatMoney(1234.5, 'USD'), '$1,234.50');
+  assert.equal(formatMoney(1234.5, 'KWD'), 'KWD\u00a01,234.500');
+  assert.equal(formatMoney(1234.5, 'JPY'), '¥1,235');
+  assert.equal(formatMoney(1234.567, 'EUR', 2), '€1,234.57');
+
+  assert.equal(formatCompactMoneyAxis(250000, 'USD'), '$250k');
+  assert.equal(formatCompactMoneyAxis(1500000, 'EUR'), '€1.5M');
+  assert.equal(formatCompactMoneyAxis(50000, 'KWD'), '50k KWD');
 });
 
 test('Date & Time: Leap years, Age, Business days, ISO weeks', () => {

@@ -465,6 +465,7 @@ const WIDGET_AR_MAP: Record<string, string> = {
   'Implied Annual Interest Rate (APR)': 'معدل الفائدة السنوي الضمني',
   'Annual Inflation Rate': 'معدل التضخم السنوي',
   "Amount in Today's Dollars": 'القيمة بقوة الشراء الحالية',
+  "Amount in Today's Value": 'القيمة بقوة الشراء الحالية',
   'Pay Amount': 'قيمة الراتب',
   'Pay Frequency': 'دورية الراتب',
   'Hours / Week': 'ساعات / أسبوع',

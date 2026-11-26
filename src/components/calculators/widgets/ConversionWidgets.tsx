@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowLeftRight, RefreshCw } from 'lucide-react';
+import { ArrowLeftRight, Globe, RefreshCw } from 'lucide-react';
 import {
   UNIT_SPECS,
   convertLinearUnit,
@@ -10,49 +10,26 @@ import {
   FuelUnit,
 } from '../../../lib/calculators/conversion.ts';
 import {
+  ACTIVE_WORLD_CURRENCY_CODES,
+  CurrencyOptionItem,
+  POPULAR_CURRENCIES_AR,
+  POPULAR_CURRENCIES_EN,
+  buildCurrencyCatalog,
+  formatConvertedCurrency,
+  formatFxSpotRate,
+} from '../../../lib/calculators/currencies.ts';
+import {
   CalcSplitLayout,
   ErrorAlert,
   NumberInput,
   ResultHero,
+  SearchableCurrencySelect,
   SelectInput,
   StatTile,
   fmtNum,
 } from './FormPrimitives.tsx';
 import { ResultActions } from '../ResultActions.tsx';
 import { useAppContext } from '../../../context/AppContext.tsx';
-
-const CURRENCY_OPTIONS = [
-  { value: 'USD', label: 'USD – US Dollar ($)' },
-  { value: 'EUR', label: 'EUR – Euro (€)' },
-  { value: 'GBP', label: 'GBP – British Pound (£)' },
-  { value: 'JPY', label: 'JPY – Japanese Yen (¥)' },
-  { value: 'CAD', label: 'CAD – Canadian Dollar (C$)' },
-  { value: 'AUD', label: 'AUD – Australian Dollar (A$)' },
-  { value: 'CHF', label: 'CHF – Swiss Franc' },
-  { value: 'CNY', label: 'CNY – Chinese Yuan (¥)' },
-  { value: 'INR', label: 'INR – Indian Rupee (₹)' },
-  { value: 'MXN', label: 'MXN – Mexican Peso' },
-  { value: 'BRL', label: 'BRL – Brazilian Real (R$)' },
-  { value: 'SGD', label: 'SGD – Singapore Dollar' },
-  { value: 'HKD', label: 'HKD – Hong Kong Dollar' },
-  { value: 'NZD', label: 'NZD – New Zealand Dollar' },
-  { value: 'KRW', label: 'KRW – South Korean Won (₩)' },
-  { value: 'SEK', label: 'SEK – Swedish Krona' },
-  { value: 'NOK', label: 'NOK – Norwegian Krone' },
-  { value: 'DKK', label: 'DKK – Danish Krone' },
-  { value: 'PLN', label: 'PLN – Polish Zloty' },
-  { value: 'TRY', label: 'TRY – Turkish Lira' },
-  { value: 'ZAR', label: 'ZAR – South African Rand' },
-  { value: 'AED', label: 'AED – UAE Dirham' },
-  { value: 'SAR', label: 'SAR – Saudi Riyal' },
-  { value: 'THB', label: 'THB – Thai Baht' },
-  { value: 'IDR', label: 'IDR – Indonesian Rupiah' },
-  { value: 'MYR', label: 'MYR – Malaysian Ringgit' },
-  { value: 'PHP', label: 'PHP – Philippine Peso' },
-  { value: 'VND', label: 'VND – Vietnamese Dong' },
-  { value: 'ILS', label: 'ILS – Israeli Shekel' },
-  { value: 'CZK', label: 'CZK – Czech Koruna' },
-];
 
 function CurrencyConverterWidget() {
   const { lang } = useAppContext();
@@ -66,18 +43,19 @@ function CurrencyConverterWidget() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchRates = async () => {
+  const fetchRates = async (forceRefresh = false) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/exchange-rates');
+      const endpoint = forceRefresh ? '/api/exchange-rates?refresh=1' : '/api/exchange-rates';
+      const res = await fetch(endpoint);
       const data = await res.json();
       if (!res.ok || !data.rates) {
         throw new Error(data.error || 'Exchange rate service unavailable.');
       }
       setRates(data.rates);
       setLastUpdated(data.lastUpdatedUtc || '');
-      setProvider(data.provider || 'Live FX Feed');
+      setProvider(data.provider || 'Live Global FX Feed');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load live exchange rates.');
     } finally {
@@ -86,8 +64,26 @@ function CurrencyConverterWidget() {
   };
 
   useEffect(() => {
-    fetchRates();
+    fetchRates(false);
   }, []);
+
+  const availableCodes = useMemo(() => {
+    if (!rates) return Array.from(ACTIVE_WORLD_CURRENCY_CODES);
+    return Object.keys(rates);
+  }, [rates]);
+
+  const currencyCatalog = useMemo(
+    () => buildCurrencyCatalog(availableCodes, lang),
+    [availableCodes, lang]
+  );
+
+  const currencyNameMap = useMemo(() => {
+    const map = new Map<string, CurrencyOptionItem>();
+    for (const item of currencyCatalog) {
+      map.set(item.code, item);
+    }
+    return map;
+  }, [currencyCatalog]);
 
   const numericAmt = parseFloat(amount);
   const validAmt = Number.isFinite(numericAmt) && numericAmt >= 0;
@@ -106,9 +102,15 @@ function CurrencyConverterWidget() {
     setToCur(fromCur);
   };
 
-  const quickTargets = ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD', 'INR', 'CHF'].filter(
-    (c) => c !== fromCur
-  );
+  const quickTargets = useMemo(() => {
+    const baseList = isAr ? POPULAR_CURRENCIES_AR : POPULAR_CURRENCIES_EN;
+    return baseList
+      .filter((c) => c !== fromCur && (!rates || Boolean(rates[c])))
+      .slice(0, 9);
+  }, [isAr, fromCur, rates]);
+
+  const fromMeta = currencyNameMap.get(fromCur);
+  const toMeta = currencyNameMap.get(toCur);
 
   return (
     <CalcSplitLayout
@@ -122,11 +124,13 @@ function CurrencyConverterWidget() {
             placeholder="1000"
           />
           <div className="space-y-3">
-            <SelectInput
+            <SearchableCurrencySelect
+              id="currency-from-select"
               label="From Currency"
               value={fromCur}
               onChange={setFromCur}
-              options={CURRENCY_OPTIONS}
+              catalog={currencyCatalog}
+              isAr={isAr}
             />
             <div className="flex justify-center">
               <button
@@ -138,32 +142,42 @@ function CurrencyConverterWidget() {
                 <span>{isAr ? 'تبديل العملات' : 'Swap Currencies'}</span>
               </button>
             </div>
-            <SelectInput
+            <SearchableCurrencySelect
+              id="currency-to-select"
               label="To Currency"
               value={toCur}
               onChange={setToCur}
-              options={CURRENCY_OPTIONS}
+              catalog={currencyCatalog}
+              isAr={isAr}
             />
           </div>
-          <div className="pt-2 flex items-center justify-between text-xs text-[#64748B]">
-            <span>
+          <div className="pt-2 space-y-1.5 text-xs text-[#64748B]">
+            <div className="flex items-center justify-between gap-2">
+              <span className="inline-flex items-center gap-1.5 font-medium text-[#0F172A]">
+                <Globe className="w-3.5 h-3.5 text-[#2563EB]" />
+                {isAr
+                  ? `${currencyCatalog.length} عملة عالمية متاحة`
+                  : `${currencyCatalog.length} World Currencies Supported`}
+              </span>
+              <button
+                type="button"
+                onClick={() => fetchRates(true)}
+                disabled={loading}
+                className="inline-flex items-center gap-1 text-[#2563EB] hover:underline disabled:opacity-50 font-medium"
+              >
+                <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
+                <span>{isAr ? 'تحديث السعر' : 'Refresh'}</span>
+              </button>
+            </div>
+            <p className="text-[11px] text-[#64748B]">
               {provider
                 ? isAr
-                  ? `المصدر: ${provider}`
-                  : `Source: ${provider}`
+                  ? `المصدر العالمي: ${provider}`
+                  : `Global source: ${provider}`
                 : isAr
-                ? 'جارٍ جلب أسعار الصرف المباشرة...'
-                : 'Fetching live market rates...'}
-            </span>
-            <button
-              type="button"
-              onClick={fetchRates}
-              disabled={loading}
-              className="inline-flex items-center gap-1 text-[#2563EB] hover:underline disabled:opacity-50"
-            >
-              <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
-              <span>{isAr ? 'تحديث' : 'Refresh'}</span>
-            </button>
+                ? 'جارٍ جلب أسعار الصرف العالمية المباشرة...'
+                : 'Fetching live global market rates...'}
+            </p>
           </div>
         </>
       }
@@ -182,18 +196,26 @@ function CurrencyConverterWidget() {
           {conversion && (
             <>
               <ResultHero
-                label={`${fmtNum(numericAmt, 2)} ${fromCur} equals`}
-                value={`${fmtNum(conversion.converted, 2)} ${toCur}`}
-                subtext={lastUpdated ? `${isAr ? 'آخر تحديث:' : 'Last updated:'} ${lastUpdated}` : undefined}
+                label={
+                  isAr
+                    ? `${fmtNum(numericAmt, 2)} ${fromMeta?.name || fromCur} (${fromCur}) يساوي`
+                    : `${fmtNum(numericAmt, 2)} ${fromMeta?.name || fromCur} (${fromCur}) equals`
+                }
+                value={`${formatConvertedCurrency(conversion.converted, toCur)} ${toCur}`}
+                subtext={
+                  lastUpdated
+                    ? `${toMeta?.name || toCur} · ${isAr ? 'آخر تحديث عالمي:' : 'Last global update:'} ${lastUpdated}`
+                    : toMeta?.name
+                }
               />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <StatTile
                   label={`1 ${fromCur} to ${toCur}`}
-                  value={`${conversion.directRate.toFixed(6)} ${toCur}`}
+                  value={`${formatFxSpotRate(conversion.directRate)} ${toCur}`}
                 />
                 <StatTile
                   label={`1 ${toCur} to ${fromCur}`}
-                  value={`${conversion.inverseRate.toFixed(6)} ${fromCur}`}
+                  value={`${formatFxSpotRate(conversion.inverseRate)} ${fromCur}`}
                 />
               </div>
 
@@ -201,22 +223,31 @@ function CurrencyConverterWidget() {
                 <div className="pt-2">
                   <h4 className="text-xs font-semibold text-[#64748B] mb-2">
                     {isAr
-                      ? `المكافئ بالعملات الرئيسية لـ ${fmtNum(numericAmt, 2)} ${fromCur}`
-                      : `Major Currency Equivalents for ${fmtNum(numericAmt, 2)} ${fromCur}`}
+                      ? `المكافئ الفوري لـ ${fmtNum(numericAmt, 2)} ${fromCur} (انقر للاختيار)`
+                      : `Quick Global Equivalents for ${fmtNum(numericAmt, 2)} ${fromCur} (click to select)`}
                   </h4>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {quickTargets.slice(0, 6).map((code) => {
+                    {quickTargets.map((code) => {
                       const res = convertCurrencyAmount(numericAmt, fromCur, code, rates);
+                      const isSelected = code === toCur;
+                      const meta = currencyNameMap.get(code);
                       return (
-                        <div
+                        <button
                           key={code}
-                          className="rounded-lg border border-[#E2E8F0] px-3 py-2 flex items-center justify-between text-xs"
+                          type="button"
+                          onClick={() => setToCur(code)}
+                          title={meta?.name || code}
+                          className={`rounded-lg border px-3 py-2 flex items-center justify-between text-xs transition-colors ${
+                            isSelected
+                              ? 'border-[#2563EB] bg-[#EFF6FF]'
+                              : 'border-[#E2E8F0] hover:border-[#CBD5E1] hover:bg-[#F8FAFC]'
+                          }`}
                         >
                           <span className="font-semibold text-[#475569]">{code}</span>
-                          <span className="font-mono-tabular text-[#0F172A]">
-                            {fmtNum(res.converted, 2)}
+                          <span className="font-mono-tabular text-[#0F172A]" dir="ltr">
+                            {formatConvertedCurrency(res.converted, code)}
                           </span>
-                        </div>
+                        </button>
                       );
                     })}
                   </div>
@@ -224,7 +255,7 @@ function CurrencyConverterWidget() {
               )}
 
               <ResultActions
-                copyText={`${numericAmt} ${fromCur} = ${conversion.converted.toFixed(2)} ${toCur} (1 ${fromCur} = ${conversion.directRate.toFixed(6)} ${toCur}, updated ${lastUpdated})`}
+                copyText={`${numericAmt} ${fromCur} = ${formatConvertedCurrency(conversion.converted, toCur)} ${toCur} (1 ${fromCur} = ${formatFxSpotRate(conversion.directRate)} ${toCur}, updated ${lastUpdated})`}
                 onReset={() => {
                   setAmount('1000');
                   setFromCur('USD');

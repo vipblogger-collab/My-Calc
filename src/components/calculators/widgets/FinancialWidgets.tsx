@@ -45,14 +45,15 @@ import {
 } from '../../../lib/calculators/financial.ts';
 import {
   CalcSplitLayout,
+  CurrencySelector,
   ErrorAlert,
   NumberInput,
   ResultHero,
   SegmentedControl,
   SelectInput,
   StatTile,
-  fmtCurrency,
   fmtNum,
+  useCurrencyFormat,
 } from './FormPrimitives.tsx';
 import { ResultActions } from '../ResultActions.tsx';
 import { useAppContext } from '../../../context/AppContext.tsx';
@@ -60,6 +61,7 @@ import { useAppContext } from '../../../context/AppContext.tsx';
 export function FinancialWidget({ slug }: { slug: string }) {
   const { lang } = useAppContext();
   const isAr = lang === 'ar';
+  const { currencySymbol, fmtMoney, fmtCompactAxis } = useCurrencyFormat();
   // Mortgage
   const [homePrice, setHomePrice] = useState('420000');
   const [downPayment, setDownPayment] = useState('20');
@@ -180,7 +182,7 @@ export function FinancialWidget({ slug }: { slug: string }) {
   // End-of-Service Gratuity (Kuwait / UAE / Saudi Arabia)
   const [eosJurisdiction, setEosJurisdiction] = useState<EndOfServiceJurisdiction>('kuwait');
   const [eosReason, setEosReason] = useState<EndOfServiceReason>('resignation');
-  const [eosCurrency, setEosCurrency] = useState<'KWD' | 'AED' | 'SAR' | 'USD'>('KWD');
+  const [eosCurrency, setEosCurrency] = useState<string>('KWD');
   const [eosSalary, setEosSalary] = useState('1000');
   const [eosYears, setEosYears] = useState('6');
   const [eosMonths, setEosMonths] = useState('0');
@@ -221,7 +223,8 @@ export function FinancialWidget({ slug }: { slug: string }) {
       <CalcSplitLayout
         inputs={
           <>
-            <NumberInput label="Home Price" prefix="$" value={homePrice} onChange={setHomePrice} min={0} />
+            <CurrencySelector />
+            <NumberInput label="Home Price" prefix={currencySymbol} value={homePrice} onChange={setHomePrice} min={0} />
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-sm font-medium text-[#1E293B]">
@@ -240,7 +243,7 @@ export function FinancialWidget({ slug }: { slug: string }) {
                     onClick={() => setDownMode('usd')}
                     className={`px-2 py-0.5 ${downMode === 'usd' ? 'bg-[#2563EB] text-white' : 'bg-white text-[#64748B]'}`}
                   >
-                    $
+                    {currencySymbol}
                   </button>
                 </div>
               </div>
@@ -267,8 +270,8 @@ export function FinancialWidget({ slug }: { slug: string }) {
               <NumberInput label="Interest Rate" suffix="%" value={mortRate} onChange={setMortRate} min={0} step="0.05" />
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <NumberInput label="Property Tax / Yr" prefix="$" value={propTax} onChange={setPropTax} min={0} />
-              <NumberInput label="Home Insurance / Yr" prefix="$" value={homeIns} onChange={setHomeIns} min={0} />
+              <NumberInput label="Property Tax / Yr" prefix={currencySymbol} value={propTax} onChange={setPropTax} min={0} />
+              <NumberInput label="Home Insurance / Yr" prefix={currencySymbol} value={homeIns} onChange={setHomeIns} min={0} />
             </div>
             {res.downPaymentPercent < 20 && (
               <NumberInput label="PMI Annual Rate" suffix="%" value={pmiRate} onChange={setPmiRate} min={0} step="0.1" />
@@ -279,11 +282,11 @@ export function FinancialWidget({ slug }: { slug: string }) {
           <>
             <ResultHero
               label="Estimated Monthly Mortgage Payment"
-              value={fmtCurrency(res.totalMonthlyPayment)}
+              value={fmtMoney(res.totalMonthlyPayment)}
               subtext={
                 isAr
-                  ? `مبلغ القرض: ${fmtCurrency(res.loanAmount, 0)} · إجمالي الفائدة: ${fmtCurrency(res.totalInterest, 0)}`
-                  : `Loan Amount: ${fmtCurrency(res.loanAmount, 0)} · Total Interest: ${fmtCurrency(res.totalInterest, 0)}`
+                  ? `مبلغ القرض: ${fmtMoney(res.loanAmount, 0)} · إجمالي الفائدة: ${fmtMoney(res.totalInterest, 0)}`
+                  : `Loan Amount: ${fmtMoney(res.loanAmount, 0)} · Total Interest: ${fmtMoney(res.totalInterest, 0)}`
               }
             />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
@@ -295,7 +298,7 @@ export function FinancialWidget({ slug }: { slug: string }) {
                         <Cell key={d.name} fill={d.color} />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(v) => fmtCurrency(Number(v))} />
+                    <Tooltip formatter={(v) => fmtMoney(Number(v))} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -306,12 +309,12 @@ export function FinancialWidget({ slug }: { slug: string }) {
                       <span className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: d.color }} />
                       {d.name}
                     </span>
-                    <span className="font-mono-tabular font-semibold text-[#0F172A]" dir="ltr">{fmtCurrency(d.value)}</span>
+                    <span className="font-mono-tabular font-semibold text-[#0F172A]" dir="ltr">{fmtMoney(d.value)}</span>
                   </div>
                 ))}
                 <div className="pt-2 border-t border-[#E2E8F0] flex justify-between font-semibold">
                   <span>{isAr ? 'إجمالي تكلفة القرض' : 'Total Loan Cost'}</span>
-                  <span className="font-mono-tabular" dir="ltr">{fmtCurrency(res.totalLoanCost, 0)}</span>
+                  <span className="font-mono-tabular" dir="ltr">{fmtMoney(res.totalLoanCost, 0)}</span>
                 </div>
               </div>
             </div>
@@ -332,9 +335,9 @@ export function FinancialWidget({ slug }: { slug: string }) {
                       <td className="px-3 py-1.5 font-sans text-[#475569]">
                         {isAr ? `السنة ${row.year}` : `Year ${row.year}`}
                       </td>
-                      <td className="px-3 py-1.5 text-end" dir="ltr">{fmtCurrency(row.principal, 0)}</td>
-                      <td className="px-3 py-1.5 text-end" dir="ltr">{fmtCurrency(row.interest, 0)}</td>
-                      <td className="px-3 py-1.5 text-end font-semibold" dir="ltr">{fmtCurrency(row.balance, 0)}</td>
+                      <td className="px-3 py-1.5 text-end" dir="ltr">{fmtMoney(row.principal, 0)}</td>
+                      <td className="px-3 py-1.5 text-end" dir="ltr">{fmtMoney(row.interest, 0)}</td>
+                      <td className="px-3 py-1.5 text-end font-semibold" dir="ltr">{fmtMoney(row.balance, 0)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -342,7 +345,7 @@ export function FinancialWidget({ slug }: { slug: string }) {
             </div>
 
             <ResultActions
-              copyText={`Monthly Mortgage: ${fmtCurrency(res.totalMonthlyPayment)} (P&I: ${fmtCurrency(res.monthlyPrincipalAndInterest)}, Loan: ${fmtCurrency(res.loanAmount, 0)}, Total Interest: ${fmtCurrency(res.totalInterest, 0)})`}
+              copyText={`Monthly Mortgage: ${fmtMoney(res.totalMonthlyPayment)} (P&I: ${fmtMoney(res.monthlyPrincipalAndInterest)}, Loan: ${fmtMoney(res.loanAmount, 0)}, Total Interest: ${fmtMoney(res.totalInterest, 0)})`}
               csvData={{
                 filename: 'mortgage-amortization.csv',
                 headers: ['Month', 'Year', 'Payment', 'Principal', 'Interest', 'Remaining Balance'],
@@ -373,7 +376,8 @@ export function FinancialWidget({ slug }: { slug: string }) {
       <CalcSplitLayout
         inputs={
           <>
-            <NumberInput label="Loan Amount" prefix="$" value={loanAmt} onChange={setLoanAmt} min={0} />
+            <CurrencySelector />
+            <NumberInput label="Loan Amount" prefix={currencySymbol} value={loanAmt} onChange={setLoanAmt} min={0} />
             <NumberInput label="Annual Interest Rate" suffix="%" value={loanRate} onChange={setLoanRate} min={0} step="0.1" />
             <NumberInput label="Loan Term" suffix="years" value={loanYears} onChange={setLoanYears} min={0.5} />
             <SegmentedControl
@@ -392,20 +396,20 @@ export function FinancialWidget({ slug }: { slug: string }) {
           <>
             <ResultHero
               label={`${loanFreq.charAt(0).toUpperCase() + loanFreq.slice(1)} Payment`}
-              value={fmtCurrency(res.periodicPayment)}
+              value={fmtMoney(res.periodicPayment)}
               subtext={
                 isAr
-                  ? `إجمالي الفائدة: ${fmtCurrency(res.totalInterest)} · إجمالي المدفوع: ${fmtCurrency(res.totalCost)}`
-                  : `Total Interest: ${fmtCurrency(res.totalInterest)} · Total Paid: ${fmtCurrency(res.totalCost)}`
+                  ? `إجمالي الفائدة: ${fmtMoney(res.totalInterest)} · إجمالي المدفوع: ${fmtMoney(res.totalCost)}`
+                  : `Total Interest: ${fmtMoney(res.totalInterest)} · Total Paid: ${fmtMoney(res.totalCost)}`
               }
             />
             <div className="grid grid-cols-3 gap-3">
               <StatTile label="Payments Count" value={String(res.periodsCount)} />
-              <StatTile label="Total Interest" value={fmtCurrency(res.totalInterest)} />
-              <StatTile label="Total Cost" value={fmtCurrency(res.totalCost)} />
+              <StatTile label="Total Interest" value={fmtMoney(res.totalInterest)} />
+              <StatTile label="Total Cost" value={fmtMoney(res.totalCost)} />
             </div>
             <ResultActions
-              copyText={`Loan ${fmtCurrency(parseFloat(loanAmt) || 0)} @ ${loanRate}%: ${fmtCurrency(res.periodicPayment)} (${loanFreq}), Total Interest: ${fmtCurrency(res.totalInterest)}`}
+              copyText={`Loan ${fmtMoney(parseFloat(loanAmt) || 0)} @ ${loanRate}%: ${fmtMoney(res.periodicPayment)} (${loanFreq}), Total Interest: ${fmtMoney(res.totalInterest)}`}
               csvData={{
                 filename: 'loan-schedule.csv',
                 headers: ['Period', 'Payment', 'Principal', 'Interest', 'Balance'],
@@ -431,10 +435,11 @@ export function FinancialWidget({ slug }: { slug: string }) {
       <CalcSplitLayout
         inputs={
           <>
-            <NumberInput label="Vehicle Price" prefix="$" value={autoPrice} onChange={setAutoPrice} min={0} />
+            <CurrencySelector />
+            <NumberInput label="Vehicle Price" prefix={currencySymbol} value={autoPrice} onChange={setAutoPrice} min={0} />
             <div className="grid grid-cols-2 gap-3">
-              <NumberInput label="Down Payment" prefix="$" value={autoDown} onChange={setAutoDown} min={0} />
-              <NumberInput label="Trade-In Value" prefix="$" value={autoTrade} onChange={setAutoTrade} min={0} />
+              <NumberInput label="Down Payment" prefix={currencySymbol} value={autoDown} onChange={setAutoDown} min={0} />
+              <NumberInput label="Trade-In Value" prefix={currencySymbol} value={autoTrade} onChange={setAutoTrade} min={0} />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <NumberInput label="Sales Tax" suffix="%" value={autoTax} onChange={setAutoTax} min={0} step="0.1" />
@@ -447,20 +452,20 @@ export function FinancialWidget({ slug }: { slug: string }) {
           <>
             <ResultHero
               label="Monthly Auto Payment"
-              value={fmtCurrency(res.monthlyPayment)}
+              value={fmtMoney(res.monthlyPayment)}
               subtext={
                 isAr
-                  ? `أصل القرض المموّل: ${fmtCurrency(res.totalLoanAmount)} (شامل ضريبة مبيعات ${fmtCurrency(res.taxAmount)})`
-                  : `Financed Principal: ${fmtCurrency(res.totalLoanAmount)} (incl. ${fmtCurrency(res.taxAmount)} sales tax)`
+                  ? `أصل القرض المموّل: ${fmtMoney(res.totalLoanAmount)} (شامل ضريبة مبيعات ${fmtMoney(res.taxAmount)})`
+                  : `Financed Principal: ${fmtMoney(res.totalLoanAmount)} (incl. ${fmtMoney(res.taxAmount)} sales tax)`
               }
             />
             <div className="grid grid-cols-3 gap-3">
-              <StatTile label="Loan Amount" value={fmtCurrency(res.totalLoanAmount)} />
-              <StatTile label="Total Interest" value={fmtCurrency(res.totalInterest)} />
-              <StatTile label="Total Vehicle Cost" value={fmtCurrency(res.totalCost)} />
+              <StatTile label="Loan Amount" value={fmtMoney(res.totalLoanAmount)} />
+              <StatTile label="Total Interest" value={fmtMoney(res.totalInterest)} />
+              <StatTile label="Total Vehicle Cost" value={fmtMoney(res.totalCost)} />
             </div>
             <ResultActions
-              copyText={`Auto Loan: ${fmtCurrency(res.monthlyPayment)}/mo | Financed: ${fmtCurrency(res.totalLoanAmount)} | Total Interest: ${fmtCurrency(res.totalInterest)}`}
+              copyText={`Auto Loan: ${fmtMoney(res.monthlyPayment)}/mo | Financed: ${fmtMoney(res.totalLoanAmount)} | Total Interest: ${fmtMoney(res.totalInterest)}`}
             />
           </>
         }
@@ -479,7 +484,8 @@ export function FinancialWidget({ slug }: { slug: string }) {
       <CalcSplitLayout
         inputs={
           <>
-            <NumberInput label="Loan Amount" prefix="$" value={persAmt} onChange={setPersAmt} min={0} />
+            <CurrencySelector />
+            <NumberInput label="Loan Amount" prefix={currencySymbol} value={persAmt} onChange={setPersAmt} min={0} />
             <NumberInput label="Interest Rate" suffix="%" value={persRate} onChange={setPersRate} min={0} step="0.1" />
             <NumberInput label="Term" suffix="months" value={persMonths} onChange={setPersMonths} min={6} max={84} step={6} />
             <NumberInput label="Origination Fee" suffix="%" value={origFee} onChange={setOrigFee} min={0} max={15} step="0.25" />
@@ -489,20 +495,20 @@ export function FinancialWidget({ slug }: { slug: string }) {
           <>
             <ResultHero
               label="Monthly Personal Loan Payment"
-              value={fmtCurrency(res.monthlyPayment)}
+              value={fmtMoney(res.monthlyPayment)}
               subtext={
                 isAr
-                  ? `صافي المبلغ المستلم: ${fmtCurrency(res.netProceeds)} · معدل الفائدة الفعلي: ${res.effectiveAprPercent.toFixed(2)}%`
-                  : `Net Cash Proceeds: ${fmtCurrency(res.netProceeds)} · Effective APR: ${res.effectiveAprPercent.toFixed(2)}%`
+                  ? `صافي المبلغ المستلم: ${fmtMoney(res.netProceeds)} · معدل الفائدة الفعلي: ${res.effectiveAprPercent.toFixed(2)}%`
+                  : `Net Cash Proceeds: ${fmtMoney(res.netProceeds)} · Effective APR: ${res.effectiveAprPercent.toFixed(2)}%`
               }
             />
             <div className="grid grid-cols-3 gap-3">
-              <StatTile label="Origination Fee" value={fmtCurrency(res.originationFeeAmount)} />
-              <StatTile label="Total Interest" value={fmtCurrency(res.totalInterest)} />
+              <StatTile label="Origination Fee" value={fmtMoney(res.originationFeeAmount)} />
+              <StatTile label="Total Interest" value={fmtMoney(res.totalInterest)} />
               <StatTile label="Effective APR" value={`${res.effectiveAprPercent.toFixed(2)}%`} />
             </div>
             <ResultActions
-              copyText={`Personal Loan: ${fmtCurrency(res.monthlyPayment)}/mo | Net Proceeds: ${fmtCurrency(res.netProceeds)} | Effective APR: ${res.effectiveAprPercent.toFixed(2)}%`}
+              copyText={`Personal Loan: ${fmtMoney(res.monthlyPayment)}/mo | Net Proceeds: ${fmtMoney(res.netProceeds)} | Effective APR: ${res.effectiveAprPercent.toFixed(2)}%`}
             />
           </>
         }
@@ -546,10 +552,11 @@ export function FinancialWidget({ slug }: { slug: string }) {
       <CalcSplitLayout
         inputs={
           <>
-            <NumberInput label="Starting Principal" prefix="$" value={principal} onChange={setPrincipal} min={0} />
+            <CurrencySelector />
+            <NumberInput label="Starting Principal" prefix={currencySymbol} value={principal} onChange={setPrincipal} min={0} />
             <NumberInput
               label={slug === 'investment-calculator' && invFreq === 'annually' ? 'Annual Contribution' : 'Monthly Contribution'}
-              prefix="$"
+              prefix={currencySymbol}
               value={monthlyContrib}
               onChange={setMonthlyContrib}
               min={0}
@@ -595,25 +602,25 @@ export function FinancialWidget({ slug }: { slug: string }) {
           <>
             <ResultHero
               label="Projected Future Balance"
-              value={fmtCurrency(futureVal)}
+              value={fmtMoney(futureVal)}
               accent="green"
               subtext={
                 invRes
                   ? isAr
-                    ? `القيمة المعدلة بالتضخم (بقوة الشراء الحالية): ${fmtCurrency(invRes.inflationAdjustedValue)}`
-                    : `Inflation-Adjusted (Today's Dollars): ${fmtCurrency(invRes.inflationAdjustedValue)}`
+                    ? `القيمة المعدلة بالتضخم (بقوة الشراء الحالية): ${fmtMoney(invRes.inflationAdjustedValue)}`
+                    : `Inflation-Adjusted (Today's Value): ${fmtMoney(invRes.inflationAdjustedValue)}`
                   : compRes && parseFloat(taxDrag) > 0
                   ? isAr
-                    ? `القيمة بعد الضريبة: ${fmtCurrency(compRes.afterTaxValue)}`
-                    : `After-Tax Value: ${fmtCurrency(compRes.afterTaxValue)}`
+                    ? `القيمة بعد الضريبة: ${fmtMoney(compRes.afterTaxValue)}`
+                    : `After-Tax Value: ${fmtMoney(compRes.afterTaxValue)}`
                   : isAr
-                  ? `إجمالي رأس المال والمساهمات: ${fmtCurrency(totalContrib)}`
-                  : `Total Principal & Contributions: ${fmtCurrency(totalContrib)}`
+                  ? `إجمالي رأس المال والمساهمات: ${fmtMoney(totalContrib)}`
+                  : `Total Principal & Contributions: ${fmtMoney(totalContrib)}`
               }
             />
             <div className="grid grid-cols-3 gap-3">
-              <StatTile label="Total Contributed" value={fmtCurrency(totalContrib, 0)} />
-              <StatTile label="Total Interest / Gain" value={fmtCurrency(totalInterest, 0)} />
+              <StatTile label="Total Contributed" value={fmtMoney(totalContrib, 0)} />
+              <StatTile label="Total Interest / Gain" value={fmtMoney(totalInterest, 0)} />
               <StatTile label="Growth Multiple" value={totalContrib > 0 ? `${(futureVal / totalContrib).toFixed(2)}×` : '—'} />
             </div>
             <div className="h-52 w-full">
@@ -621,15 +628,15 @@ export function FinancialWidget({ slug }: { slug: string }) {
                 <AreaChart data={schedule}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
                   <XAxis dataKey="year" tick={{ fontSize: 11 }} />
-                  <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `$${Math.round(v / 1000)}k`} />
-                  <Tooltip formatter={(v) => fmtCurrency(Number(v), 0)} />
+                  <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => fmtCompactAxis(Number(v))} />
+                  <Tooltip formatter={(v) => fmtMoney(Number(v), 0)} />
                   <Area type="monotone" dataKey="endingBalance" name={isAr ? 'إجمالي الرصيد' : 'Total Balance'} stroke="#2563EB" fill="#DBEAFE" />
                   <Area type="monotone" dataKey="totalPrincipalAndContributions" name={isAr ? 'المساهمات' : 'Contributions'} stroke="#0F172A" fill="#E2E8F0" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
             <ResultActions
-              copyText={`Future Balance: ${fmtCurrency(futureVal)} | Total Contributed: ${fmtCurrency(totalContrib)} | Total Interest: ${fmtCurrency(totalInterest)}`}
+              copyText={`Future Balance: ${fmtMoney(futureVal)} | Total Contributed: ${fmtMoney(totalContrib)} | Total Interest: ${fmtMoney(totalInterest)}`}
               csvData={{
                 filename: `${slug}-projection.csv`,
                 headers: ['Year', 'Starting Balance', 'Contributions', 'Interest Earned', 'Ending Balance'],
@@ -659,7 +666,8 @@ export function FinancialWidget({ slug }: { slug: string }) {
       <CalcSplitLayout
         inputs={
           <>
-            <NumberInput label="Principal" prefix="$" value={principal} onChange={setPrincipal} min={0} />
+            <CurrencySelector />
+            <NumberInput label="Principal" prefix={currencySymbol} value={principal} onChange={setPrincipal} min={0} />
             <NumberInput label="Annual Rate" suffix="%" value={annualRate} onChange={setAnnualRate} min={0} step="0.1" />
             <div className="grid grid-cols-2 gap-3">
               <NumberInput label="Time" value={yearsHorizon} onChange={setYearsHorizon} min={0} />
@@ -680,10 +688,10 @@ export function FinancialWidget({ slug }: { slug: string }) {
           <>
             <ResultHero
               label="Total Balance (Principal + Interest)"
-              value={fmtCurrency(res.totalAmount)}
-              subtext={`${isAr ? 'الفائدة البسيطة المكتسبة:' : 'Simple Interest Earned:'} ${fmtCurrency(res.interestEarned)}`}
+              value={fmtMoney(res.totalAmount)}
+              subtext={`${isAr ? 'الفائدة البسيطة المكتسبة:' : 'Simple Interest Earned:'} ${fmtMoney(res.interestEarned)}`}
             />
-            <ResultActions copyText={`Simple Interest: ${fmtCurrency(res.interestEarned)} | Total: ${fmtCurrency(res.totalAmount)}`} />
+            <ResultActions copyText={`Simple Interest: ${fmtMoney(res.interestEarned)} | Total: ${fmtMoney(res.totalAmount)}`} />
           </>
         }
       />
@@ -705,37 +713,38 @@ export function FinancialWidget({ slug }: { slug: string }) {
       <CalcSplitLayout
         inputs={
           <>
+            <CurrencySelector />
             <div className="grid grid-cols-3 gap-2">
               <NumberInput label="Age" value={retAgeNow} onChange={setRetAgeNow} min={18} max={85} />
               <NumberInput label="Retire" value={retAgeGoal} onChange={setRetAgeGoal} min={25} max={90} />
               <NumberInput label="Life Exp" value={retLifeExp} onChange={setRetLifeExp} min={50} max={110} />
             </div>
-            <NumberInput label="Current Retirement Savings" prefix="$" value={retSaved} onChange={setRetSaved} min={0} />
-            <NumberInput label="Monthly Contribution" prefix="$" value={retContrib} onChange={setRetContrib} min={0} />
+            <NumberInput label="Current Retirement Savings" prefix={currencySymbol} value={retSaved} onChange={setRetSaved} min={0} />
+            <NumberInput label="Monthly Contribution" prefix={currencySymbol} value={retContrib} onChange={setRetContrib} min={0} />
             <div className="grid grid-cols-2 gap-3">
               <NumberInput label="Pre-Ret Return" suffix="%" value={retPreReturn} onChange={setRetPreReturn} min={0} step="0.25" />
               <NumberInput label="In-Ret Return" suffix="%" value={retPostReturn} onChange={setRetPostReturn} min={0} step="0.25" />
             </div>
-            <NumberInput label="Desired Annual Income" prefix="$" value={retDesiredIncome} onChange={setRetDesiredIncome} min={0} />
+            <NumberInput label="Desired Annual Income" prefix={currencySymbol} value={retDesiredIncome} onChange={setRetDesiredIncome} min={0} />
           </>
         }
         results={
           <>
             <ResultHero
               label={isAr ? `رصيد التقاعد المتوقع عند عمر ${retAgeGoal}` : `Projected Nest Egg at Age ${retAgeGoal}`}
-              value={fmtCurrency(res.projectedNestEgg, 0)}
+              value={fmtMoney(res.projectedNestEgg, 0)}
               accent={res.surplusOrShortfall >= 0 ? 'green' : 'blue'}
               subtext={
                 isAr
-                  ? `يدعم ${fmtCurrency(res.sustainableMonthlyIncome, 0)}/شهر · ${
+                  ? `يدعم ${fmtMoney(res.sustainableMonthlyIncome, 0)}/شهر · ${
                       res.surplusOrShortfall >= 0
-                        ? `فائض قدره ${fmtCurrency(res.surplusOrShortfall, 0)}`
-                        : `عجز قدره ${fmtCurrency(Math.abs(res.surplusOrShortfall), 0)}`
+                        ? `فائض قدره ${fmtMoney(res.surplusOrShortfall, 0)}`
+                        : `عجز قدره ${fmtMoney(Math.abs(res.surplusOrShortfall), 0)}`
                     }`
-                  : `Supports ${fmtCurrency(res.sustainableMonthlyIncome, 0)}/mo · ${
+                  : `Supports ${fmtMoney(res.sustainableMonthlyIncome, 0)}/mo · ${
                       res.surplusOrShortfall >= 0
-                        ? `Surplus of ${fmtCurrency(res.surplusOrShortfall, 0)}`
-                        : `Shortfall of ${fmtCurrency(Math.abs(res.surplusOrShortfall), 0)}`
+                        ? `Surplus of ${fmtMoney(res.surplusOrShortfall, 0)}`
+                        : `Shortfall of ${fmtMoney(Math.abs(res.surplusOrShortfall), 0)}`
                     }`
               }
             />
@@ -744,14 +753,14 @@ export function FinancialWidget({ slug }: { slug: string }) {
                 <AreaChart data={res.projectionRows}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
                   <XAxis dataKey="age" tick={{ fontSize: 11 }} />
-                  <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `$${Math.round(v / 1000)}k`} />
-                  <Tooltip formatter={(v) => fmtCurrency(Number(v), 0)} />
+                  <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => fmtCompactAxis(Number(v))} />
+                  <Tooltip formatter={(v) => fmtMoney(Number(v), 0)} />
                   <Area type="monotone" dataKey="balance" name={isAr ? 'رصيد المحفظة' : 'Portfolio Balance'} stroke="#2563EB" fill="#DBEAFE" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
             <ResultActions
-              copyText={`Projected Nest Egg at ${retAgeGoal}: ${fmtCurrency(res.projectedNestEgg, 0)} | Sustainable Monthly Income: ${fmtCurrency(res.sustainableMonthlyIncome, 0)}`}
+              copyText={`Projected Nest Egg at ${retAgeGoal}: ${fmtMoney(res.projectedNestEgg, 0)} | Sustainable Monthly Income: ${fmtMoney(res.sustainableMonthlyIncome, 0)}`}
             />
           </>
         }
@@ -769,9 +778,10 @@ export function FinancialWidget({ slug }: { slug: string }) {
       <CalcSplitLayout
         inputs={
           <>
-            <NumberInput label="Current Card Balance" prefix="$" value={ccBalance} onChange={setCcBalance} min={0} />
+            <CurrencySelector />
+            <NumberInput label="Current Card Balance" prefix={currencySymbol} value={ccBalance} onChange={setCcBalance} min={0} />
             <NumberInput label="Credit Card APR" suffix="%" value={ccApr} onChange={setCcApr} min={0} step="0.1" />
-            <NumberInput label="Planned Monthly Payment" prefix="$" value={ccMonthly} onChange={setCcMonthly} min={0} />
+            <NumberInput label="Planned Monthly Payment" prefix={currencySymbol} value={ccMonthly} onChange={setCcMonthly} min={0} />
           </>
         }
         results={
@@ -779,8 +789,8 @@ export function FinancialWidget({ slug }: { slug: string }) {
             <ErrorAlert
               message={
                 isAr
-                  ? `الدفعة الشهرية لا تغطي الفائدة الشهرية. ارفع الدفعة فوق ${fmtCurrency(res.minimumRequiredPayment)} لتخفيض أصل الدين.`
-                  : `Monthly payment does not cover monthly interest charges. Increase payment above ${fmtCurrency(res.minimumRequiredPayment)} to reduce principal.`
+                  ? `الدفعة الشهرية لا تغطي الفائدة الشهرية. ارفع الدفعة فوق ${fmtMoney(res.minimumRequiredPayment)} لتخفيض أصل الدين.`
+                  : `Monthly payment does not cover monthly interest charges. Increase payment above ${fmtMoney(res.minimumRequiredPayment)} to reduce principal.`
               }
             />
           ) : (
@@ -794,12 +804,12 @@ export function FinancialWidget({ slug }: { slug: string }) {
                 }
                 subtext={
                   isAr
-                    ? `إجمالي الفائدة المدفوعة: ${fmtCurrency(res.totalInterest)} · إجمالي المدفوع: ${fmtCurrency(res.totalPaid)}`
-                    : `Total Interest Paid: ${fmtCurrency(res.totalInterest)} · Total Paid: ${fmtCurrency(res.totalPaid)}`
+                    ? `إجمالي الفائدة المدفوعة: ${fmtMoney(res.totalInterest)} · إجمالي المدفوع: ${fmtMoney(res.totalPaid)}`
+                    : `Total Interest Paid: ${fmtMoney(res.totalInterest)} · Total Paid: ${fmtMoney(res.totalPaid)}`
                 }
               />
               <ResultActions
-                copyText={`Credit Card Payoff: ${res.monthsToPayoff} months | Total Interest: ${fmtCurrency(res.totalInterest)}`}
+                copyText={`Credit Card Payoff: ${res.monthsToPayoff} months | Total Interest: ${fmtMoney(res.totalInterest)}`}
               />
             </>
           )
@@ -814,6 +824,7 @@ export function FinancialWidget({ slug }: { slug: string }) {
       <CalcSplitLayout
         inputs={
           <>
+            <CurrencySelector />
             <div className="space-y-2.5">
               {debts.map((d) => (
                 <div key={d.id} className="rounded-lg border border-[#E2E8F0] p-2.5 space-y-2">
@@ -838,7 +849,7 @@ export function FinancialWidget({ slug }: { slug: string }) {
                   </div>
                   <div className="grid grid-cols-3 gap-2">
                     <NumberInput
-                      label="Bal ($)"
+                      label={isAr ? `الرصيد (${currencySymbol})` : `Bal (${currencySymbol})`}
                       value={d.balance}
                       onChange={(v) =>
                         setDebts((prev) =>
@@ -856,7 +867,7 @@ export function FinancialWidget({ slug }: { slug: string }) {
                       }
                     />
                     <NumberInput
-                      label="Min ($)"
+                      label={isAr ? `الحد الأدنى (${currencySymbol})` : `Min (${currencySymbol})`}
                       value={d.minPayment}
                       onChange={(v) =>
                         setDebts((prev) =>
@@ -881,7 +892,7 @@ export function FinancialWidget({ slug }: { slug: string }) {
                 <span>{isAr ? 'إضافة دين' : 'Add Debt'}</span>
               </button>
             </div>
-            <NumberInput label="Extra Monthly Rollover Budget" prefix="$" value={debtExtra} onChange={setDebtExtra} min={0} />
+            <NumberInput label="Extra Monthly Rollover Budget" prefix={currencySymbol} value={debtExtra} onChange={setDebtExtra} min={0} />
           </>
         }
         results={
@@ -892,8 +903,8 @@ export function FinancialWidget({ slug }: { slug: string }) {
               accent="green"
               subtext={
                 isAr
-                  ? `طريقة الانهيار الجليدي توفر ${fmtCurrency(res.interestSavedWithAvalanche)} فائدة إضافية مقارنة بطريقة كرة الثلج`
-                  : `Avalanche saves ${fmtCurrency(res.interestSavedWithAvalanche)} more interest than Snowball`
+                  ? `طريقة الانهيار الجليدي توفر ${fmtMoney(res.interestSavedWithAvalanche)} فائدة إضافية مقارنة بطريقة كرة الثلج`
+                  : `Avalanche saves ${fmtMoney(res.interestSavedWithAvalanche)} more interest than Snowball`
               }
             />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -902,7 +913,7 @@ export function FinancialWidget({ slug }: { slug: string }) {
                   {isAr ? 'الانهيار الجليدي (أعلى فائدة أولاً)' : 'Debt Avalanche (Highest APR First)'}
                 </p>
                 <p className="mt-1 font-mono-tabular text-lg font-bold text-[#0F172A]">
-                  {res.avalanche.monthsToPayoff} {isAr ? 'شهر' : 'months'} · {fmtCurrency(res.avalanche.totalInterest)} {isAr ? 'فائدة' : 'int.'}
+                  {res.avalanche.monthsToPayoff} {isAr ? 'شهر' : 'months'} · {fmtMoney(res.avalanche.totalInterest)} {isAr ? 'فائدة' : 'int.'}
                 </p>
               </div>
               <div className="rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-3.5">
@@ -910,12 +921,12 @@ export function FinancialWidget({ slug }: { slug: string }) {
                   {isAr ? 'كرة الثلج (أقل رصيد أولاً)' : 'Debt Snowball (Smallest Balance First)'}
                 </p>
                 <p className="mt-1 font-mono-tabular text-lg font-bold text-[#0F172A]">
-                  {res.snowball.monthsToPayoff} {isAr ? 'شهر' : 'months'} · {fmtCurrency(res.snowball.totalInterest)} {isAr ? 'فائدة' : 'int.'}
+                  {res.snowball.monthsToPayoff} {isAr ? 'شهر' : 'months'} · {fmtMoney(res.snowball.totalInterest)} {isAr ? 'فائدة' : 'int.'}
                 </p>
               </div>
             </div>
             <ResultActions
-              copyText={`Avalanche: ${res.avalanche.monthsToPayoff} mos (${fmtCurrency(res.avalanche.totalInterest)} interest) | Snowball: ${res.snowball.monthsToPayoff} mos (${fmtCurrency(res.snowball.totalInterest)} interest)`}
+              copyText={`Avalanche: ${res.avalanche.monthsToPayoff} mos (${fmtMoney(res.avalanche.totalInterest)} interest) | Snowball: ${res.snowball.monthsToPayoff} mos (${fmtMoney(res.snowball.totalInterest)} interest)`}
             />
           </>
         }
@@ -934,31 +945,32 @@ export function FinancialWidget({ slug }: { slug: string }) {
       <CalcSplitLayout
         inputs={
           <>
-            <NumberInput label="Loan Amount" prefix="$" value={loanAmt} onChange={setLoanAmt} min={0} />
+            <CurrencySelector />
+            <NumberInput label="Loan Amount" prefix={currencySymbol} value={loanAmt} onChange={setLoanAmt} min={0} />
             <NumberInput label="Interest Rate" suffix="%" value={loanRate} onChange={setLoanRate} min={0} step="0.1" />
             <NumberInput label="Loan Term" suffix="years" value={loanYears} onChange={setLoanYears} min={1} max={40} />
-            <NumberInput label="Extra Monthly Principal Payment" prefix="$" value={extraMonthly} onChange={setExtraMonthly} min={0} />
+            <NumberInput label="Extra Monthly Principal Payment" prefix={currencySymbol} value={extraMonthly} onChange={setExtraMonthly} min={0} />
           </>
         }
         results={
           <>
             <ResultHero
               label="Monthly Payment + Extra Principal"
-              value={fmtCurrency(res.standardMonthlyPayment + (parseFloat(extraMonthly) || 0))}
+              value={fmtMoney(res.standardMonthlyPayment + (parseFloat(extraMonthly) || 0))}
               accent="green"
               subtext={
                 isAr
-                  ? `الفائدة الموفرة: ${fmtCurrency(res.interestSaved)} · السداد مبكراً بـ ${res.monthsSaved} شهراً`
-                  : `Interest Saved: ${fmtCurrency(res.interestSaved)} · Paid off ${res.monthsSaved} months early`
+                  ? `الفائدة الموفرة: ${fmtMoney(res.interestSaved)} · السداد مبكراً بـ ${res.monthsSaved} شهراً`
+                  : `Interest Saved: ${fmtMoney(res.interestSaved)} · Paid off ${res.monthsSaved} months early`
               }
             />
             <div className="grid grid-cols-3 gap-3">
-              <StatTile label="Standard Interest" value={fmtCurrency(res.standardTotalInterest, 0)} />
-              <StatTile label="Accelerated Interest" value={fmtCurrency(res.acceleratedTotalInterest, 0)} />
+              <StatTile label="Standard Interest" value={fmtMoney(res.standardTotalInterest, 0)} />
+              <StatTile label="Accelerated Interest" value={fmtMoney(res.acceleratedTotalInterest, 0)} />
               <StatTile label="Payoff Months" value={`${res.acceleratedMonths} / ${res.standardMonths}`} />
             </div>
             <ResultActions
-              copyText={`Amortization with $${extraMonthly}/mo extra: saves ${fmtCurrency(res.interestSaved)} and ${res.monthsSaved} months`}
+              copyText={`Amortization with ${currencySymbol}${extraMonthly}/mo extra: saves ${fmtMoney(res.interestSaved)} and ${res.monthsSaved} months`}
               csvData={{
                 filename: 'amortization-schedule.csv',
                 headers: ['Month', 'Year', 'Payment', 'Principal', 'Interest', 'Extra', 'Balance'],
@@ -989,8 +1001,9 @@ export function FinancialWidget({ slug }: { slug: string }) {
       <CalcSplitLayout
         inputs={
           <>
-            <NumberInput label="Loan Principal" prefix="$" value={loanAmt} onChange={setLoanAmt} min={1} />
-            <NumberInput label="Monthly Payment" prefix="$" value={targetMonthlyPay} onChange={setTargetMonthlyPay} min={1} />
+            <CurrencySelector />
+            <NumberInput label="Loan Principal" prefix={currencySymbol} value={loanAmt} onChange={setLoanAmt} min={1} />
+            <NumberInput label="Monthly Payment" prefix={currencySymbol} value={targetMonthlyPay} onChange={setTargetMonthlyPay} min={1} />
             <NumberInput label="Loan Term" suffix="years" value={loanYears} onChange={setLoanYears} min={0.5} />
           </>
         }
@@ -1004,11 +1017,11 @@ export function FinancialWidget({ slug }: { slug: string }) {
                 value={`${impliedApr.toFixed(3)}%`}
                 subtext={
                   isAr
-                    ? `إجمالي المدفوع: ${fmtCurrency(totalPaid)} · إجمالي الفائدة: ${fmtCurrency(totalPaid - principalVal)}`
-                    : `Total Paid: ${fmtCurrency(totalPaid)} · Total Interest: ${fmtCurrency(totalPaid - principalVal)}`
+                    ? `إجمالي المدفوع: ${fmtMoney(totalPaid)} · إجمالي الفائدة: ${fmtMoney(totalPaid - principalVal)}`
+                    : `Total Paid: ${fmtMoney(totalPaid)} · Total Interest: ${fmtMoney(totalPaid - principalVal)}`
                 }
               />
-              <ResultActions copyText={`Implied APR: ${impliedApr.toFixed(3)}% on ${fmtCurrency(principalVal)} @ ${fmtCurrency(payVal)}/mo`} />
+              <ResultActions copyText={`Implied APR: ${impliedApr.toFixed(3)}% on ${fmtMoney(principalVal)} @ ${fmtMoney(payVal)}/mo`} />
             </>
           )
         }
@@ -1022,7 +1035,8 @@ export function FinancialWidget({ slug }: { slug: string }) {
       <CalcSplitLayout
         inputs={
           <>
-            <NumberInput label="Amount in Today's Dollars" prefix="$" value={infAmount} onChange={setInfAmount} min={0} />
+            <CurrencySelector />
+            <NumberInput label="Amount in Today's Value" prefix={currencySymbol} value={infAmount} onChange={setInfAmount} min={0} />
             <NumberInput label="Annual Inflation Rate" suffix="%" value={infRate} onChange={setInfRate} step="0.1" />
             <NumberInput label="Years" suffix="yrs" value={infYears} onChange={setInfYears} min={1} max={80} />
           </>
@@ -1031,11 +1045,11 @@ export function FinancialWidget({ slug }: { slug: string }) {
           <>
             <ResultHero
               label={isAr ? `التكلفة المستقبلية بعد ${infYears} سنة` : `Future Cost in ${infYears} Years`}
-              value={fmtCurrency(res.futureEquivalent)}
+              value={fmtMoney(res.futureEquivalent)}
               subtext={
                 isAr
-                  ? `القوة الشرائية لـ ${fmtCurrency(parseFloat(infAmount) || 0)} تنخفض إلى ${fmtCurrency(res.purchasingPowerOfOriginal)} (-${res.purchasingPowerLossPercent.toFixed(1)}%)`
-                  : `Purchasing power of ${fmtCurrency(parseFloat(infAmount) || 0)} drops to ${fmtCurrency(res.purchasingPowerOfOriginal)} (-${res.purchasingPowerLossPercent.toFixed(1)}%)`
+                  ? `القوة الشرائية لـ ${fmtMoney(parseFloat(infAmount) || 0)} تنخفض إلى ${fmtMoney(res.purchasingPowerOfOriginal)} (-${res.purchasingPowerLossPercent.toFixed(1)}%)`
+                  : `Purchasing power of ${fmtMoney(parseFloat(infAmount) || 0)} drops to ${fmtMoney(res.purchasingPowerOfOriginal)} (-${res.purchasingPowerLossPercent.toFixed(1)}%)`
               }
             />
             <div className="h-48 w-full">
@@ -1043,14 +1057,14 @@ export function FinancialWidget({ slug }: { slug: string }) {
                 <AreaChart data={res.yearlyRows}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
                   <XAxis dataKey="year" tick={{ fontSize: 11 }} />
-                  <YAxis tick={{ fontSize: 11 }} />
-                  <Tooltip formatter={(v) => fmtCurrency(Number(v))} />
+                  <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => fmtCompactAxis(Number(v))} />
+                  <Tooltip formatter={(v) => fmtMoney(Number(v))} />
                   <Area type="monotone" dataKey="futureCost" name={isAr ? 'التكلفة المستقبلية المكافئة' : 'Future Equivalent Cost'} stroke="#2563EB" fill="#DBEAFE" />
                   <Area type="monotone" dataKey="purchasingPower" name={isAr ? 'القوة الشرائية' : 'Purchasing Power'} stroke="#DC2626" fill="#FEE2E2" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-            <ResultActions copyText={`After ${infYears} yrs at ${infRate}% inflation: ${fmtCurrency(res.futureEquivalent)} future cost`} />
+            <ResultActions copyText={`After ${infYears} yrs at ${infRate}% inflation: ${fmtMoney(res.futureEquivalent)} future cost`} />
           </>
         }
       />
@@ -1069,7 +1083,8 @@ export function FinancialWidget({ slug }: { slug: string }) {
       <CalcSplitLayout
         inputs={
           <>
-            <NumberInput label="Pay Amount" prefix="$" value={salAmount} onChange={setSalAmount} min={0} />
+            <CurrencySelector />
+            <NumberInput label="Pay Amount" prefix={currencySymbol} value={salAmount} onChange={setSalAmount} min={0} />
             <SelectInput
               label="Pay Frequency"
               value={salPeriod}
@@ -1092,16 +1107,16 @@ export function FinancialWidget({ slug }: { slug: string }) {
         }
         results={
           <>
-            <ResultHero label="Annual Gross Salary" value={fmtCurrency(res.annual)} />
+            <ResultHero label="Annual Gross Salary" value={fmtMoney(res.annual)} />
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-              <StatTile label="Hourly" value={fmtCurrency(res.hourly)} />
-              <StatTile label="Daily" value={fmtCurrency(res.daily)} />
-              <StatTile label="Weekly" value={fmtCurrency(res.weekly)} />
-              <StatTile label="Biweekly" value={fmtCurrency(res.biweekly)} />
-              <StatTile label="Semi-Monthly" value={fmtCurrency(res.semimonthly)} />
-              <StatTile label="Monthly" value={fmtCurrency(res.monthly)} />
+              <StatTile label="Hourly" value={fmtMoney(res.hourly)} />
+              <StatTile label="Daily" value={fmtMoney(res.daily)} />
+              <StatTile label="Weekly" value={fmtMoney(res.weekly)} />
+              <StatTile label="Biweekly" value={fmtMoney(res.biweekly)} />
+              <StatTile label="Semi-Monthly" value={fmtMoney(res.semimonthly)} />
+              <StatTile label="Monthly" value={fmtMoney(res.monthly)} />
             </div>
-            <ResultActions copyText={`Annual: ${fmtCurrency(res.annual)} | Monthly: ${fmtCurrency(res.monthly)} | Hourly: ${fmtCurrency(res.hourly)}`} />
+            <ResultActions copyText={`Annual: ${fmtMoney(res.annual)} | Monthly: ${fmtMoney(res.monthly)} | Hourly: ${fmtMoney(res.hourly)}`} />
           </>
         }
       />
@@ -1125,6 +1140,7 @@ export function FinancialWidget({ slug }: { slug: string }) {
       <CalcSplitLayout
         inputs={
           <>
+            <CurrencySelector />
             <SelectInput
               label="Filing Status"
               value={filingStatus}
@@ -1135,8 +1151,8 @@ export function FinancialWidget({ slug }: { slug: string }) {
                 { value: 'head_of_household', label: 'Head of Household' },
               ]}
             />
-            <NumberInput label="Gross Annual Income" prefix="$" value={taxGross} onChange={setTaxGross} min={0} />
-            <NumberInput label="Pre-Tax 401(k) / HSA" prefix="$" value={preTax401k} onChange={setPreTax401k} min={0} />
+            <NumberInput label="Gross Annual Income" prefix={currencySymbol} value={taxGross} onChange={setTaxGross} min={0} />
+            <NumberInput label="Pre-Tax 401(k) / HSA" prefix={currencySymbol} value={preTax401k} onChange={setPreTax401k} min={0} />
             <NumberInput label="State Income Tax Rate" suffix="%" value={stateTaxPct} onChange={setStateTaxPct} min={0} step="0.25" />
           </>
         }
@@ -1144,33 +1160,33 @@ export function FinancialWidget({ slug }: { slug: string }) {
           <>
             <ResultHero
               label="Estimated Annual Take-Home Pay"
-              value={fmtCurrency(res.takeHomeAnnual, 0)}
+              value={fmtMoney(res.takeHomeAnnual, 0)}
               accent="green"
               subtext={
                 isAr
-                  ? `${fmtCurrency(res.takeHomeMonthly, 0)}/شهر · المعدل الفعلي: ${res.effectiveTaxRatePercent.toFixed(1)}% · الشريحة الحدية: ${res.marginalBracketPercent}%`
-                  : `${fmtCurrency(res.takeHomeMonthly, 0)}/mo · Effective Rate: ${res.effectiveTaxRatePercent.toFixed(1)}% · Marginal: ${res.marginalBracketPercent}%`
+                  ? `${fmtMoney(res.takeHomeMonthly, 0)}/شهر · المعدل الفعلي: ${res.effectiveTaxRatePercent.toFixed(1)}% · الشريحة الحدية: ${res.marginalBracketPercent}%`
+                  : `${fmtMoney(res.takeHomeMonthly, 0)}/mo · Effective Rate: ${res.effectiveTaxRatePercent.toFixed(1)}% · Marginal: ${res.marginalBracketPercent}%`
               }
             />
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-              <StatTile label="Federal Tax" value={fmtCurrency(res.federalTax, 0)} />
-              <StatTile label="Social Security" value={fmtCurrency(res.socialSecurityTax, 0)} />
-              <StatTile label="Medicare" value={fmtCurrency(res.medicareTax, 0)} />
-              <StatTile label="State Tax" value={fmtCurrency(res.stateTax, 0)} />
+              <StatTile label="Federal Tax" value={fmtMoney(res.federalTax, 0)} />
+              <StatTile label="Social Security" value={fmtMoney(res.socialSecurityTax, 0)} />
+              <StatTile label="Medicare" value={fmtMoney(res.medicareTax, 0)} />
+              <StatTile label="State Tax" value={fmtMoney(res.stateTax, 0)} />
             </div>
             <div className="h-44 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
                   <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                  <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `$${Math.round(v / 1000)}k`} />
-                  <Tooltip formatter={(v) => fmtCurrency(Number(v), 0)} />
+                  <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => fmtCompactAxis(Number(v))} />
+                  <Tooltip formatter={(v) => fmtMoney(Number(v), 0)} />
                   <Bar dataKey="amount" fill="#2563EB" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
             <ResultActions
-              copyText={`Gross: ${fmtCurrency(res.grossIncome, 0)} | Take-Home: ${fmtCurrency(res.takeHomeAnnual, 0)} | Effective Tax: ${res.effectiveTaxRatePercent.toFixed(1)}%`}
+              copyText={`Gross: ${fmtMoney(res.grossIncome, 0)} | Take-Home: ${fmtMoney(res.takeHomeAnnual, 0)} | Effective Tax: ${res.effectiveTaxRatePercent.toFixed(1)}%`}
             />
           </>
         }
@@ -1194,16 +1210,17 @@ export function FinancialWidget({ slug }: { slug: string }) {
       <CalcSplitLayout
         inputs={
           <>
-            <NumberInput label="Monthly Net Income" prefix="$" value={bIncome} onChange={setBIncome} min={0} />
+            <CurrencySelector />
+            <NumberInput label="Monthly Net Income" prefix={currencySymbol} value={bIncome} onChange={setBIncome} min={0} />
             <div className="grid grid-cols-2 gap-2.5">
-              <NumberInput label="Housing" prefix="$" value={bHousing} onChange={setBHousing} min={0} />
-              <NumberInput label="Utilities" prefix="$" value={bUtils} onChange={setBUtils} min={0} />
-              <NumberInput label="Food & Groceries" prefix="$" value={bFood} onChange={setBFood} min={0} />
-              <NumberInput label="Transportation" prefix="$" value={bTrans} onChange={setBTrans} min={0} />
-              <NumberInput label="Healthcare" prefix="$" value={bHealth} onChange={setBHealth} min={0} />
-              <NumberInput label="Debt Minimums" prefix="$" value={bDebt} onChange={setBDebt} min={0} />
-              <NumberInput label="Savings & Investing" prefix="$" value={bSavings} onChange={setBSavings} min={0} />
-              <NumberInput label="Wants / Dining" prefix="$" value={bWants} onChange={setBWants} min={0} />
+              <NumberInput label="Housing" prefix={currencySymbol} value={bHousing} onChange={setBHousing} min={0} />
+              <NumberInput label="Utilities" prefix={currencySymbol} value={bUtils} onChange={setBUtils} min={0} />
+              <NumberInput label="Food & Groceries" prefix={currencySymbol} value={bFood} onChange={setBFood} min={0} />
+              <NumberInput label="Transportation" prefix={currencySymbol} value={bTrans} onChange={setBTrans} min={0} />
+              <NumberInput label="Healthcare" prefix={currencySymbol} value={bHealth} onChange={setBHealth} min={0} />
+              <NumberInput label="Debt Minimums" prefix={currencySymbol} value={bDebt} onChange={setBDebt} min={0} />
+              <NumberInput label="Savings & Investing" prefix={currencySymbol} value={bSavings} onChange={setBSavings} min={0} />
+              <NumberInput label="Wants / Dining" prefix={currencySymbol} value={bWants} onChange={setBWants} min={0} />
             </div>
           </>
         }
@@ -1211,7 +1228,7 @@ export function FinancialWidget({ slug }: { slug: string }) {
           <>
             <ResultHero
               label={res.unallocated >= 0 ? 'Monthly Unallocated Surplus' : 'Monthly Budget Deficit'}
-              value={fmtCurrency(res.unallocated)}
+              value={fmtMoney(res.unallocated)}
               accent={res.unallocated >= 0 ? 'green' : 'blue'}
               subtext={
                 isAr
@@ -1220,12 +1237,12 @@ export function FinancialWidget({ slug }: { slug: string }) {
               }
             />
             <div className="grid grid-cols-3 gap-3">
-              <StatTile label="Needs" value={fmtCurrency(res.needs, 0)} />
-              <StatTile label="Wants" value={fmtCurrency(res.wants, 0)} />
-              <StatTile label="Savings" value={fmtCurrency(res.savings, 0)} />
+              <StatTile label="Needs" value={fmtMoney(res.needs, 0)} />
+              <StatTile label="Wants" value={fmtMoney(res.wants, 0)} />
+              <StatTile label="Savings" value={fmtMoney(res.savings, 0)} />
             </div>
             <ResultActions
-              copyText={`Monthly Budget: Needs ${res.needsPercent.toFixed(1)}%, Wants ${res.wantsPercent.toFixed(1)}%, Savings ${res.savingsPercent.toFixed(1)}%, Surplus ${fmtCurrency(res.unallocated)}`}
+              copyText={`Monthly Budget: Needs ${res.needsPercent.toFixed(1)}%, Wants ${res.wantsPercent.toFixed(1)}%, Savings ${res.savingsPercent.toFixed(1)}%, Surplus ${fmtMoney(res.unallocated)}`}
             />
           </>
         }
@@ -1250,21 +1267,22 @@ export function FinancialWidget({ slug }: { slug: string }) {
       <CalcSplitLayout
         inputs={
           <>
+            <CurrencySelector />
             <p className="text-xs font-semibold text-[#16A34A]">{isAr ? 'الأصول' : 'Assets'}</p>
             <div className="grid grid-cols-2 gap-2.5">
-              <NumberInput label="Cash & Bank" prefix="$" value={nwCash} onChange={setNwCash} min={0} />
-              <NumberInput label="Brokerage" prefix="$" value={nwInv} onChange={setNwInv} min={0} />
-              <NumberInput label="Retirement" prefix="$" value={nwRet} onChange={setNwRet} min={0} />
-              <NumberInput label="Real Estate" prefix="$" value={nwHome} onChange={setNwHome} min={0} />
-              <NumberInput label="Vehicles & Other" prefix="$" value={nwVeh} onChange={setNwVeh} min={0} />
+              <NumberInput label="Cash & Bank" prefix={currencySymbol} value={nwCash} onChange={setNwCash} min={0} />
+              <NumberInput label="Brokerage" prefix={currencySymbol} value={nwInv} onChange={setNwInv} min={0} />
+              <NumberInput label="Retirement" prefix={currencySymbol} value={nwRet} onChange={setNwRet} min={0} />
+              <NumberInput label="Real Estate" prefix={currencySymbol} value={nwHome} onChange={setNwHome} min={0} />
+              <NumberInput label="Vehicles & Other" prefix={currencySymbol} value={nwVeh} onChange={setNwVeh} min={0} />
             </div>
             <p className="text-xs font-semibold text-[#DC2626] pt-2">{isAr ? 'الالتزامات' : 'Liabilities'}</p>
             <div className="grid grid-cols-2 gap-2.5">
-              <NumberInput label="Mortgage" prefix="$" value={nwMort} onChange={setNwMort} min={0} />
-              <NumberInput label="Auto Loans" prefix="$" value={nwAuto} onChange={setNwAuto} min={0} />
-              <NumberInput label="Student Loans" prefix="$" value={nwStud} onChange={setNwStud} min={0} />
-              <NumberInput label="Credit Cards" prefix="$" value={nwCard} onChange={setNwCard} min={0} />
-              <NumberInput label="Other Debt" prefix="$" value={nwOtherL} onChange={setNwOtherL} min={0} />
+              <NumberInput label="Mortgage" prefix={currencySymbol} value={nwMort} onChange={setNwMort} min={0} />
+              <NumberInput label="Auto Loans" prefix={currencySymbol} value={nwAuto} onChange={setNwAuto} min={0} />
+              <NumberInput label="Student Loans" prefix={currencySymbol} value={nwStud} onChange={setNwStud} min={0} />
+              <NumberInput label="Credit Cards" prefix={currencySymbol} value={nwCard} onChange={setNwCard} min={0} />
+              <NumberInput label="Other Debt" prefix={currencySymbol} value={nwOtherL} onChange={setNwOtherL} min={0} />
             </div>
           </>
         }
@@ -1272,16 +1290,16 @@ export function FinancialWidget({ slug }: { slug: string }) {
           <>
             <ResultHero
               label="Total Personal Net Worth"
-              value={fmtCurrency(res.netWorth, 0)}
+              value={fmtMoney(res.netWorth, 0)}
               accent={res.netWorth >= 0 ? 'green' : 'blue'}
               subtext={`${isAr ? 'نسبة الدين إلى الأصول:' : 'Debt-to-Asset Ratio:'} ${res.debtToAssetRatio.toFixed(1)}%`}
             />
             <div className="grid grid-cols-2 gap-3">
-              <StatTile label="Total Assets" value={fmtCurrency(res.totalAssets, 0)} />
-              <StatTile label="Total Liabilities" value={fmtCurrency(res.totalLiabilities, 0)} />
+              <StatTile label="Total Assets" value={fmtMoney(res.totalAssets, 0)} />
+              <StatTile label="Total Liabilities" value={fmtMoney(res.totalLiabilities, 0)} />
             </div>
             <ResultActions
-              copyText={`Net Worth: ${fmtCurrency(res.netWorth, 0)} (Assets: ${fmtCurrency(res.totalAssets, 0)}, Liabilities: ${fmtCurrency(res.totalLiabilities, 0)})`}
+              copyText={`Net Worth: ${fmtMoney(res.netWorth, 0)} (Assets: ${fmtMoney(res.totalAssets, 0)}, Liabilities: ${fmtMoney(res.totalLiabilities, 0)})`}
             />
           </>
         }
@@ -1295,8 +1313,9 @@ export function FinancialWidget({ slug }: { slug: string }) {
       <CalcSplitLayout
         inputs={
           <>
-            <NumberInput label="Initial Investment" prefix="$" value={roiInit} onChange={setRoiInit} min={0.01} />
-            <NumberInput label="Amount Returned" prefix="$" value={roiRet} onChange={setRoiRet} min={0} />
+            <CurrencySelector />
+            <NumberInput label="Initial Investment" prefix={currencySymbol} value={roiInit} onChange={setRoiInit} min={0.01} />
+            <NumberInput label="Amount Returned" prefix={currencySymbol} value={roiRet} onChange={setRoiRet} min={0} />
             <NumberInput label="Investment Duration" suffix="years" value={roiYears} onChange={setRoiYears} min={0.05} />
           </>
         }
@@ -1308,15 +1327,15 @@ export function FinancialWidget({ slug }: { slug: string }) {
               accent={res.netProfit >= 0 ? 'green' : 'blue'}
               subtext={
                 isAr
-                  ? `صافي الربح: ${fmtCurrency(res.netProfit)} · العائد السنوي المركب (CAGR): ${res.annualizedRoiPercent.toFixed(2)}%`
-                  : `Net Profit: ${fmtCurrency(res.netProfit)} · Annualized ROI (CAGR): ${res.annualizedRoiPercent.toFixed(2)}%`
+                  ? `صافي الربح: ${fmtMoney(res.netProfit)} · العائد السنوي المركب (CAGR): ${res.annualizedRoiPercent.toFixed(2)}%`
+                  : `Net Profit: ${fmtMoney(res.netProfit)} · Annualized ROI (CAGR): ${res.annualizedRoiPercent.toFixed(2)}%`
               }
             />
             <div className="grid grid-cols-2 gap-3">
-              <StatTile label="Net Gain / Loss" value={fmtCurrency(res.netProfit)} />
+              <StatTile label="Net Gain / Loss" value={fmtMoney(res.netProfit)} />
               <StatTile label="Annualized CAGR" value={`${res.annualizedRoiPercent.toFixed(2)}%`} />
             </div>
-            <ResultActions copyText={`ROI: ${res.roiPercent.toFixed(2)}% | CAGR: ${res.annualizedRoiPercent.toFixed(2)}% | Net Profit: ${fmtCurrency(res.netProfit)}`} />
+            <ResultActions copyText={`ROI: ${res.roiPercent.toFixed(2)}% | CAGR: ${res.annualizedRoiPercent.toFixed(2)}% | Net Profit: ${fmtMoney(res.netProfit)}`} />
           </>
         }
       />
@@ -1333,7 +1352,7 @@ export function FinancialWidget({ slug }: { slug: string }) {
       unusedLeaveDays: parseFloat(eosLeaveDays) || 0,
     });
 
-    const decimals = eosCurrency === 'KWD' ? 3 : 2;
+    const decimals = ['KWD', 'BHD', 'OMR', 'JOD', 'TND', 'LYD', 'IQD'].includes(eosCurrency) ? 3 : 2;
     const fmtEos = (val: number) => {
       if (!Number.isFinite(val)) return '—';
       return `${fmtNum(val, decimals)} ${eosCurrency}`;
@@ -1371,28 +1390,19 @@ export function FinancialWidget({ slug }: { slug: string }) {
                 { value: 'resignation', label: 'Resignation' },
               ]}
             />
-            <div className="grid grid-cols-3 gap-3">
-              <div className="col-span-2">
-                <NumberInput
-                  label={eosJurisdiction === 'uae' ? 'Basic Monthly Salary' : 'Monthly Salary'}
-                  suffix={eosCurrency}
-                  value={eosSalary}
-                  onChange={setEosSalary}
-                  min={0}
-                />
-              </div>
-              <SelectInput
-                label="Currency"
-                value={eosCurrency}
-                onChange={(v) => setEosCurrency(v as 'KWD' | 'AED' | 'SAR' | 'USD')}
-                options={[
-                  { value: 'KWD', label: 'KWD' },
-                  { value: 'AED', label: 'AED' },
-                  { value: 'SAR', label: 'SAR' },
-                  { value: 'USD', label: 'USD' },
-                ]}
-              />
-            </div>
+            <CurrencySelector
+              id="eos-currency-select"
+              label="Currency"
+              value={eosCurrency}
+              onChange={setEosCurrency}
+            />
+            <NumberInput
+              label={eosJurisdiction === 'uae' ? 'Basic Monthly Salary' : 'Monthly Salary'}
+              suffix={eosCurrency}
+              value={eosSalary}
+              onChange={setEosSalary}
+              min={0}
+            />
             <div className="grid grid-cols-2 gap-3">
               <NumberInput label="Years of Service" value={eosYears} onChange={setEosYears} min={0} max={60} />
               <NumberInput label="Extra Months" value={eosMonths} onChange={setEosMonths} min={0} max={11} />
@@ -1465,14 +1475,15 @@ export function FinancialWidget({ slug }: { slug: string }) {
     <CalcSplitLayout
       inputs={
         <>
-          <NumberInput label="Remaining Loan Balance" prefix="$" value={refiBal} onChange={setRefiBal} min={0} />
+          <CurrencySelector />
+          <NumberInput label="Remaining Loan Balance" prefix={currencySymbol} value={refiBal} onChange={setRefiBal} min={0} />
           <div className="grid grid-cols-2 gap-3">
             <NumberInput label="Current Rate" suffix="%" value={refiOldRate} onChange={setRefiOldRate} min={0} step="0.05" />
             <NumberInput label="Years Remaining" suffix="yrs" value={refiOldYears} onChange={setRefiOldYears} min={1} />
             <NumberInput label="New Rate" suffix="%" value={refiNewRate} onChange={setRefiNewRate} min={0} step="0.05" />
             <NumberInput label="New Loan Term" suffix="yrs" value={refiNewYears} onChange={setRefiNewYears} min={1} />
           </div>
-          <NumberInput label="Estimated Closing Costs" prefix="$" value={refiCosts} onChange={setRefiCosts} min={0} />
+          <NumberInput label="Estimated Closing Costs" prefix={currencySymbol} value={refiCosts} onChange={setRefiCosts} min={0} />
         </>
       }
       results={
@@ -1482,9 +1493,9 @@ export function FinancialWidget({ slug }: { slug: string }) {
             value={
               refiRes.monthlySavings >= 0
                 ? isAr
-                  ? `توفير ${fmtCurrency(refiRes.monthlySavings)}/شهر`
-                  : `Save ${fmtCurrency(refiRes.monthlySavings)}/mo`
-                : `+${fmtCurrency(Math.abs(refiRes.monthlySavings))}${isAr ? '/شهر' : '/mo'}`
+                  ? `توفير ${fmtMoney(refiRes.monthlySavings)}/شهر`
+                  : `Save ${fmtMoney(refiRes.monthlySavings)}/mo`
+                : `+${fmtMoney(Math.abs(refiRes.monthlySavings))}${isAr ? '/شهر' : '/mo'}`
             }
             accent={refiRes.lifetimeSavings > 0 ? 'green' : 'blue'}
             subtext={
@@ -1493,22 +1504,22 @@ export function FinancialWidget({ slug }: { slug: string }) {
                     Number.isFinite(refiRes.breakEvenMonths)
                       ? `${refiRes.breakEvenMonths.toFixed(1)} شهراً`
                       : 'لا يحقق تعادلاً شهرياً'
-                  } · صافي التوفير الإجمالي: ${fmtCurrency(refiRes.lifetimeSavings, 0)}`
+                  } · صافي التوفير الإجمالي: ${fmtMoney(refiRes.lifetimeSavings, 0)}`
                 : `Break-Even Point: ${
                     Number.isFinite(refiRes.breakEvenMonths)
                       ? `${refiRes.breakEvenMonths.toFixed(1)} months`
                       : 'Does not break even monthly'
-                  } · Net Lifetime Savings: ${fmtCurrency(refiRes.lifetimeSavings, 0)}`
+                  } · Net Lifetime Savings: ${fmtMoney(refiRes.lifetimeSavings, 0)}`
             }
           />
           <div className="grid grid-cols-2 gap-3">
-            <StatTile label="Current P&I Payment" value={fmtCurrency(refiRes.currentMonthlyPayment)} />
-            <StatTile label="New P&I Payment" value={fmtCurrency(refiRes.newMonthlyPayment)} />
-            <StatTile label="Current Remaining Interest" value={fmtCurrency(refiRes.currentTotalInterest, 0)} />
-            <StatTile label="New Total Interest" value={fmtCurrency(refiRes.newTotalInterest, 0)} />
+            <StatTile label="Current P&I Payment" value={fmtMoney(refiRes.currentMonthlyPayment)} />
+            <StatTile label="New P&I Payment" value={fmtMoney(refiRes.newMonthlyPayment)} />
+            <StatTile label="Current Remaining Interest" value={fmtMoney(refiRes.currentTotalInterest, 0)} />
+            <StatTile label="New Total Interest" value={fmtMoney(refiRes.newTotalInterest, 0)} />
           </div>
           <ResultActions
-            copyText={`Refinance Savings: ${fmtCurrency(refiRes.monthlySavings)}/mo | Break-Even: ${refiRes.breakEvenMonths.toFixed(1)} mos | Lifetime Net Savings: ${fmtCurrency(refiRes.lifetimeSavings, 0)}`}
+            copyText={`Refinance Savings: ${fmtMoney(refiRes.monthlySavings)}/mo | Break-Even: ${refiRes.breakEvenMonths.toFixed(1)} mos | Lifetime Net Savings: ${fmtMoney(refiRes.lifetimeSavings, 0)}`}
           />
         </>
       }
