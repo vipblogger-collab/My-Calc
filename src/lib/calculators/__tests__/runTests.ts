@@ -60,6 +60,12 @@ import {
   addSubtractCalendarDate,
 } from '../dateTime.ts';
 import {
+  buildCountryCatalog,
+  getCountryPublicHolidaysForRange,
+  getCountryWeekendDays,
+  loadDateHolidaysEngine,
+} from '../countryHolidays.ts';
+import {
   calculateTip,
   calculateDiscount,
   calculateSalesTax,
@@ -301,6 +307,57 @@ test('Date & Time: Leap years, Age, Business days, ISO weeks', () => {
   assert.equal(added.resultDate, '2025-03-01');
 });
 
+test('Date & Time: World country calendars, weekends, and public holidays', async () => {
+  await loadDateHolidaysEngine();
+
+  const countriesAr = buildCountryCatalog('ar');
+  const countriesEn = buildCountryCatalog('en');
+  assert.ok(countriesAr.length >= 230);
+  assert.equal(countriesAr.length, countriesEn.length);
+  assert.ok(countriesAr.some((c) => c.code === 'KW' && c.name.includes('الكويت')));
+  assert.ok(countriesEn.some((c) => c.code === 'US'));
+
+  assert.deepEqual(getCountryWeekendDays('KW'), [5, 6]); // Fri & Sat
+  assert.deepEqual(getCountryWeekendDays('SA'), [5, 6]); // Fri & Sat
+  assert.deepEqual(getCountryWeekendDays('EG'), [5, 6]); // Fri & Sat
+  assert.deepEqual(getCountryWeekendDays('US'), [6, 0]); // Sat & Sun
+  assert.deepEqual(getCountryWeekendDays('AE'), [6, 0]); // Sat & Sun
+  assert.deepEqual(getCountryWeekendDays('IR'), [5]);    // Fri only
+  assert.deepEqual(getCountryWeekendDays('AF'), [4, 5]); // Thu & Fri
+
+  // Kuwait: Sun Feb 22 .. Sat Feb 28 2026 inclusive -> Fri/Sat (2 weekend days), Wed Feb 25 + Thu Feb 26 (2 holidays), 3 workdays
+  const kwHolidays = getCountryPublicHolidaysForRange('KW', '2026-02-22', '2026-02-28', 'ar');
+  const kwBiz = calculateBusinessDays('2026-02-22', '2026-02-28', true, true, {
+    weekendDays: getCountryWeekendDays('KW'),
+    holidays: kwHolidays,
+  });
+  assert.equal(kwBiz.totalDays, 7);
+  assert.equal(kwBiz.weekendDays, 2);
+  assert.equal(kwBiz.holidayDays, 2);
+  assert.equal(kwBiz.businessDays, 3);
+  assert.equal(kwBiz.matchedHolidays.length, 2);
+
+  // Saudi Arabia Founding Day Feb 22 2026 (Sunday, workday in SA)
+  const saHolidays = getCountryPublicHolidaysForRange('SA', '2026-02-20', '2026-02-26', 'ar');
+  const saBiz = calculateBusinessDays('2026-02-20', '2026-02-26', true, true, {
+    weekendDays: getCountryWeekendDays('SA'),
+    holidays: saHolidays,
+  });
+  assert.equal(saBiz.weekendDays, 2); // Fri Feb 20 & Sat Feb 21
+  assert.equal(saBiz.holidayDays, 1); // Sun Feb 22 Founding Day
+  assert.equal(saBiz.businessDays, 4);
+
+  // US Thanksgiving week via date-holidays
+  const usHolidays = getCountryPublicHolidaysForRange('US', '2026-11-23', '2026-11-29', 'en');
+  const usBiz = calculateBusinessDays('2026-11-23', '2026-11-29', true, true, {
+    weekendDays: getCountryWeekendDays('US'),
+    holidays: usHolidays,
+  });
+  assert.equal(usBiz.weekendDays, 2);
+  assert.equal(usBiz.holidayDays, 1);
+  assert.equal(usBiz.businessDays, 4);
+});
+
 test('Everyday & Science: Tip, Discount, Sales Tax, GPA, Ohm Law, KE, Voltage Divider', () => {
   const tip = calculateTip(100, 18, 4);
   approx(tip.totalPerPerson, 29.5, 0.01);
@@ -383,3 +440,54 @@ test('Financial: End-of-Service Gratuity (Kuwait, UAE, Saudi Arabia)', async () 
   });
   approx(ksaResign.gratuityAmount, 4500, 0.01);
 });
+
+test('Financial: Zakat Calculator (Cash, Gold & Silver at 2.5%)', async () => {
+  const { calculateZakat, getGoldPricesByKarat } = await import('../zakat.ts');
+
+  const prices = getGoldPricesByKarat(120);
+  assert.equal(prices[24], 120);
+  approx(prices[22], 110, 0.01);
+  approx(prices[21], 105, 0.01);
+  approx(prices[18], 90, 0.01);
+
+  // Below gold Nisab (40g of 21K = 35g 24K < 85g) and below silver Nisab (500g < 595g)
+  // Money Zakat = 10,000 * 2.5% = 250
+  const belowMetals = calculateZakat({
+    moneyAmount: 10000,
+    goldItems: [{ id: 'g1', karat: 21, weightGrams: 40 }],
+    silverWeightGrams: 500,
+    gold24kPricePerGram: 120,
+    silverPricePerGram: 1.5,
+  });
+  approx(belowMetals.moneyZakat, 250, 0.01);
+  approx(belowMetals.goldPure24kGrams, 35, 0.001);
+  assert.equal(belowMetals.goldMeetsNisab, false);
+  assert.equal(belowMetals.goldZakat, 0);
+  assert.equal(belowMetals.silverMeetsNisab, false);
+  assert.equal(belowMetals.silverZakat, 0);
+  approx(belowMetals.totalZakatDue, 250, 0.01);
+
+  // Multi-karat gold meeting 85g 24K Nisab + silver meeting 595g Nisab:
+  // 50g 24K (= 50g pure, val 6000) + 40g 21K (= 35g pure, val 4200) -> 85g pure, val 10200 -> Gold Zakat = 255
+  // Silver: 600g * 1.5 = 900 -> Silver Zakat = 22.5
+  // Money: 2000 -> Money Zakat = 50
+  const aboveMetals = calculateZakat({
+    moneyAmount: 2000,
+    goldItems: [
+      { id: 'g1', karat: 24, weightGrams: 50 },
+      { id: 'g2', karat: 21, weightGrams: 40 },
+    ],
+    silverWeightGrams: 600,
+    gold24kPricePerGram: 120,
+    silverPricePerGram: 1.5,
+  });
+  approx(aboveMetals.goldPure24kGrams, 85, 0.001);
+  approx(aboveMetals.goldEstimatedValue, 10200, 0.01);
+  assert.equal(aboveMetals.goldMeetsNisab, true);
+  approx(aboveMetals.goldZakat, 255, 0.01);
+  assert.equal(aboveMetals.silverMeetsNisab, true);
+  approx(aboveMetals.silverZakat, 22.5, 0.01);
+  approx(aboveMetals.totalZakatDue, 327.5, 0.01);
+});
+
+

@@ -6,6 +6,7 @@ import { ConversionWidget } from './ConversionWidgets.tsx';
 import { DateTimeWidget } from './DateTimeWidgets.tsx';
 import { EverydayWidget } from './EverydayWidgets.tsx';
 import { ScienceWidget } from './ScienceWidgets.tsx';
+import { ZakatWidget } from './ZakatWidget.tsx';
 
 export function CalculatorWidgetRouter({
   slug,
@@ -14,7 +15,10 @@ export function CalculatorWidgetRouter({
   slug: string;
   category: CategorySlug;
 }) {
-  // Handle shared cross-category slugs cleanly
+  // Handle shared cross-category or dedicated modular slugs cleanly
+  if (slug === 'zakat-calculator') {
+    return <ZakatWidget />;
+  }
   if (slug === 'tip-calculator' || slug === 'discount-calculator' || slug === 'grade-calculator') {
     return <EverydayWidget slug={slug} />;
   }

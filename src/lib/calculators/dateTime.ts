@@ -104,27 +104,55 @@ export function calculateAge(dobStr: string, targetDateStr: string) {
   };
 }
 
+export interface BusinessCalendarHoliday {
+  date: string;
+  name: string;
+}
+
+export interface BusinessCalendarOptions {
+  weekendDays?: number[];
+  holidays?: BusinessCalendarHoliday[];
+  getYearHolidays?: (year: number) => BusinessCalendarHoliday[];
+}
+
 export function calculateBusinessDays(
   startStr: string,
   endStr: string,
   excludeHolidays = true,
-  includeEndDate = false
+  includeEndDate = false,
+  options?: BusinessCalendarOptions
 ) {
   let start = parseIsoDate(startStr);
   let end = parseIsoDate(endStr);
   if (start.getTime() > end.getTime()) [start, end] = [end, start];
 
-  const holidayCache = new Map<number, Set<string>>();
-  const isHoliday = (iso: string, year: number) => {
-    if (!excludeHolidays) return false;
-    if (!holidayCache.has(year)) holidayCache.set(year, getUsFederalHolidays(year));
-    return holidayCache.get(year)!.has(iso);
+  const weekendSet = new Set<number>(options?.weekendDays ?? [0, 6]);
+  const explicitHolidayMap = options?.holidays
+    ? new Map<string, string>(options.holidays.map((h) => [h.date, h.name]))
+    : null;
+  const yearCache = new Map<number, Map<string, string>>();
+
+  const getHolidayName = (iso: string, year: number): string | null => {
+    if (!excludeHolidays) return null;
+    if (explicitHolidayMap) {
+      return explicitHolidayMap.get(iso) ?? null;
+    }
+    if (!yearCache.has(year)) {
+      if (options?.getYearHolidays) {
+        yearCache.set(year, new Map(options.getYearHolidays(year).map((h) => [h.date, h.name])));
+      } else {
+        const usSet = getUsFederalHolidays(year);
+        yearCache.set(year, new Map(Array.from(usSet).map((d) => [d, 'US Federal Holiday'])));
+      }
+    }
+    return yearCache.get(year)!.get(iso) ?? null;
   };
 
   let totalDays = 0;
   let businessDays = 0;
   let weekendDays = 0;
   let holidayDays = 0;
+  const matchedHolidays: BusinessCalendarHoliday[] = [];
 
   const cursor = new Date(start.getTime());
   const limit = includeEndDate ? end.getTime() : end.getTime() - 86400000;
@@ -133,42 +161,60 @@ export function calculateBusinessDays(
     totalDays++;
     const dow = cursor.getUTCDay();
     const iso = formatUtcIso(cursor);
-    if (dow === 0 || dow === 6) {
+    if (weekendSet.has(dow)) {
       weekendDays++;
-    } else if (isHoliday(iso, cursor.getUTCFullYear())) {
-      holidayDays++;
     } else {
-      businessDays++;
+      const holidayName = getHolidayName(iso, cursor.getUTCFullYear());
+      if (holidayName !== null) {
+        holidayDays++;
+        matchedHolidays.push({ date: iso, name: holidayName });
+      } else {
+        businessDays++;
+      }
     }
     cursor.setUTCDate(cursor.getUTCDate() + 1);
     if (totalDays > 50000) break;
   }
 
-  return { totalDays, businessDays, weekendDays, holidayDays };
+  return { totalDays, businessDays, weekendDays, holidayDays, matchedHolidays };
 }
 
 export function addWorkingDays(
   startStr: string,
   deltaDays: number,
-  excludeHolidays = true
+  excludeHolidays = true,
+  options?: BusinessCalendarOptions
 ) {
   const start = parseIsoDate(startStr);
   const step = deltaDays >= 0 ? 1 : -1;
   let remaining = Math.abs(Math.round(deltaDays));
-  const holidayCache = new Map<number, Set<string>>();
+  const weekendSet = new Set<number>(options?.weekendDays ?? [0, 6]);
+  const explicitHolidaySet = options?.holidays
+    ? new Set(options.holidays.map((h) => h.date))
+    : null;
+  const yearCache = new Map<number, Set<string>>();
   const cursor = new Date(start.getTime());
   let calendarDaysElapsed = 0;
+
+  const isHoliday = (iso: string, year: number): boolean => {
+    if (!excludeHolidays) return false;
+    if (explicitHolidaySet) return explicitHolidaySet.has(iso);
+    if (!yearCache.has(year)) {
+      if (options?.getYearHolidays) {
+        yearCache.set(year, new Set(options.getYearHolidays(year).map((h) => h.date)));
+      } else {
+        yearCache.set(year, getUsFederalHolidays(year));
+      }
+    }
+    return yearCache.get(year)!.has(iso);
+  };
 
   while (remaining > 0 && calendarDaysElapsed < 50000) {
     cursor.setUTCDate(cursor.getUTCDate() + step);
     calendarDaysElapsed++;
     const dow = cursor.getUTCDay();
-    if (dow === 0 || dow === 6) continue;
-    if (excludeHolidays) {
-      const yr = cursor.getUTCFullYear();
-      if (!holidayCache.has(yr)) holidayCache.set(yr, getUsFederalHolidays(yr));
-      if (holidayCache.get(yr)!.has(formatUtcIso(cursor))) continue;
-    }
+    if (weekendSet.has(dow)) continue;
+    if (isHoliday(formatUtcIso(cursor), cursor.getUTCFullYear())) continue;
     remaining--;
   }
 

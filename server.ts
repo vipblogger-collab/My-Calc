@@ -12,7 +12,9 @@ import { injectSeoIntoHtml } from './src/seo/routeMeta.ts';
 import { SITE_NAME, SITE_URL } from './src/config/site.ts';
 import {
   fetchLiveGlobalRatesDirect,
+  fetchLiveMetalPricesDirect,
   type LiveExchangeRatesPayload,
+  type LiveMetalPricesPayload,
 } from './src/lib/calculators/currencies.ts';
 
 dotenv.config({ quiet: true });
@@ -21,6 +23,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 let ratesCache: LiveExchangeRatesPayload | null = null;
+let metalsCache: LiveMetalPricesPayload | null = null;
 const FX_CACHE_TTL_MS = 15 * 60 * 1000;
 const FX_FORCE_COOLDOWN_MS = 20 * 1000;
 
@@ -134,6 +137,38 @@ async function startServer() {
       }
       res.status(502).json({
         error: 'Unable to fetch live exchange rates at the moment. Please try again shortly.',
+        detail: err instanceof Error ? err.message : 'Network error',
+      });
+    }
+  });
+
+  // Live global Gold (24K XAU) & Silver (XAG) spot prices per gram in USD + 168 currency FX rates
+  app.get('/api/metal-prices', async (req, res) => {
+    const forceRefresh = req.query.refresh === '1' || req.query.refresh === 'true';
+    const cacheAgeMs = metalsCache ? Date.now() - metalsCache.fetchedAtMs : Infinity;
+    const canUseCache =
+      metalsCache &&
+      (forceRefresh ? cacheAgeMs < FX_FORCE_COOLDOWN_MS : cacheAgeMs < FX_CACHE_TTL_MS);
+
+    if (canUseCache && metalsCache) {
+      res.json({ ...metalsCache, cached: true });
+      return;
+    }
+
+    try {
+      metalsCache = await fetchLiveMetalPricesDirect();
+      res.json({ ...metalsCache, cached: false });
+    } catch (err) {
+      if (metalsCache) {
+        res.json({
+          ...metalsCache,
+          provider: `${metalsCache.provider} (stale cache)`,
+          cached: true,
+        });
+        return;
+      }
+      res.status(502).json({
+        error: 'Unable to fetch live gold and silver prices at the moment.',
         detail: err instanceof Error ? err.message : 'Network error',
       });
     }

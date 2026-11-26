@@ -1052,4 +1052,69 @@ export const FINANCIAL_CALCULATORS: CalculatorDef[] = [
     ],
     relatedSlugs: ['salary-calculator', 'retirement-calculator', 'savings-calculator'],
   },
+  {
+    id: 'zakat-calculator',
+    slug: 'zakat-calculator',
+    category: 'financial-calculators',
+    name: 'Zakat Calculator (Cash, Gold & Silver)',
+    shortName: 'Zakat Calculator',
+    popular: true,
+    recentlyAdded: true,
+    description:
+      'Calculate Zakat on cash, 24K/22K/21K/18K gold, and silver at 2.5% using live global gold and silver prices per gram (85g 24K gold and 595g silver Nisab).',
+    keywords: [
+      'zakat calculator',
+      'zakat cash gold silver',
+      'nisab 85g gold',
+      'nisab 595g silver',
+      'zakat on gold',
+      'zakat on silver',
+      'live gold price zakat',
+    ],
+    seoTitle: 'Zakat Calculator (Cash, Gold & Silver) – Live Global Prices | mysmartcalc.net',
+    seoDescription:
+      'Calculate Islamic Zakat on money, 24K/22K/21K/18K gold, and silver at 2.5% using automatically updated live global gold and silver prices across 168 currencies.',
+    formulaText:
+      'Total Zakat Due = Cash Zakat (Cash × 2.5%) + Gold Zakat (if Pure 24K Gold ≥ 85g: ∑(Weight × Karat Price) × 2.5%) + Silver Zakat (if Silver ≥ 595g: Weight × Silver Price × 2.5%)',
+    formulaVariables: [
+      { symbol: 'Rate', description: '2.5% (1/40) Sharia Zakat rate' },
+      { symbol: 'Gold Nisab', description: '85g pure 24K gold equivalent (24K + 22K×22/24 + 21K×21/24 + 18K×18/24)' },
+      { symbol: 'Silver Nisab', description: '595g pure silver at the live global silver spot price' },
+    ],
+    steps: [
+      'Select your preferred world currency; live global 24K/22K/21K/18K gold and silver prices per gram update automatically every 10 minutes.',
+      'Use the Cash, Gold, and Silver tabs to enter your cash amount, add gold items by weight and karat (24K, 22K, 21K, 18K), and enter silver weight in grams.',
+      'Review the live Zakat Summary panel showing Money Zakat, Gold Zakat, Silver Zakat, and Total Due at 2.5%.',
+    ],
+    example: {
+      title: 'Cash, Multi-Karat Gold & Silver Zakat Example',
+      inputsSummary: '24K Gold: $110/g (21K: $96.25/g) · Silver: $1.20/g · Cash: $10,000 · Gold: 100g of 21K (= 87.5g pure 24K) · Silver: 600g',
+      calculation: 'Cash Zakat = $10,000 × 2.5% = $250 · Gold Value = 100 × $96.25 = $9,625 (≥ 85g 24K) → $240.63 · Silver Value = 600 × $1.20 = $720 (≥ 595g) → $18.00',
+      resultSummary: 'Total Zakat due across cash, gold, and silver is $508.63.',
+    },
+    faqs: [
+      {
+        question: 'How is the Sharia Zakat rate and Nisab calculated?',
+        answer:
+          'Calculations are based on the standard 2.5% Sharia Zakat rate. Gold Zakat becomes due when total pure 24K equivalent gold reaches 85 grams, and Silver Zakat becomes due when silver reaches 595 grams.',
+      },
+      {
+        question: 'How does the multi-karat gold calculator handle 22K, 21K, and 18K gold?',
+        answer:
+          'You can add multiple gold rows with different karats (24K, 22K, 21K, or 18K). Each weight is priced using its live global karat rate and converted to 24K pure gold grams to check the 85g Nisab accurately.',
+      },
+      {
+        question: 'Are gold and silver prices updated from global markets?',
+        answer:
+          'Yes. Global spot prices per troy ounce for gold (XAU) and silver (XAG) are converted to grams and your chosen currency and refresh automatically every 10 minutes.',
+      },
+    ],
+    educationalSections: [
+      {
+        heading: 'Cash, Gold & Silver Zakat at 2.5%',
+        body: 'Separating Zakat into dedicated tabs for Cash, multi-karat Gold (24K, 22K, 21K, 18K), and Silver keeps personal Zakat assessment clear while linking live global precious-metal prices to both 85g gold and 595g silver Nisab checks.',
+      },
+    ],
+    relatedSlugs: ['savings-calculator', 'investment-calculator', 'net-worth-calculator'],
+  },
 ];

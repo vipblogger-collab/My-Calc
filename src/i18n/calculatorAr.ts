@@ -63,6 +63,12 @@ export interface CalculatorArMeta {
   shortName: string;
   description: string;
   keywords: string[];
+  formulaText?: string;
+  formulaVariables?: CalculatorDef['formulaVariables'];
+  steps?: string[];
+  example?: CalculatorDef['example'];
+  faqs?: CalculatorDef['faqs'];
+  educationalSections?: CalculatorDef['educationalSections'];
 }
 
 export const CALCULATOR_AR: Record<string, CalculatorArMeta> = {
@@ -192,6 +198,54 @@ export const CALCULATOR_AR: Record<string, CalculatorArMeta> = {
     shortName: 'نهاية الخدمة',
     description: 'احسب مستحقات نهاية الخدمة وبدل الإجازات وفق قوانين العمل في الكويت والإمارات والسعودية.',
     keywords: ['نهاية الخدمة', 'مكافأة نهاية الخدمة', 'الكويت', 'الإمارات', 'السعودية', 'استقالة'],
+  },
+  'zakat-calculator': {
+    name: 'حاسبة الزكاة (المال والذهب والفضة)',
+    shortName: 'حاسبة الزكاة',
+    description:
+      'احسب زكاة المال والذهب بمختلف العيارات (24، 22، 21، 18) والفضة بنسبة 2.5% للنصاب الشرعي مع تحديث فوري لأسعار الذهب والفضة العالمية.',
+    keywords: ['حاسبة الزكاة', 'زكاة المال', 'زكاة الذهب', 'زكاة الفضة', 'نصاب الذهب', 'سعر الذهب العالمي'],
+    formulaText:
+      'إجمالي الزكاة = زكاة المال (المبلغ × 2.5%) + زكاة الذهب (إذا بلغ الصافي 85 جم عيار 24: ∑(الوزن × سعر العيار) × 2.5%) + زكاة الفضة (إذا بلغت 595 جم: الوزن × سعر الفضة × 2.5%)',
+    formulaVariables: [
+      { symbol: 'النسبة', description: '2.5% (ربع العشر) للنصاب الشرعي' },
+      { symbol: 'نصاب الذهب', description: '85 جرام ذهب خالص عيار 24 (بعد تحويل أوزان 22 و21 و18 لمكافئ 24)' },
+      { symbol: 'نصاب الفضة', description: '595 جرام فضة خالصة بالسعر العالمي الفوري' },
+    ],
+    steps: [
+      'اختر عملتك المحلية ليتم جلب وتحديث أسعار جرام الذهب (24 و22 و21 و18) والفضة تلقائياً كل 10 دقائق حسب السعر العالمي.',
+      'انتقل بين تبويبات زكاة المال، زكاة الذهب (مع إمكانية إضافة أكثر من عيار ووزن)، وزكاة الفضة لإدخال ممتلكاتك.',
+      'راجع ملخص الزكاة الجانبي لمعرفة زكاة المال وزكاة الذهب وزكاة الفضة والإجمالي المستحق بنسبة 2.5%.',
+    ],
+    example: {
+      title: 'مثال حساب زكاة المال والذهب والفضة',
+      inputsSummary: 'سعر ذهب 24: 35 KWD/جم (عيار 21: 30.625 KWD/جم) · الفضة: 0.40 KWD/جم · المال: 5,000 KWD · ذهب عيار 21: 100 جم (87.5 جم صافي) · فضة: 600 جم',
+      calculation: 'زكاة المال = 5,000 × 2.5% = 125 KWD · قيمة الذهب = 3,062.5 KWD (≥ 85 جم صافي) ← 76.563 KWD · قيمة الفضة = 240 KWD (≥ 595 جم) ← 6.000 KWD',
+      resultSummary: 'إجمالي الزكاة المستحقة على المال والذهب والفضة يساوي 207.563 دينار كويتي.',
+    },
+    faqs: [
+      {
+        question: 'كيف يتم احتساب نسبة الزكاة والنصاب الشرعي للذهب والفضة؟',
+        answer:
+          'الحساب مبني على نسبة 2.5% للنصاب الشرعي؛ نصاب الذهب هو 85 جراماً من الذهب الخالص عيار 24، ونصاب الفضة هو 595 جراماً من الفضة الخالصة.',
+      },
+      {
+        question: 'هل يمكن حساب أكثر من عيار للذهب في نفس الوقت؟',
+        answer:
+          'نعم، يمكنك عبر تبويب زكاة الذهب إضافة عدة صفوف بأوزان وعيارات مختلفة (24 أو 22 أو 21 أو 18)، وتقوم الحاسبة بتحويلها إلى مكافئ الذهب الخالص عيار 24 للتحقق من بلوغ نصاب 85 جراماً.',
+      },
+      {
+        question: 'كيف يتم تحديث أسعار الذهب والفضة؟',
+        answer:
+          'ترتبط الحاسبة بأسعار السوق العالمي لأونصة الذهب والفضة وتُحوّلها تلقائياً إلى سعر الجرام بالعملة التي تختارها مع تحديث دوري كل 10 دقائق وزر للتحديث الفوري.',
+      },
+    ],
+    educationalSections: [
+      {
+        heading: 'حساب زكاة المال والذهب والفضة بنسبة 2.5%',
+        body: 'توفر الحاسبة ثلاثة تبويبات منفصلة لزكاة المال وزكاة الذهب متعددة العيارات وزكاة الفضة مع ملخص فوري للمبالغ المستحقة وربط مباشر بأسعار الذهب والفضة العالمية.',
+      },
+    ],
   },
 
   // Health (15)
@@ -810,6 +864,12 @@ export function localizeCalculator(calc: CalculatorDef, lang: Language): Calcula
     shortName: ar.shortName,
     description: ar.description,
     keywords: [...calc.keywords, ...ar.keywords],
+    formulaText: ar.formulaText ?? calc.formulaText,
+    formulaVariables: ar.formulaVariables ?? calc.formulaVariables,
+    steps: ar.steps ?? calc.steps,
+    example: ar.example ?? calc.example,
+    faqs: ar.faqs ?? calc.faqs,
+    educationalSections: ar.educationalSections ?? calc.educationalSections,
     seoTitle: `${ar.name} – أداة حساب مجانية ودقيقة | mysmartcalc.net`,
     seoDescription: `${ar.description} نتائج فورية مع شرح المعادلة والأمثلة التطبيقية.`,
   };

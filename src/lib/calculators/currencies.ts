@@ -376,3 +376,90 @@ export async function fetchLiveGlobalRatesDirect(ttlMs = 15 * 60 * 1000): Promis
   };
 }
 
+export const TROY_OUNCE_IN_GRAMS = 31.1034768;
+
+export interface LiveMetalPricesPayload {
+  gold24kUsdPerGram: number;
+  silverUsdPerGram: number;
+  rates: Record<string, number>;
+  lastUpdatedUtc: string;
+  provider: string;
+  fetchedAtMs: number;
+}
+
+export async function fetchLiveMetalPricesDirect(): Promise<LiveMetalPricesPayload> {
+  const metalFeeds = [
+    {
+      url: 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json',
+      provider: 'Global Spot Feed (XAU/XAG Market Rate)',
+    },
+    {
+      url: 'https://latest.currency-api.pages.dev/v1/currencies/usd.json',
+      provider: 'Global Spot Mirror (XAU/XAG Market Rate)',
+    },
+  ];
+
+  let usdRatesMap: Record<string, number> | null = null;
+  let dateStr = '';
+  let usedProvider = metalFeeds[0].provider;
+
+  for (const feed of metalFeeds) {
+    try {
+      const data = await safeFetchJson<{
+        date?: string;
+        usd?: Record<string, number>;
+      }>(feed.url, 6000);
+      if (data?.usd?.xau && data?.usd?.xag && data.usd.xau > 0 && data.usd.xag > 0) {
+        usdRatesMap = data.usd;
+        dateStr = data.date || '';
+        usedProvider = feed.provider;
+        break;
+      }
+    } catch {
+      // try next feed
+    }
+  }
+
+  if (!usdRatesMap || !usdRatesMap.xau || !usdRatesMap.xag) {
+    throw new Error('Unable to retrieve live global gold and silver prices');
+  }
+
+  const gold24kUsdPerGram = 1 / usdRatesMap.xau / TROY_OUNCE_IN_GRAMS;
+  const silverUsdPerGram = 1 / usdRatesMap.xag / TROY_OUNCE_IN_GRAMS;
+
+  const rates: Record<string, number> = { USD: 1 };
+  for (const code of ACTIVE_WORLD_CURRENCY_CODES) {
+    const val = usdRatesMap[code.toLowerCase()];
+    if (typeof val === 'number' && Number.isFinite(val) && val > 0) {
+      rates[code] = val;
+    }
+  }
+
+  // Ensure any currency missing from the metal feed is filled from open.er-api
+  try {
+    const fx = await safeFetchJson<{ result?: string; rates?: Record<string, number> }>(
+      'https://open.er-api.com/v6/latest/USD',
+      3500
+    );
+    if (fx.result === 'success' && fx.rates) {
+      for (const [k, v] of Object.entries(fx.rates)) {
+        if (!rates[k] && typeof v === 'number' && Number.isFinite(v) && v > 0) {
+          rates[k] = v;
+        }
+      }
+    }
+  } catch {
+    // Ignore secondary FX supplement error
+  }
+
+  return {
+    gold24kUsdPerGram,
+    silverUsdPerGram,
+    rates,
+    lastUpdatedUtc: dateStr ? `${dateStr} (Global Spot)` : new Date().toUTCString(),
+    provider: usedProvider,
+    fetchedAtMs: Date.now(),
+  };
+}
+
+
