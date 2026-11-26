@@ -50,6 +50,7 @@ import {
   formatMoney,
   getCurrencyName,
   getCurrencySymbol,
+  safeFetchJson,
 } from '../currencies.ts';
 import {
   calculateAge,
@@ -264,6 +265,21 @@ test('Conversion: Length, Weight, Temperature, Fuel Economy inverse', () => {
   assert.equal(formatCompactMoneyAxis(250000, 'USD'), '$250k');
   assert.equal(formatCompactMoneyAxis(1500000, 'EUR'), '€1.5M');
   assert.equal(formatCompactMoneyAxis(50000, 'KWD'), '50k KWD');
+});
+
+test('Conversion: safeFetchJson rejects non-JSON responses cleanly', async () => {
+  const originalFetch = globalThis.fetch;
+  try {
+    globalThis.fetch = async () =>
+      new Response('The page could not be found', { status: 200, headers: { 'Content-Type': 'text/plain' } });
+    await assert.rejects(() => safeFetchJson('/api/exchange-rates'), /not valid JSON/);
+
+    globalThis.fetch = async () =>
+      new Response('The page could not be found', { status: 404, headers: { 'Content-Type': 'text/plain' } });
+    await assert.rejects(() => safeFetchJson('/api/exchange-rates'), /HTTP 404/);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
 });
 
 test('Date & Time: Leap years, Age, Business days, ISO weeks', () => {

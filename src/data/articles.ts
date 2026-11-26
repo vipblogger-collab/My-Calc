@@ -1,4 +1,4 @@
-import { ArticleDef } from '../types/calculator.ts';
+import type { ArticleDef } from '../types/calculator.ts';
 
 export const ARTICLES: ArticleDef[] = [
   {

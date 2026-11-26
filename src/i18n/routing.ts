@@ -1,4 +1,4 @@
-import { Language } from '../types/calculator.ts';
+import type { Language } from '../types/calculator.ts';
 
 export const SUPPORTED_LANGUAGES: readonly Language[] = ['en', 'ar'];
 

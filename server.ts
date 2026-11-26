@@ -10,118 +10,22 @@ import { ARTICLES } from './src/data/articles.ts';
 import { localizePath } from './src/i18n/routing.ts';
 import { injectSeoIntoHtml } from './src/seo/routeMeta.ts';
 import { SITE_NAME, SITE_URL } from './src/config/site.ts';
-import { ACTIVE_WORLD_CURRENCY_CODES } from './src/lib/calculators/currencies.ts';
+import {
+  fetchLiveGlobalRatesDirect,
+  type LiveExchangeRatesPayload,
+} from './src/lib/calculators/currencies.ts';
 
 dotenv.config({ quiet: true });
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-interface CachedRates {
-  base: string;
-  rates: Record<string, number>;
-  currencyCount: number;
-  lastUpdatedUtc: string;
-  nextUpdateUtc: string;
-  provider: string;
-  fetchedAtMs: number;
-}
-
-let ratesCache: CachedRates | null = null;
+let ratesCache: LiveExchangeRatesPayload | null = null;
 const FX_CACHE_TTL_MS = 15 * 60 * 1000;
 const FX_FORCE_COOLDOWN_MS = 20 * 1000;
 
-async function fetchJsonWithTimeout<T>(url: string, timeoutMs: number): Promise<T> {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const response = await fetch(url, { signal: controller.signal });
-    if (!response.ok) {
-      throw new Error(`Upstream API responded with ${response.status}`);
-    }
-    return (await response.json()) as T;
-  } finally {
-    clearTimeout(timeout);
-  }
-}
-
-async function fetchLiveGlobalRates(): Promise<CachedRates> {
-  let primaryRates: Record<string, number> | null = null;
-  let lastUpdatedUtc = new Date().toUTCString();
-  let nextUpdateUtc = new Date(Date.now() + FX_CACHE_TTL_MS).toUTCString();
-  let provider = 'ExchangeRate-API (open.er-api.com)';
-
-  try {
-    const data = await fetchJsonWithTimeout<{
-      result: string;
-      base_code?: string;
-      rates?: Record<string, number>;
-      time_last_update_utc?: string;
-      time_next_update_utc?: string;
-    }>('https://open.er-api.com/v6/latest/USD', 7000);
-
-    if (data.result === 'success' && data.rates && Object.keys(data.rates).length > 50) {
-      primaryRates = { ...data.rates, USD: 1 };
-      if (data.time_last_update_utc) lastUpdatedUtc = data.time_last_update_utc;
-      if (data.time_next_update_utc) nextUpdateUtc = data.time_next_update_utc;
-    }
-  } catch {
-    primaryRates = null;
-  }
-
-  // Supplement missing active world currencies (e.g., KPW) or act as full failover
-  try {
-    const backup = await fetchJsonWithTimeout<{
-      date?: string;
-      usd?: Record<string, number>;
-    }>(
-      'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json',
-      primaryRates ? 2500 : 7000
-    );
-
-    if (backup.usd) {
-      if (primaryRates) {
-        for (const code of ACTIVE_WORLD_CURRENCY_CODES) {
-          if (!primaryRates[code]) {
-            const val = backup.usd[code.toLowerCase()];
-            if (typeof val === 'number' && Number.isFinite(val) && val > 0) {
-              primaryRates[code] = val;
-            }
-          }
-        }
-      } else {
-        const failoverRates: Record<string, number> = { USD: 1 };
-        for (const code of ACTIVE_WORLD_CURRENCY_CODES) {
-          const val = backup.usd[code.toLowerCase()];
-          if (typeof val === 'number' && Number.isFinite(val) && val > 0) {
-            failoverRates[code] = val;
-          }
-        }
-        if (Object.keys(failoverRates).length > 50) {
-          primaryRates = failoverRates;
-          lastUpdatedUtc = backup.date ? `${backup.date} 00:00:00 UTC` : new Date().toUTCString();
-          nextUpdateUtc = new Date(Date.now() + FX_CACHE_TTL_MS).toUTCString();
-          provider = 'Global FX Feed (fawazahmed0/currency-api)';
-        }
-      }
-    }
-  } catch {
-    // Ignore backup fetch errors when primary succeeded
-  }
-
-  if (!primaryRates) {
-    throw new Error('All live global exchange-rate providers failed');
-  }
-
-  return {
-    base: 'USD',
-    rates: primaryRates,
-    currencyCount: Object.keys(primaryRates).length,
-    lastUpdatedUtc,
-    nextUpdateUtc,
-    provider,
-    fetchedAtMs: Date.now(),
-  };
+async function fetchLiveGlobalRates(): Promise<LiveExchangeRatesPayload> {
+  return fetchLiveGlobalRatesDirect(FX_CACHE_TTL_MS);
 }
 
 function resolveServerPort(): number {

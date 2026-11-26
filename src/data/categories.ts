@@ -1,4 +1,4 @@
-import { CategoryDef } from '../types/calculator.ts';
+import type { CategoryDef } from '../types/calculator.ts';
 
 export const CATEGORIES: CategoryDef[] = [
   {

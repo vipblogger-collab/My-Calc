@@ -4,7 +4,7 @@ import { ARTICLES } from '../data/articles.ts';
 import { UI_COPY } from '../i18n/translations.ts';
 import { localizeArticle, localizeCalculator, localizeCategory } from '../i18n/calculatorAr.ts';
 import { extractLangFromPath, localizePath } from '../i18n/routing.ts';
-import { Language } from '../types/calculator.ts';
+import type { Language } from '../types/calculator.ts';
 
 export interface RouteSeoMeta {
   lang: Language;

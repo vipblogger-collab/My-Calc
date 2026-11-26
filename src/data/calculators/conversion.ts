@@ -1,4 +1,4 @@
-import { CalculatorDef } from '../../types/calculator.ts';
+import type { CalculatorDef } from '../../types/calculator.ts';
 
 function makeUnitConverterDef(params: {
   slug: string;

@@ -266,3 +266,113 @@ export function formatCompactMoneyAxis(val: number, currencyCode = 'USD'): strin
   }
   return `${sign}${prefixSym}${Math.round(abs)}${suffixSym}`;
 }
+
+export interface LiveExchangeRatesPayload {
+  base: string;
+  rates: Record<string, number>;
+  currencyCount: number;
+  lastUpdatedUtc: string;
+  nextUpdateUtc: string;
+  provider: string;
+  fetchedAtMs: number;
+}
+
+export async function safeFetchJson<T>(url: string, timeoutMs = 7000): Promise<T> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, {
+      signal: controller.signal,
+      headers: { Accept: 'application/json' },
+    });
+    const raw = await response.text();
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    try {
+      return JSON.parse(raw) as T;
+    } catch {
+      throw new Error('Response was not valid JSON');
+    }
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+export async function fetchLiveGlobalRatesDirect(ttlMs = 15 * 60 * 1000): Promise<LiveExchangeRatesPayload> {
+  let primaryRates: Record<string, number> | null = null;
+  let lastUpdatedUtc = new Date().toUTCString();
+  let nextUpdateUtc = new Date(Date.now() + ttlMs).toUTCString();
+  let provider = 'ExchangeRate-API (open.er-api.com)';
+
+  try {
+    const data = await safeFetchJson<{
+      result?: string;
+      rates?: Record<string, number>;
+      time_last_update_utc?: string;
+      time_next_update_utc?: string;
+    }>('https://open.er-api.com/v6/latest/USD', 7000);
+
+    if (data.result === 'success' && data.rates && Object.keys(data.rates).length > 50) {
+      primaryRates = { ...data.rates, USD: 1 };
+      if (data.time_last_update_utc) lastUpdatedUtc = data.time_last_update_utc;
+      if (data.time_next_update_utc) nextUpdateUtc = data.time_next_update_utc;
+    }
+  } catch {
+    primaryRates = null;
+  }
+
+  try {
+    const backup = await safeFetchJson<{
+      date?: string;
+      usd?: Record<string, number>;
+    }>(
+      'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json',
+      primaryRates ? 2500 : 7000
+    );
+
+    if (backup.usd) {
+      if (primaryRates) {
+        for (const code of ACTIVE_WORLD_CURRENCY_CODES) {
+          if (!primaryRates[code]) {
+            const val = backup.usd[code.toLowerCase()];
+            if (typeof val === 'number' && Number.isFinite(val) && val > 0) {
+              primaryRates[code] = val;
+            }
+          }
+        }
+      } else {
+        const failoverRates: Record<string, number> = { USD: 1 };
+        for (const code of ACTIVE_WORLD_CURRENCY_CODES) {
+          const val = backup.usd[code.toLowerCase()];
+          if (typeof val === 'number' && Number.isFinite(val) && val > 0) {
+            failoverRates[code] = val;
+          }
+        }
+        if (Object.keys(failoverRates).length > 50) {
+          primaryRates = failoverRates;
+          lastUpdatedUtc = backup.date ? `${backup.date} 00:00:00 UTC` : new Date().toUTCString();
+          nextUpdateUtc = new Date(Date.now() + ttlMs).toUTCString();
+          provider = 'Global FX Feed (fawazahmed0/currency-api)';
+        }
+      }
+    }
+  } catch {
+    // Ignore backup error when primary succeeded
+  }
+
+  if (!primaryRates) {
+    throw new Error('All live global exchange-rate providers failed');
+  }
+
+  return {
+    base: 'USD',
+    rates: primaryRates,
+    currencyCount: Object.keys(primaryRates).length,
+    lastUpdatedUtc,
+    nextUpdateUtc,
+    provider,
+    fetchedAtMs: Date.now(),
+  };
+}
+

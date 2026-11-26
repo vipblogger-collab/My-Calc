@@ -1,4 +1,4 @@
-import { CalculatorDef, CategorySlug, Language } from '../../types/calculator.ts';
+import type { CalculatorDef, CategorySlug, Language } from '../../types/calculator.ts';
 import { FINANCIAL_CALCULATORS } from './financial.ts';
 import { HEALTH_CALCULATORS } from './health.ts';
 import { MATH_CALCULATORS } from './math.ts';

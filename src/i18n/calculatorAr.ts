@@ -1,4 +1,4 @@
-import { ArticleDef, CalculatorDef, CategoryDef, CategorySlug, Language } from '../types/calculator.ts';
+import type { ArticleDef, CalculatorDef, CategoryDef, CategorySlug, Language } from '../types/calculator.ts';
 
 interface CategoryArMeta {
   name: string;

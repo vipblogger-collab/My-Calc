@@ -15,8 +15,10 @@ import {
   POPULAR_CURRENCIES_AR,
   POPULAR_CURRENCIES_EN,
   buildCurrencyCatalog,
+  fetchLiveGlobalRatesDirect,
   formatConvertedCurrency,
   formatFxSpotRate,
+  safeFetchJson,
 } from '../../../lib/calculators/currencies.ts';
 import {
   CalcSplitLayout,
@@ -30,6 +32,49 @@ import {
 } from './FormPrimitives.tsx';
 import { ResultActions } from '../ResultActions.tsx';
 import { useAppContext } from '../../../context/AppContext.tsx';
+
+const FX_CLIENT_CACHE_KEY = 'mysmartcalc_fx_rates_v1';
+const FX_CLIENT_CACHE_TTL_MS = 15 * 60 * 1000;
+
+interface CachedClientRates {
+  rates: Record<string, number>;
+  lastUpdatedUtc: string;
+  provider: string;
+  fetchedAtMs: number;
+}
+
+function readClientRatesCache(): CachedClientRates | null {
+  try {
+    const raw = window.localStorage.getItem(FX_CLIENT_CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<CachedClientRates>;
+    if (
+      parsed &&
+      parsed.rates &&
+      typeof parsed.rates === 'object' &&
+      Object.keys(parsed.rates).length > 50 &&
+      typeof parsed.fetchedAtMs === 'number'
+    ) {
+      return {
+        rates: parsed.rates,
+        lastUpdatedUtc: parsed.lastUpdatedUtc || '',
+        provider: parsed.provider || 'Live Global FX Feed',
+        fetchedAtMs: parsed.fetchedAtMs,
+      };
+    }
+  } catch {
+    // Ignore storage/parse errors
+  }
+  return null;
+}
+
+function writeClientRatesCache(payload: CachedClientRates): void {
+  try {
+    window.localStorage.setItem(FX_CLIENT_CACHE_KEY, JSON.stringify(payload));
+  } catch {
+    // Ignore storage quota errors
+  }
+}
 
 function CurrencyConverterWidget() {
   const { lang } = useAppContext();
@@ -46,18 +91,65 @@ function CurrencyConverterWidget() {
   const fetchRates = async (forceRefresh = false) => {
     setLoading(true);
     setError(null);
+    const cached = readClientRatesCache();
+    if (!forceRefresh && cached && Date.now() - cached.fetchedAtMs < FX_CLIENT_CACHE_TTL_MS) {
+      setRates(cached.rates);
+      setLastUpdated(cached.lastUpdatedUtc);
+      setProvider(cached.provider);
+      setLoading(false);
+      return;
+    }
+
     try {
-      const endpoint = forceRefresh ? '/api/exchange-rates?refresh=1' : '/api/exchange-rates';
-      const res = await fetch(endpoint);
-      const data = await res.json();
-      if (!res.ok || !data.rates) {
-        throw new Error(data.error || 'Exchange rate service unavailable.');
+      let resolved: CachedClientRates | null = null;
+
+      // 1. Try local backend proxy first (safe JSON parse handles 404/HTML/text responses cleanly)
+      try {
+        const endpoint = forceRefresh ? '/api/exchange-rates?refresh=1' : '/api/exchange-rates';
+        const data = await safeFetchJson<{
+          rates?: Record<string, number>;
+          lastUpdatedUtc?: string;
+          provider?: string;
+        }>(endpoint, 5000);
+        if (data?.rates && Object.keys(data.rates).length > 50) {
+          resolved = {
+            rates: data.rates,
+            lastUpdatedUtc: data.lastUpdatedUtc || '',
+            provider: data.provider || 'Live Global FX Feed',
+            fetchedAtMs: Date.now(),
+          };
+        }
+      } catch {
+        resolved = null;
       }
-      setRates(data.rates);
-      setLastUpdated(data.lastUpdatedUtc || '');
-      setProvider(data.provider || 'Live Global FX Feed');
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to load live exchange rates.');
+
+      // 2. Fallback to direct CORS-enabled global FX feeds if /api/exchange-rates is unavailable
+      if (!resolved) {
+        const direct = await fetchLiveGlobalRatesDirect(FX_CLIENT_CACHE_TTL_MS);
+        resolved = {
+          rates: direct.rates,
+          lastUpdatedUtc: direct.lastUpdatedUtc,
+          provider: direct.provider,
+          fetchedAtMs: direct.fetchedAtMs,
+        };
+      }
+
+      setRates(resolved.rates);
+      setLastUpdated(resolved.lastUpdatedUtc);
+      setProvider(resolved.provider);
+      writeClientRatesCache(resolved);
+    } catch {
+      if (cached) {
+        setRates(cached.rates);
+        setLastUpdated(cached.lastUpdatedUtc);
+        setProvider(isAr ? `${cached.provider} (نسخة محفوظة)` : `${cached.provider} (cached)`);
+      } else {
+        setError(
+          isAr
+            ? 'تعذر جلب أسعار الصرف العالمية المباشرة حالياً. يرجى المحاولة مرة أخرى.'
+            : 'Unable to fetch live exchange rates at the moment. Please try again shortly.'
+        );
+      }
     } finally {
       setLoading(false);
     }
