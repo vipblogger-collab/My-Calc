@@ -288,12 +288,12 @@ export function AdminPage() {
                 <label className="flex items-center justify-between gap-4 p-3.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC]">
                   <div>
                     <p className="text-sm font-semibold text-[#0F172A]">
-                      {isAr ? 'إظهار مواضع الانتظار' : 'Show Slot Placeholders'}
+                      {isAr ? 'إظهار مواضع الانتظار التجريبية' : 'Show Slot Placeholders (Preview Only)'}
                     </p>
                     <p className="text-xs text-[#64748B]">
                       {isAr
-                        ? 'عرض حاويات محجوزة هادئة عند عدم إدخال معرّف وحدة AdSense بعد.'
-                        : 'Render subtle reserved containers when no AdSense Slot ID is configured yet.'}
+                        ? 'مخفي افتراضياً حتى لا تظهر صناديق فارغة للزوار أو مراجعي Google AdSense قبل إدخال أكواد الإعلانات الحقيقية.'
+                        : 'Hidden by default so empty placeholder boxes never appear to visitors or Google AdSense reviewers before live ad unit IDs are added.'}
                     </p>
                   </div>
                   <input

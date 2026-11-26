@@ -328,6 +328,9 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
     );
   }
 
+  const now = new Date();
+  const todayDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
   const contentMapEn: Record<
     Exclude<LegalPageKind, 'sitemap' | 'contact-us'>,
     {
@@ -335,7 +338,7 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
       description: string;
       canonical: string;
       updated: string;
-      sections: { heading: string; body: string }[];
+      sections: { heading: string; body: React.ReactNode }[];
     }
   > = {
     'about-us': {
@@ -362,7 +365,7 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
       title: 'Privacy Policy',
       description: 'How mysmartcalc.net handles browser storage, calculator inputs, analytics, and advertising privacy.',
       canonical: '/privacy-policy/',
-      updated: '2026-01-15',
+      updated: todayDate,
       sections: [
         {
           heading: 'Calculator Input Privacy',
@@ -374,7 +377,46 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
         },
         {
           heading: 'Third-Party Feeds & Advertising',
-          body: 'The Currency Converter retrieves public market exchange rates through our API proxy without sending personal identifiers. When advertising partners such as Google AdSense are enabled by the site publisher, those networks may use cookies in accordance with their published privacy policies and your consent preferences.',
+          body: (
+            <p>
+              The Currency Converter retrieves public market exchange rates without sending any personal identifiers. We partner with third-party advertising networks, including Google AdSense, which may use cookies and web beacons to display relevant advertisements based on your visits to mysmartcalc.net and other websites. For more details on how Google manages data in its ad products, please review{' '}
+              <a
+                href="https://policies.google.com/technologies/partner-sites"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#2563EB] hover:underline font-medium"
+              >
+                Google’s Privacy &amp; Terms
+              </a>
+              .
+            </p>
+          ),
+        },
+        {
+          heading: 'Log Files & Analytics',
+          body: 'Like most standard websites, mysmartcalc.net and our hosting provider may collect non-personally identifiable log data (such as browser type, device type, referring pages, and approximate region) strictly to monitor site performance, security, and aggregated traffic trends.',
+        },
+        {
+          heading: "Children's Information",
+          body: 'mysmartcalc.net does not knowingly collect any Personal Identifiable Information from children under the age of 13.',
+        },
+        {
+          heading: 'Your Consent & Contact',
+          body: (
+            <p>
+              By using our website, you hereby consent to our Privacy Policy. If you have any questions regarding this policy, please contact us via our{' '}
+              <Link to={l('/contact-us/')} className="text-[#2563EB] hover:underline font-medium">
+                Contact Page
+              </Link>{' '}
+              or at{' '}
+              <a
+                href="mailto:support@mysmartcalc.net"
+                className="text-[#2563EB] hover:underline font-medium"
+              >
+                support@mysmartcalc.net
+              </a>
+            </p>
+          ),
         },
       ],
     },
@@ -420,17 +462,44 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
     },
     'cookie-policy': {
       title: 'Cookie Policy',
-      description: 'Information on essential browser storage and optional advertising cookies on mysmartcalc.net.',
+      description: 'Information on essential browser storage and Google AdSense advertising cookies on mysmartcalc.net.',
       canonical: '/cookie-policy/',
-      updated: '2026-01-15',
+      updated: todayDate,
       sections: [
         {
           heading: 'Essential Storage',
           body: 'mysmartcalc.net uses minimal browser storage (localStorage) strictly for functional preferences you choose—such as bookmarked calculators and recently viewed tools. No user-tracking login cookies are set by the core application.',
         },
         {
-          heading: 'Advertising Cookies',
-          body: 'When Google AdSense or another ad network is configured via the site’s Ad Management settings, third-party vendors may set cookies to measure ad delivery or serve relevant ads, subject to regional consent controls.',
+          heading: 'Advertising Cookies (Google AdSense)',
+          body: (
+            <>
+              <p>
+                Third-party vendors, including Google, use cookies to serve ads based on a user’s prior visits to mysmartcalc.net or other websites. Google’s use of advertising cookies enables it and its partners to serve ads to users based on their visit to our site and/or other sites on the Internet.
+              </p>
+              <p>
+                Users may opt out of personalized advertising by visiting{' '}
+                <a
+                  href="https://myadcenter.google.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#2563EB] hover:underline font-medium"
+                >
+                  Google Ads Settings
+                </a>{' '}
+                or{' '}
+                <a
+                  href="https://www.aboutads.info"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#2563EB] hover:underline font-medium"
+                >
+                  www.aboutads.info
+                </a>
+                .
+              </p>
+            </>
+          ),
         },
         {
           heading: 'Managing Cookies',
@@ -465,7 +534,7 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
       title: 'سياسة الخصوصية',
       description: 'كيف تتعامل mysmartcalc.net مع تخزين المتصفح ومدخلات الحاسبة وخصوصية الإعلانات.',
       canonical: '/privacy-policy/',
-      updated: '2026-01-15',
+      updated: todayDate,
       sections: [
         {
           heading: 'خصوصية مدخلات الحاسبة',
@@ -477,7 +546,47 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
         },
         {
           heading: 'مصادر البيانات والإعلانات',
-          body: 'يجلب محوّل العملات أسعار الصرف العامة عبر وسيط الخادم دون إرسال أي معرّفات شخصية. وعند تفعيل شركاء الإعلان مثل Google AdSense من قِبل ناشر الموقع، قد تستخدم تلك الشبكات ملفات تعريف الارتباط وفق سياساتها وإعدادات الموافقة لديك.',
+          body: (
+            <p>
+              يجلب محوّل العملات أسعار الصرف العامة في السوق دون إرسال أي معرّفات شخصية. كما نتعاون مع شبكات إعلانية خارجية، بما في ذلك Google AdSense، والتي قد تستخدم ملفات تعريف الارتباط وإشارات الويب لعرض إعلانات ملائمة بناءً على زياراتك لموقع mysmartcalc.net ومواقع أخرى. لمزيد من التفاصيل حول كيفية إدارة Google للبيانات في منتجاتها الإعلانية، يرجى الاطلاع على{' '}
+              <a
+                href="https://policies.google.com/technologies/partner-sites"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#2563EB] hover:underline font-medium"
+              >
+                سياسة الخصوصية والبنود في Google
+              </a>
+              .
+            </p>
+          ),
+        },
+        {
+          heading: 'ملفات السجل والتحليلات',
+          body: 'مثل معظم مواقع الويب القياسية، قد يقوم موقع mysmartcalc.net ومزود الاستضافة بجمع بيانات سجل غير شخصية (مثل نوع المتصفح ونوع الجهاز والصفحات المحيلة والمنطقة التقريبية) وذلك حصرياً لمراقبة أداء الموقع والأمان واتجاهات الزيارات الإجمالية.',
+        },
+        {
+          heading: 'معلومات الأطفال',
+          body: 'لا يجمع موقع mysmartcalc.net عن علم أي معلومات تعريف شخصية من الأطفال دون سن 13 عاماً.',
+        },
+        {
+          heading: 'موافقتك والتواصل معنا',
+          body: (
+            <p>
+              باستخدامك لموقعنا الإلكتروني، فإنك توافق بموجب ذلك على سياسة الخصوصية الخاصة بنا. إذا كانت لديك أي أسئلة بخصوص هذه السياسة، يرجى التواصل معنا عبر{' '}
+              <Link to={l('/contact-us/')} className="text-[#2563EB] hover:underline font-medium">
+                صفحة التواصل
+              </Link>{' '}
+              أو عبر البريد الإلكتروني{' '}
+              <a
+                href="mailto:support@mysmartcalc.net"
+                className="text-[#2563EB] hover:underline font-medium"
+                dir="ltr"
+              >
+                support@mysmartcalc.net
+              </a>
+            </p>
+          ),
         },
       ],
     },
@@ -523,17 +632,45 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
     },
     'cookie-policy': {
       title: 'سياسة ملفات تعريف الارتباط',
-      description: 'معلومات حول التخزين الأساسي في المتصفح وملفات تعريف الارتباط الإعلانية الاختيارية.',
+      description: 'معلومات حول التخزين الأساسي في المتصفح وملفات تعريف الارتباط الإعلانية (Google AdSense).',
       canonical: '/cookie-policy/',
-      updated: '2026-01-15',
+      updated: todayDate,
       sections: [
         {
           heading: 'التخزين الأساسي',
           body: 'تستخدم mysmartcalc.net تخزين المتصفح (localStorage) فقط لحفظ تفضيلاتك مثل اللغة المختارة والحاسبات المحفوظة وأحدث الأدوات، دون ملفات تتبع لتسجيل الدخول.',
         },
         {
-          heading: 'ملفات تعريف الارتباط الإعلانية',
-          body: 'عند إعداد Google AdSense أو شبكات إعلانية أخرى عبر لوحة إدارة الإعلانات، قد يستخدم مزودو الإعلانات ملفات تعريف ارتباط لقياس الأداء وعرض إعلانات ملائمة.',
+          heading: 'ملفات تعريف الارتباط الإعلانية (Google AdSense)',
+          body: (
+            <>
+              <p>
+                تستخدم شركات الإعلان التابعة لجهات خارجية، بما في ذلك Google، ملفات تعريف الارتباط لعرض الإعلانات بناءً على زيارات المستخدم السابقة لموقع mysmartcalc.net أو مواقع الويب الأخرى. يتيح استخدام Google لملفات تعريف الارتباط الإعلانية لها ولشركائها عرض الإعلانات للمستخدمين بناءً على زيارتهم لموقعنا و/أو مواقع أخرى على الإنترنت.
+              </p>
+              <p>
+                يمكن للمستخدمين تعطيل الإعلانات المخصصة عن طريق زيارة{' '}
+                <a
+                  href="https://myadcenter.google.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#2563EB] hover:underline font-medium"
+                >
+                  إعدادات إعلانات Google
+                </a>{' '}
+                أو موقع{' '}
+                <a
+                  href="https://www.aboutads.info"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#2563EB] hover:underline font-medium"
+                  dir="ltr"
+                >
+                  www.aboutads.info
+                </a>
+                .
+              </p>
+            </>
+          ),
         },
         {
           heading: 'إدارة ملفات تعريف الارتباط',
@@ -579,7 +716,11 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
             {doc.sections.map((sec) => (
               <section key={sec.heading}>
                 <h2 className="font-display text-xl font-bold text-[#0F172A]">{sec.heading}</h2>
-                <p className="mt-2 text-sm sm:text-base text-[#475569] leading-relaxed">{sec.body}</p>
+                <div className="mt-2 space-y-2.5 text-sm sm:text-base text-[#475569] leading-relaxed">
+                  {typeof sec.body === 'string'
+                    ? sec.body.split('\n').map((paragraph, idx) => <p key={idx}>{paragraph}</p>)
+                    : sec.body}
+                </div>
               </section>
             ))}
           </div>

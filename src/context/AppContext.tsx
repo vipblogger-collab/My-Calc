@@ -9,7 +9,7 @@ import { extractLangFromPath, localizePath } from '../i18n/routing.ts';
 
 const DEFAULT_AD_CONFIG: AdConfig = {
   enabled: true,
-  showSlotPlaceholders: true,
+  showSlotPlaceholders: false,
   provider: 'adsense',
   publisherId: '',
   slots: {
@@ -28,7 +28,7 @@ const STORAGE_KEYS = {
   currency: 'calcaxis_currency_v1',
   bookmarks: 'calcaxis_bookmarks_v1',
   recent: 'calcaxis_recent_v1',
-  adConfig: 'calcaxis_ad_config_v1',
+  adConfig: 'calcaxis_ad_config_v2',
   calcOverrides: 'calcaxis_calc_overrides_v1',
   customArticles: 'calcaxis_articles_v1',
 };
