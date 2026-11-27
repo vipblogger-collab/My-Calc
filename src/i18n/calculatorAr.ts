@@ -1,4 +1,5 @@
 import type { ArticleDef, CalculatorDef, CategoryDef, CategorySlug, Language } from '../types/calculator.ts';
+import { CALCULATOR_FAQS_AR } from './calculatorFaqsAr.ts';
 
 interface CategoryArMeta {
   name: string;
@@ -433,23 +434,23 @@ export const CALCULATOR_AR: Record<string, CalculatorArMeta> = {
     description: 'حل التناسب الرياضي A : B = C : D وأوجد القيمة المجهولة وتبسيط النسبة.',
     keywords: ['نسبة وتناسب', 'تحجيم', 'أبعاد'],
   },
-  'quadratic-formula-calculator': {
+  'quadratic-equation-calculator': {
     name: 'حاسبة المعادلة التربيعية',
     shortName: 'المعادلة التربيعية',
-    description: 'أوجد الجذور الحقيقية أو المركبة والمميز ورأس القطع المكافئ للمعادلة ax²+bx+c=0.',
-    keywords: ['معادلة تربيعية', 'المميز', 'جذور'],
+    description: 'أوجد الجذور الحقيقية أو المركبة والمميز ورأس القطع المكافئ للمعادلة ax² + bx + c = 0.',
+    keywords: ['معادلة تربيعية', 'المميز', 'جذور', 'قطع مكافئ'],
   },
   'exponent-calculator': {
     name: 'حاسبة الأسس والقوى',
     shortName: 'الأسس',
-    description: 'احسب ناتج رفع أي عدد إلى أي أس موجب أو سالب أو كسري.',
+    description: 'احسب ناتج رفع أي عدد إلى أي أس موجب أو سالب أو كسري مع الترميز العلمي.',
     keywords: ['أس', 'قوة', 'رفع للأس'],
   },
-  'root-calculator': {
-    name: 'حاسبة الجذور',
-    shortName: 'الجذور',
-    description: 'احسب الجذر التربيعي والتكعيبي والجذر النوني لأي عدد بدقة عالية.',
-    keywords: ['جذر تربيعي', 'جذر تكعيبي', 'جذر نوني'],
+  'square-root-calculator': {
+    name: 'حاسبة الجذر التربيعي والجذور',
+    shortName: 'الجذر التربيعي',
+    description: 'احسب الجذر التربيعي والتكعيبي والجذر النوني لأي عدد مع الصيغة الجذرية المبسطة.',
+    keywords: ['جذر تربيعي', 'جذر تكعيبي', 'جذر نوني', 'جذور'],
   },
   'prime-number-calculator': {
     name: 'فاحص الأعداد الأولية والتحليل',
@@ -457,11 +458,17 @@ export const CALCULATOR_AR: Record<string, CalculatorArMeta> = {
     description: 'تحقق مما إذا كان العدد أولياً وحلّله إلى عوامله الأولية وأوجد أقرب عدد أولي.',
     keywords: ['عدد أولي', 'عوامل أولية', 'تحليل'],
   },
-  'gcf-lcm-calculator': {
-    name: 'حاسبة القاسم والمضاعف (GCF / LCM)',
-    shortName: 'القاسم والمضاعف',
-    description: 'احسب القاسم المشترك الأكبر والمضاعف المشترك الأصغر لمجموعة من الأعداد الصحيحة.',
-    keywords: ['قاسم مشترك أكبر', 'مضاعف مشترك أصغر'],
+  'gcf-calculator': {
+    name: 'حاسبة القاسم المشترك الأكبر (GCF)',
+    shortName: 'القاسم المشترك الأكبر',
+    description: 'احسب القاسم المشترك الأكبر (GCF / GCD) لعددين صحيحين أو أكثر مع خطوات خوارزمية إقليدس.',
+    keywords: ['قاسم مشترك أكبر', 'عامل مشترك أكبر', 'GCF', 'GCD'],
+  },
+  'lcm-calculator': {
+    name: 'حاسبة المضاعف المشترك الأصغر (LCM)',
+    shortName: 'المضاعف المشترك الأصغر',
+    description: 'احسب المضاعف المشترك الأصغر (LCM) والقاسم المشترك الأكبر لقائمة أعداد صحيحة.',
+    keywords: ['مضاعف مشترك أصغر', 'مقام مشترك', 'LCM'],
   },
   'statistics-calculator': {
     name: 'حاسبة الإحصاء المتقدم',
@@ -913,7 +920,13 @@ export function localizeCategory(cat: CategoryDef, lang: Language): CategoryDef 
 export function localizeCalculator(calc: CalculatorDef, lang: Language): CalculatorDef {
   if (lang === 'en') return calc;
   const ar = CALCULATOR_AR[calc.slug];
-  if (!ar) return calc;
+  const localizedFaqs = ar?.faqs ?? CALCULATOR_FAQS_AR[calc.slug] ?? calc.faqs;
+  if (!ar) {
+    return {
+      ...calc,
+      faqs: localizedFaqs,
+    };
+  }
   return {
     ...calc,
     name: ar.name,
@@ -924,7 +937,7 @@ export function localizeCalculator(calc: CalculatorDef, lang: Language): Calcula
     formulaVariables: ar.formulaVariables ?? calc.formulaVariables,
     steps: ar.steps ?? calc.steps,
     example: ar.example ?? calc.example,
-    faqs: ar.faqs ?? calc.faqs,
+    faqs: localizedFaqs,
     educationalSections: ar.educationalSections ?? calc.educationalSections,
     seoTitle: `${ar.name} – أداة حساب مجانية ودقيقة | mysmartcalc.net`,
     seoDescription: `${ar.description} نتائج فورية مع شرح المعادلة والأمثلة التطبيقية.`,

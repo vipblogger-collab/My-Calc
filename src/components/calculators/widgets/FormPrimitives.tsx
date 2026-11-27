@@ -13,6 +13,9 @@ import {
 import {
   buildCountryCatalog,
 } from '../../../lib/calculators/countryHolidays.ts';
+import {
+  buildTimeZoneCatalog,
+} from '../../../lib/calculators/timeZones.ts';
 
 export function fmtCurrency(val: number, decimals?: number, currencyCode = 'USD'): string {
   return formatMoney(val, currencyCode, decimals);
@@ -573,6 +576,222 @@ export function SearchableCountrySelect({
                           <span className="flex items-center gap-1.5 shrink-0">
                             <span className="text-[11px] text-[#64748B]">
                               {isAr ? item.weekendLabelAr : item.weekendLabelEn}
+                            </span>
+                            {active && <Check className="w-3.5 h-3.5 text-[#2563EB]" />}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function SearchableTimeZoneSelect({
+  id = 'world-timezone-select',
+  label = 'Time Zone',
+  value,
+  onChange,
+}: {
+  id?: string;
+  label?: string;
+  value: string;
+  onChange: (tz: string) => void;
+}) {
+  const { lang } = useAppContext();
+  const isAr = lang === 'ar';
+  const catalog = useMemo(() => buildTimeZoneCatalog(lang), [lang]);
+
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const containerRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onMouseDown = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('mousedown', onMouseDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', onMouseDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (open) {
+      setTimeout(() => searchInputRef.current?.focus(), 0);
+    } else {
+      setQuery('');
+    }
+  }, [open]);
+
+  const selected = useMemo(
+    () => catalog.find((item) => item.value === value) || catalog[0],
+    [catalog, value]
+  );
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return catalog;
+    return catalog.filter((item) => item.searchText.includes(q));
+  }, [catalog, query]);
+
+  const popularFiltered = useMemo(
+    () => (query.trim() ? [] : filtered.filter((z) => z.isPopular)),
+    [filtered, query]
+  );
+  const allOtherFiltered = useMemo(
+    () => (query.trim() ? filtered : filtered.filter((z) => !z.isPopular)),
+    [filtered, query]
+  );
+
+  return (
+    <div ref={containerRef} className="relative">
+      <FieldLabel label={label} htmlFor={id} />
+      <button
+        id={id}
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        aria-haspopup="listbox"
+        className="w-full min-h-10 rounded-lg border border-[#CBD5E1] bg-white px-3 py-2 text-sm text-[#0F172A] flex items-center justify-between gap-2 hover:border-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/25 focus:border-[#2563EB] transition-colors text-start"
+      >
+        <span className="flex items-center gap-2 min-w-0">
+          <span
+            className="inline-flex items-center justify-center rounded bg-[#EFF6FF] text-[#1D4ED8] font-mono-tabular font-bold text-[11px] px-1.5 py-0.5 shrink-0"
+            dir="ltr"
+          >
+            {selected?.offsetLabel || 'UTC'}
+          </span>
+          <span className="truncate font-medium">
+            {selected ? `${selected.displayLabel} — ${selected.value}` : value}
+          </span>
+        </span>
+        <ChevronDown
+          className={`w-4 h-4 text-[#64748B] shrink-0 transition-transform ${open ? 'rotate-180' : ''}`}
+        />
+      </button>
+
+      {open && (
+        <div
+          role="listbox"
+          aria-labelledby={id}
+          className="absolute z-50 mt-1.5 w-full rounded-xl border border-[#CBD5E1] bg-white shadow-lg overflow-hidden"
+        >
+          <div className="p-2 border-b border-[#E2E8F0] bg-[#F8FAFC]">
+            <div className="relative flex items-center">
+              <Search className="w-3.5 h-3.5 text-[#64748B] absolute start-2.5 pointer-events-none" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder={
+                  isAr
+                    ? 'ابحث باسم المدينة أو المنطقة الزمنية (مثال: الكويت، Riyadh، UTC+3)...'
+                    : 'Search city, region, or UTC offset (e.g. Kuwait, Tokyo, UTC+3)...'
+                }
+                className="w-full h-9 rounded-lg border border-[#CBD5E1] bg-white ps-8 pe-3 text-xs text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/25 focus:border-[#2563EB]"
+              />
+            </div>
+          </div>
+
+          <div className="max-h-72 overflow-y-auto divide-y divide-[#F1F5F9]">
+            {filtered.length === 0 ? (
+              <div className="px-3 py-6 text-center text-xs text-[#64748B]">
+                {isAr ? 'لا توجد منطقة زمنية مطابقة لبحثك' : 'No matching time zone found'}
+              </div>
+            ) : (
+              <>
+                {popularFiltered.length > 0 && (
+                  <div className="py-1">
+                    <div className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#64748B] bg-[#F8FAFC]">
+                      {isAr ? 'مناطق زمنية شائعة' : 'Popular Time Zones'}
+                    </div>
+                    {popularFiltered.map((item) => {
+                      const active = item.value === value;
+                      return (
+                        <button
+                          key={`pop-${item.value}`}
+                          type="button"
+                          role="option"
+                          aria-selected={active}
+                          onClick={() => {
+                            onChange(item.value);
+                            setOpen(false);
+                          }}
+                          className={`w-full px-3 py-2 text-xs flex items-center justify-between gap-2 text-start transition-colors ${
+                            active
+                              ? 'bg-[#EFF6FF] text-[#1D4ED8] font-semibold'
+                              : 'text-[#0F172A] hover:bg-[#F8FAFC]'
+                          }`}
+                        >
+                          <span className="flex items-center gap-2 min-w-0">
+                            <span className="font-mono-tabular font-semibold text-[#1D4ED8] w-20 shrink-0" dir="ltr">
+                              {item.offsetLabel}
+                            </span>
+                            <span className="truncate">{item.displayLabel}</span>
+                          </span>
+                          <span className="flex items-center gap-1.5 shrink-0">
+                            <span className="font-mono-tabular text-[11px] text-[#64748B]" dir="ltr">
+                              {item.value}
+                            </span>
+                            {active && <Check className="w-3.5 h-3.5 text-[#2563EB]" />}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {allOtherFiltered.length > 0 && (
+                  <div className="py-1">
+                    {!query.trim() && (
+                      <div className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#64748B] bg-[#F8FAFC]">
+                        {isAr ? `جميع المناطق الزمنية في العالم (${catalog.length})` : `All World Time Zones (${catalog.length})`}
+                      </div>
+                    )}
+                    {allOtherFiltered.map((item) => {
+                      const active = item.value === value;
+                      return (
+                        <button
+                          key={item.value}
+                          type="button"
+                          role="option"
+                          aria-selected={active}
+                          onClick={() => {
+                            onChange(item.value);
+                            setOpen(false);
+                          }}
+                          className={`w-full px-3 py-2 text-xs flex items-center justify-between gap-2 text-start transition-colors ${
+                            active
+                              ? 'bg-[#EFF6FF] text-[#1D4ED8] font-semibold'
+                              : 'text-[#0F172A] hover:bg-[#F8FAFC]'
+                          }`}
+                        >
+                          <span className="flex items-center gap-2 min-w-0">
+                            <span className="font-mono-tabular font-semibold text-[#1D4ED8] w-20 shrink-0" dir="ltr">
+                              {item.offsetLabel}
+                            </span>
+                            <span className="truncate">{item.displayLabel}</span>
+                          </span>
+                          <span className="flex items-center gap-1.5 shrink-0">
+                            <span className="font-mono-tabular text-[11px] text-[#64748B]" dir="ltr">
+                              {item.value}
                             </span>
                             {active && <Check className="w-3.5 h-3.5 text-[#2563EB]" />}
                           </span>

@@ -24,11 +24,12 @@ import {
   NumberInput,
   ResultHero,
   SearchableCountrySelect,
+  SearchableTimeZoneSelect,
   SegmentedControl,
-  SelectInput,
   StatTile,
   fmtNum,
 } from './FormPrimitives.tsx';
+import { getTimeZoneDisplayLabel } from '../../../lib/calculators/timeZones.ts';
 import { ResultActions } from '../ResultActions.tsx';
 import { useAppContext } from '../../../context/AppContext.tsx';
 
@@ -59,19 +60,17 @@ function DateInput({
 
 const todayIso = () => new Date().toISOString().slice(0, 10);
 
-const TIME_ZONES = [
-  { value: 'America/New_York', label: 'New York (Eastern Time)' },
-  { value: 'America/Chicago', label: 'Chicago (Central Time)' },
-  { value: 'America/Denver', label: 'Denver (Mountain Time)' },
-  { value: 'America/Los_Angeles', label: 'Los Angeles (Pacific Time)' },
-  { value: 'UTC', label: 'UTC (Coordinated Universal Time)' },
-  { value: 'Europe/London', label: 'London (GMT / BST)' },
-  { value: 'Europe/Paris', label: 'Paris / Berlin (CET / CEST)' },
-  { value: 'Asia/Dubai', label: 'Dubai (GST)' },
-  { value: 'Asia/Kolkata', label: 'Mumbai / New Delhi (IST)' },
-  { value: 'Asia/Singapore', label: 'Singapore (SGT)' },
-  { value: 'Asia/Tokyo', label: 'Tokyo (JST)' },
-  { value: 'Australia/Sydney', label: 'Sydney (AEST / AEDT)' },
+const WORLD_CLOCK_ZONES = [
+  'UTC',
+  'Asia/Riyadh',
+  'Asia/Kuwait',
+  'Asia/Dubai',
+  'Africa/Cairo',
+  'Europe/London',
+  'Europe/Paris',
+  'America/New_York',
+  'America/Los_Angeles',
+  'Asia/Tokyo',
 ];
 
 export function DateTimeWidget({ slug }: { slug: string }) {
@@ -756,17 +755,15 @@ export function DateTimeWidget({ slug }: { slug: string }) {
       return {
         sourceFormatted: formatInZone(srcZone),
         targetFormatted: formatInZone(dstZone),
-        worldClocks: ['UTC', 'America/New_York', 'America/Los_Angeles', 'Europe/London', 'Europe/Paris', 'Asia/Tokyo'].map(
-          (tz) => ({
-            tz: TIME_ZONES.find((z) => z.value === tz)?.label || tz,
-            formatted: formatInZone(tz),
-          })
-        ),
+        worldClocks: WORLD_CLOCK_ZONES.slice(0, 8).map((tz) => ({
+          tz: getTimeZoneDisplayLabel(tz, lang),
+          formatted: formatInZone(tz),
+        })),
       };
     } catch {
       return null;
     }
-  }, [tzDate, tzTime, srcZone, dstZone]);
+  }, [tzDate, tzTime, srcZone, dstZone, lang]);
 
   return (
     <CalcSplitLayout
@@ -785,7 +782,12 @@ export function DateTimeWidget({ slug }: { slug: string }) {
               />
             </div>
           </div>
-          <SelectInput label="Source Time Zone" value={srcZone} onChange={setSrcZone} options={TIME_ZONES} />
+          <SearchableTimeZoneSelect
+            id="src-timezone-select"
+            label={isAr ? 'المنطقة الزمنية المصدر' : 'Source Time Zone'}
+            value={srcZone}
+            onChange={setSrcZone}
+          />
           <div className="flex justify-center">
             <button
               type="button"
@@ -799,7 +801,12 @@ export function DateTimeWidget({ slug }: { slug: string }) {
               <span>{isAr ? 'تبديل المناطق الزمنية' : 'Swap Time Zones'}</span>
             </button>
           </div>
-          <SelectInput label="Target Time Zone" value={dstZone} onChange={setDstZone} options={TIME_ZONES} />
+          <SearchableTimeZoneSelect
+            id="dst-timezone-select"
+            label={isAr ? 'المنطقة الزمنية الهدف' : 'Target Time Zone'}
+            value={dstZone}
+            onChange={setDstZone}
+          />
         </>
       }
       results={

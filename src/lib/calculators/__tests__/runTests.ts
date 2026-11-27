@@ -559,5 +559,25 @@ test('Financial: VAT Calculator (World Country Rates, Add, Extract, Discount, Se
   assert.equal(settleRefund.isRefundDue, true);
 });
 
+test('Date & Time: World Time Zones catalog covers all IANA zones and Arabic labels', async () => {
+  const { getAllWorldTimeZoneIds, buildTimeZoneCatalog } = await import('../timeZones.ts');
+
+  const ids = getAllWorldTimeZoneIds();
+  assert.ok(ids.length >= 300, `Expected >= 300 IANA time zones, got ${ids.length}`);
+  assert.ok(ids.includes('UTC'));
+  assert.ok(ids.includes('Asia/Kuwait'));
+  assert.ok(ids.includes('Asia/Riyadh'));
+  assert.ok(ids.includes('America/New_York'));
+  assert.ok(ids.includes('Europe/London'));
+
+  const catalogAr = buildTimeZoneCatalog('ar');
+  const catalogEn = buildTimeZoneCatalog('en');
+  assert.equal(catalogAr.length, ids.length);
+  assert.equal(catalogEn.length, ids.length);
+  const kwAr = catalogAr.find((z) => z.value === 'Asia/Kuwait');
+  assert.ok(kwAr && kwAr.displayLabel.includes('الكويت') && kwAr.offsetLabel.startsWith('UTC'));
+});
+
+
 
 

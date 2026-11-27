@@ -23,9 +23,10 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
   const [topic, setTopic] = useState('Calculator Feedback');
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
 
-  const handleContactSubmit = (e: React.FormEvent) => {
+  const handleContactSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!name.trim() || !email.trim() || !email.includes('@') || !message.trim()) {
       setFormError(
@@ -36,7 +37,43 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
       return;
     }
     setFormError('');
-    setSubmitted(true);
+    setSubmitting(true);
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          access_key: '8002c461-c0fd-435f-8576-61b3d8b13169',
+          name: name.trim(),
+          email: email.trim(),
+          topic,
+          subject: `[mysmartcalc.net] ${topic} - ${name.trim()}`,
+          message: message.trim(),
+        }),
+      });
+      const result = (await response.json()) as { success?: boolean; message?: string };
+      if (response.ok && result.success) {
+        setSubmitted(true);
+      } else {
+        setFormError(
+          result.message ||
+            (isAr
+              ? 'تعذر إرسال الرسالة حالياً. يرجى المحاولة مرة أخرى أو مراسلتنا مباشرة على support@mysmartcalc.net.'
+              : 'Unable to send your message right now. Please try again or email support@mysmartcalc.net.')
+        );
+      }
+    } catch {
+      setFormError(
+        isAr
+          ? 'حدث خطأ في الاتصال بالشبكة أثناء الإرسال. يمكنك مراسلتنا مباشرة على support@mysmartcalc.net.'
+          : 'Network error while sending your message. Please email us directly at support@mysmartcalc.net.'
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (page === 'sitemap') {
@@ -316,10 +353,28 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
 
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-sm font-semibold transition-colors"
+                  disabled={submitting}
+                  className="px-5 py-2.5 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-semibold transition-colors"
                 >
-                  {isAr ? 'إرسال الرسالة' : 'Send Message'}
+                  {submitting
+                    ? isAr
+                      ? 'جاري الإرسال...'
+                      : 'Sending...'
+                    : isAr
+                    ? 'إرسال الرسالة'
+                    : 'Send Message'}
                 </button>
+
+                <p className="pt-2 text-xs text-[#64748B]">
+                  {isAr ? 'أو يمكنك التواصل معنا مباشرة عبر البريد الإلكتروني: ' : 'Or reach us directly via email at '}
+                  <a
+                    href="mailto:support@mysmartcalc.net"
+                    dir="ltr"
+                    className="text-[#2563EB] hover:underline font-medium"
+                  >
+                    support@mysmartcalc.net
+                  </a>
+                </p>
               </form>
             )}
           </div>
@@ -345,7 +400,7 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
       title: 'About Us',
       description: 'Learn how mysmartcalc.net builds fast, transparent, client-side online calculators with documented formulas.',
       canonical: '/about-us/',
-      updated: '2026-01-15',
+      updated: todayDate,
       sections: [
         {
           heading: 'Our Mission',
@@ -358,6 +413,25 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
         {
           heading: 'Built for Clarity',
           body: 'Alongside instant results and interactive charts, each tool documents the exact formula, variable definitions, worked examples, and frequently asked questions so you can verify every calculation step.',
+        },
+        {
+          heading: 'Contact & Editorial Oversight',
+          body: (
+            <p>
+              mysmartcalc.net is developed and maintained by an independent team dedicated to delivering accurate, easy-to-use calculation tools in both English and Arabic. We continuously review our formulas and guides to ensure clarity and reliability. For suggestions, corrections, or general inquiries, please contact us at{' '}
+              <a
+                href="mailto:support@mysmartcalc.net"
+                className="text-[#2563EB] hover:underline font-medium"
+              >
+                support@mysmartcalc.net
+              </a>{' '}
+              or through our{' '}
+              <Link to={l('/contact-us/')} className="text-[#2563EB] hover:underline font-medium">
+                Contact Page
+              </Link>
+              .
+            </p>
+          ),
         },
       ],
     },
@@ -424,7 +498,7 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
       title: 'Terms of Service',
       description: 'Terms governing use of mysmartcalc.net online calculators, formulas, and educational guides.',
       canonical: '/terms-of-service/',
-      updated: '2026-01-15',
+      updated: todayDate,
       sections: [
         {
           heading: 'Acceptance of Terms',
@@ -438,13 +512,36 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
           heading: 'Intellectual Property',
           body: 'The mysmartcalc.net interface, educational guides, and curated tool documentation remain the property of mysmartcalc.net. You are welcome to print or export your own calculation results for personal or business reference.',
         },
+        {
+          heading: 'Limitation of Liability',
+          body: 'In no event shall mysmartcalc.net or its team be liable for any direct, indirect, incidental, or consequential damages resulting from the use of, or inability to use, our calculators, exchange rate feeds, or educational content.',
+        },
+        {
+          heading: 'Third-Party Links & Advertisements',
+          body: 'mysmartcalc.net may display advertisements served by third-party networks (such as Google AdSense) and include links to external websites. We do not control or endorse the content, products, or privacy practices of any third-party sites.',
+        },
+        {
+          heading: 'Changes to Terms & Contact',
+          body: (
+            <p>
+              We reserve the right to update or modify these Terms of Service at any time without prior notice. If you have any questions about these terms, please contact us at{' '}
+              <a
+                href="mailto:support@mysmartcalc.net"
+                className="text-[#2563EB] hover:underline font-medium"
+              >
+                support@mysmartcalc.net
+              </a>
+              .
+            </p>
+          ),
+        },
       ],
     },
     disclaimer: {
       title: 'Disclaimer',
       description: 'Important financial, medical, tax, and exchange-rate disclaimers for mysmartcalc.net calculators.',
       canonical: '/disclaimer/',
-      updated: '2026-01-15',
+      updated: todayDate,
       sections: [
         {
           heading: 'Financial & Tax Disclaimer',
@@ -457,6 +554,25 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
         {
           heading: 'Currency & External Rates Disclaimer',
           body: 'Live currency exchange rates represent indicative mid-market rates sourced from public market feeds and exclude bank spreads, card foreign-transaction fees, and settlement timing differences.',
+        },
+        {
+          heading: 'General Accuracy & External Links',
+          body: 'While we strive to keep all formulas, conversion factors, and educational guides on mysmartcalc.net accurate and up to date, we make no warranties regarding the completeness or reliability of any result. Any links to external websites or third-party advertisements are provided for convenience and do not imply endorsement.',
+        },
+        {
+          heading: 'Questions & Feedback',
+          body: (
+            <p>
+              If you spot a calculation discrepancy or have questions about this disclaimer, please contact us at{' '}
+              <a
+                href="mailto:support@mysmartcalc.net"
+                className="text-[#2563EB] hover:underline font-medium"
+              >
+                support@mysmartcalc.net
+              </a>
+              .
+            </p>
+          ),
         },
       ],
     },
@@ -514,7 +630,7 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
       title: 'من نحن',
       description: 'تعرّف على كيفية بناء mysmartcalc.net لحاسبات سريعة وشفافة تعمل في المتصفح مع توثيق المعادلات.',
       canonical: '/about-us/',
-      updated: '2026-01-15',
+      updated: todayDate,
       sections: [
         {
           heading: 'رسالتنا',
@@ -527,6 +643,26 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
         {
           heading: 'مصممة للوضوح',
           body: 'إلى جانب النتائج الفورية والرسوم البيانية التفاعلية، توثق كل أداة الصيغة الرياضية وتعريف المتغيرات وأمثلة تطبيقية والأسئلة الشائعة لتتمكن من التحقق من كل خطوة.',
+        },
+        {
+          heading: 'التواصل والإشراف التحريري',
+          body: (
+            <p>
+              يتم تطوير وصيانة موقع mysmartcalc.net من قِبل فريق مستقل مكرّس لتقديم أدوات حسابية دقيقة وسهلة الاستخدام باللغتين العربية والإنجليزية. نراجع باستمرار معادلاتنا وأدلتنا لضمان الوضوح والموثوقية. للاقتراحات أو التصحيحات أو الاستفسارات العامة، يرجى التواصل معنا عبر{' '}
+              <a
+                href="mailto:support@mysmartcalc.net"
+                dir="ltr"
+                className="text-[#2563EB] hover:underline font-medium"
+              >
+                support@mysmartcalc.net
+              </a>{' '}
+              أو من خلال{' '}
+              <Link to={l('/contact-us/')} className="text-[#2563EB] hover:underline font-medium">
+                صفحة التواصل
+              </Link>
+              .
+            </p>
+          ),
         },
       ],
     },
@@ -594,7 +730,7 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
       title: 'شروط الاستخدام',
       description: 'الشروط المنظمة لاستخدام حاسبات ومعادلات وأدلة mysmartcalc.net الإلكترونية.',
       canonical: '/terms-of-service/',
-      updated: '2026-01-15',
+      updated: todayDate,
       sections: [
         {
           heading: 'قبول الشروط',
@@ -608,13 +744,37 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
           heading: 'الملكية الفكرية',
           body: 'تظل واجهة mysmartcalc.net والأدلة التعليمية وتوثيق الأدوات مملوكة للمنصة، مع الترحيب بطباعة أو تصدير نتائج حساباتك للاستخدام الشخصي أو المهني.',
         },
+        {
+          heading: 'تحديد المسؤولية',
+          body: 'لا يتحمل موقع mysmartcalc.net أو فريقه بأي حال من الأحوال أي مسؤولية عن أي أضرار مباشرة أو غير مباشرة أو عرضية أو تبعية ناتجة عن استخدام أو عدم القدرة على استخدام حاسباتنا أو بيانات أسعار الصرف أو المحتوى التعليمي.',
+        },
+        {
+          heading: 'روابط الجهات الخارجية والإعلانات',
+          body: 'قد يعرض موقع mysmartcalc.net إعلانات مقدمة من شبكات خارجية (مثل Google AdSense) ويتضمن روابط لمواقع إلكترونية خارجية. نحن لا نتحكم في محتوى أو منتجات أو ممارسات الخصوصية لأي مواقع تابعة لجهات خارجية ولا نصادق عليها.',
+        },
+        {
+          heading: 'تعديل الشروط والتواصل',
+          body: (
+            <p>
+              نحتفظ بالحق في تحديث أو تعديل شروط الاستخدام هذه في أي وقت دون إشعار مسبق. إذا كانت لديك أي أسئلة حول هذه الشروط، يرجى التواصل معنا عبر{' '}
+              <a
+                href="mailto:support@mysmartcalc.net"
+                dir="ltr"
+                className="text-[#2563EB] hover:underline font-medium"
+              >
+                support@mysmartcalc.net
+              </a>
+              .
+            </p>
+          ),
+        },
       ],
     },
     disclaimer: {
       title: 'إخلاء المسؤولية',
       description: 'إفصاحات مهمة حول الحسابات المالية والطبية والضريبية وأسعار الصرف.',
       canonical: '/disclaimer/',
-      updated: '2026-01-15',
+      updated: todayDate,
       sections: [
         {
           heading: 'إخلاء المسؤولية المالية والضريبية',
@@ -627,6 +787,26 @@ export function LegalPages({ page }: { page: LegalPageKind }) {
         {
           heading: 'إخلاء مسؤولية أسعار العملات',
           body: 'تعكس أسعار الصرف المباشرة متوسط السوق الإرشادي وقد تختلف عن الأسعار الفعلية للبنوك أو البطاقات المصرفية أو شركات الصرافة.',
+        },
+        {
+          heading: 'الدقة العامة والروابط الخارجية',
+          body: 'رغم سعينا الدائم للحفاظ على دقة وتحديث جميع المعادلات وعوامل التحويل والأدلة التعليمية على mysmartcalc.net، فإننا لا نقدم أي ضمانات بشأن اكتمال أو موثوقية أي نتيجة. يتم توفير أي روابط لمواقع خارجية أو إعلانات جهات خارجية لراحة المستخدم ولا تعني المصادقة عليها.',
+        },
+        {
+          heading: 'الأسئلة والملاحظات',
+          body: (
+            <p>
+              إذا لاحظت أي تباين في الحساب أو كانت لديك أسئلة حول إخلاء المسؤولية هذا، يرجى التواصل معنا عبر{' '}
+              <a
+                href="mailto:support@mysmartcalc.net"
+                dir="ltr"
+                className="text-[#2563EB] hover:underline font-medium"
+              >
+                support@mysmartcalc.net
+              </a>
+              .
+            </p>
+          ),
         },
       ],
     },
