@@ -205,6 +205,17 @@ async function startServer() {
     res.send(generateSitemapXml(baseUrl));
   });
 
+  // Site Favicon (512x512 SVG)
+  app.get('/favicon.svg', (_req, res) => {
+    const staticFavicon = path.resolve(__dirname, 'public/favicon.svg');
+    if (fs.existsSync(staticFavicon)) {
+      res.type('image/svg+xml');
+      res.send(fs.readFileSync(staticFavicon, 'utf-8'));
+      return;
+    }
+    res.status(404).end();
+  });
+
   if (process.env.NODE_ENV !== 'production') {
     const disableHmr = process.env.DISABLE_HMR === 'true';
     const vitePromise = (async () => {
