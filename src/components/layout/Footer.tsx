@@ -54,11 +54,6 @@ export function Footer() {
                   {ui.footer.xmlSitemap}
                 </a>
               </li>
-              <li>
-                <Link to={l('/admin/')} className="text-[#94A3B8] hover:text-white transition-colors">
-                  {ui.footer.cmsSettings}
-                </Link>
-              </li>
             </ul>
           </div>
 
