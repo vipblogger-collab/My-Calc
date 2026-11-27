@@ -596,6 +596,25 @@ test('SEO: robots.txt and bilingual XML sitemap include EN/AR home, calculators,
   assert.ok(xml.includes('<loc>https://www.mysmartcalc.net/ar/terms-of-service/</loc>'));
 });
 
+test('i18n: All 100 calculators have Arabic names, How-to-Use steps, and FAQs', async () => {
+  const { ALL_CALCULATORS } = await import('../../../data/calculators/index.ts');
+  const { localizeCalculator } = await import('../../../i18n/calculatorAr.ts');
+
+  const hasArabic = (text: string) => /[\u0600-\u06FF]/.test(text);
+  for (const calc of ALL_CALCULATORS) {
+    const ar = localizeCalculator(calc, 'ar');
+    assert.ok(hasArabic(ar.name), `Missing Arabic name for ${calc.slug}`);
+    assert.ok(ar.steps.length > 0, `Missing Arabic steps for ${calc.slug}`);
+    assert.ok(ar.steps.every(hasArabic), `Untranslated Arabic step in ${calc.slug}`);
+    assert.ok(ar.faqs.length > 0, `Missing Arabic FAQs for ${calc.slug}`);
+    assert.ok(
+      ar.faqs.every((f) => hasArabic(f.question) && hasArabic(f.answer)),
+      `Untranslated Arabic FAQ in ${calc.slug}`
+    );
+  }
+});
+
+
 
 
 

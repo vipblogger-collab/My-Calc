@@ -1,5 +1,6 @@
 import type { ArticleDef, CalculatorDef, CategoryDef, CategorySlug, Language } from '../types/calculator.ts';
 import { CALCULATOR_FAQS_AR } from './calculatorFaqsAr.ts';
+import { CALCULATOR_STEPS_AR } from './calculatorStepsAr.ts';
 
 interface CategoryArMeta {
   name: string;
@@ -920,10 +921,12 @@ export function localizeCategory(cat: CategoryDef, lang: Language): CategoryDef 
 export function localizeCalculator(calc: CalculatorDef, lang: Language): CalculatorDef {
   if (lang === 'en') return calc;
   const ar = CALCULATOR_AR[calc.slug];
+  const localizedSteps = ar?.steps ?? CALCULATOR_STEPS_AR[calc.slug] ?? calc.steps;
   const localizedFaqs = ar?.faqs ?? CALCULATOR_FAQS_AR[calc.slug] ?? calc.faqs;
   if (!ar) {
     return {
       ...calc,
+      steps: localizedSteps,
       faqs: localizedFaqs,
     };
   }
@@ -935,7 +938,7 @@ export function localizeCalculator(calc: CalculatorDef, lang: Language): Calcula
     keywords: [...calc.keywords, ...ar.keywords],
     formulaText: ar.formulaText ?? calc.formulaText,
     formulaVariables: ar.formulaVariables ?? calc.formulaVariables,
-    steps: ar.steps ?? calc.steps,
+    steps: localizedSteps,
     example: ar.example ?? calc.example,
     faqs: localizedFaqs,
     educationalSections: ar.educationalSections ?? calc.educationalSections,
