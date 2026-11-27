@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import {
   analyzePrime,
@@ -704,7 +704,7 @@ export function MathWidget({ slug }: { slug: string }) {
       err = e instanceof Error ? e.message : 'Invalid quadratic coefficients';
     }
 
-    const plotData = useMemo(() => {
+    const plotData = (() => {
       if (!res) return [];
       const vx = res.vertexX;
       const span = Math.max(4, res.realRoots.length ? Math.abs(res.realRoots[0] - vx) * 2 + 2 : 5);
@@ -717,7 +717,7 @@ export function MathWidget({ slug }: { slug: string }) {
         });
       }
       return pts;
-    }, [a, b, c, res]);
+    })();
 
     return (
       <CalcSplitLayout

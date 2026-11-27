@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import {
@@ -657,18 +657,15 @@ export function EverydayWidget({ slug }: { slug: string }) {
     const guests = Math.max(1, parseInt(weddingGuests, 10) || 1);
     const totalPct = Object.values(weddingSplits).reduce((a, b) => a + b, 0);
 
-    const rows = useMemo(
-      () => [
-        { key: 'venueCatering', name: isAr ? 'القاعة والضيافة' : 'Venue & Catering', pct: weddingSplits.venueCatering },
-        { key: 'photoVideo', name: isAr ? 'التصوير والفيديو' : 'Photography & Video', pct: weddingSplits.photoVideo },
-        { key: 'attireBeauty', name: isAr ? 'الأزياء والتجميل' : 'Attire & Beauty', pct: weddingSplits.attireBeauty },
-        { key: 'flowersDecor', name: isAr ? 'الزهور والديكور' : 'Flowers & Decor', pct: weddingSplits.flowersDecor },
-        { key: 'musicEntertainment', name: isAr ? 'الموسيقى والترفيه' : 'Music & DJ', pct: weddingSplits.musicEntertainment },
-        { key: 'stationeryFavors', name: isAr ? 'الدعوات والهدايا' : 'Invitations & Favors', pct: weddingSplits.stationeryFavors },
-        { key: 'contingency', name: isAr ? 'احتياطي الطوارئ' : 'Contingency Buffer', pct: weddingSplits.contingency },
-      ].map((r) => ({ ...r, amount: (budget * r.pct) / 100 })),
-      [budget, weddingSplits, isAr]
-    );
+    const rows = [
+      { key: 'venueCatering', name: isAr ? 'القاعة والضيافة' : 'Venue & Catering', pct: weddingSplits.venueCatering },
+      { key: 'photoVideo', name: isAr ? 'التصوير والفيديو' : 'Photography & Video', pct: weddingSplits.photoVideo },
+      { key: 'attireBeauty', name: isAr ? 'الأزياء والتجميل' : 'Attire & Beauty', pct: weddingSplits.attireBeauty },
+      { key: 'flowersDecor', name: isAr ? 'الزهور والديكور' : 'Flowers & Decor', pct: weddingSplits.flowersDecor },
+      { key: 'musicEntertainment', name: isAr ? 'الموسيقى والترفيه' : 'Music & DJ', pct: weddingSplits.musicEntertainment },
+      { key: 'stationeryFavors', name: isAr ? 'الدعوات والهدايا' : 'Invitations & Favors', pct: weddingSplits.stationeryFavors },
+      { key: 'contingency', name: isAr ? 'احتياطي الطوارئ' : 'Contingency Buffer', pct: weddingSplits.contingency },
+    ].map((r) => ({ ...r, amount: (budget * r.pct) / 100 }));
 
     return (
       <CalcSplitLayout

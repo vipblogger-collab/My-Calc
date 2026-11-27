@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Info, Plus, Trash2 } from 'lucide-react';
 import {
   AreaChart,
@@ -60,6 +61,7 @@ import { useAppContext } from '../../../context/AppContext.tsx';
 
 export function FinancialWidget({ slug }: { slug: string }) {
   const { lang } = useAppContext();
+  const location = useLocation();
   const isAr = lang === 'ar';
   const { currencySymbol, fmtMoney, fmtCompactAxis } = useCurrencyFormat();
   // Mortgage
@@ -188,6 +190,19 @@ export function FinancialWidget({ slug }: { slug: string }) {
   const [eosMonths, setEosMonths] = useState('0');
   const [eosLeaveDays, setEosLeaveDays] = useState('10');
 
+  useEffect(() => {
+    if (slug === 'mortgage-calculator') {
+      setHomePrice('420000');
+      setDownPayment('20');
+      setDownMode('pct');
+      setMortTerm('30');
+      setMortRate('6.25');
+      setPropTax('4800');
+      setHomeIns('1500');
+      setPmiRate('0.5');
+    }
+  }, [slug, lang, location.pathname]);
+
   if (slug === 'mortgage-calculator') {
     const res = calculateMortgage({
       homePrice: parseFloat(homePrice) || 0,
@@ -207,7 +222,7 @@ export function FinancialWidget({ slug }: { slug: string }) {
       ...(res.monthlyPMI > 0 ? [{ name: 'PMI', value: Math.round(res.monthlyPMI), color: '#D97706' }] : []),
     ];
 
-    const annualSummary = useMemo(() => {
+    const annualSummary = (() => {
       const yearsMap = new Map<number, { year: number; principal: number; interest: number; balance: number }>();
       res.schedule.forEach((row) => {
         const cur = yearsMap.get(row.year) || { year: row.year, principal: 0, interest: 0, balance: row.balance };
@@ -217,7 +232,7 @@ export function FinancialWidget({ slug }: { slug: string }) {
         yearsMap.set(row.year, cur);
       });
       return Array.from(yearsMap.values());
-    }, [res.schedule]);
+    })();
 
     return (
       <CalcSplitLayout

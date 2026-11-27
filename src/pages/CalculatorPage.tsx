@@ -39,10 +39,10 @@ export function CalculatorPage({ forcedCategory }: { forcedCategory?: CategorySl
   useEffect(() => {
     if (calc) {
       recordRecentView(calc.slug);
-      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+      window.scrollTo({ top: 0, behavior: 'auto' });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [calc?.slug]);
+  }, [calc?.slug, location.pathname]);
 
   if (!calc || !activeCategory) {
     return (
@@ -134,7 +134,7 @@ export function CalculatorPage({ forcedCategory }: { forcedCategory?: CategorySl
             </a>
           </div>
           <section aria-label={calc.name}>
-            <CalculatorWidgetRouter slug={calc.slug} category={calc.category} />
+            <CalculatorWidgetRouter key={`${lang}-${calc.slug}`} slug={calc.slug} category={calc.category} />
           </section>
           <p className="text-[11px] text-[#64748B] text-center pt-1" dir="ltr">
             Powered by{' '}
@@ -215,7 +215,7 @@ export function CalculatorPage({ forcedCategory }: { forcedCategory?: CategorySl
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
           <div className="xl:col-span-9 space-y-8">
             <section aria-label={calc.name} className="space-y-3">
-              <CalculatorWidgetRouter slug={calc.slug} category={calc.category} />
+              <CalculatorWidgetRouter key={`${lang}-${calc.slug}`} slug={calc.slug} category={calc.category} />
               <EmbedCodeBox calcName={calc.name} canonicalPath={canonicalPath} lang={lang} />
             </section>
 

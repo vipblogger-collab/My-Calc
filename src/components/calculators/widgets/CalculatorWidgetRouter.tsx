@@ -1,4 +1,5 @@
 import { CategorySlug } from '../../../types/calculator.ts';
+import { useAppContext } from '../../../context/AppContext.tsx';
 import { FinancialWidget } from './FinancialWidgets.tsx';
 import { HealthWidget } from './HealthWidgets.tsx';
 import { MathWidget } from './MathWidgets.tsx';
@@ -16,32 +17,35 @@ export function CalculatorWidgetRouter({
   slug: string;
   category: CategorySlug;
 }) {
+  const { lang } = useAppContext();
+  const widgetKey = `${lang}-${slug}`;
+
   // Handle shared cross-category or dedicated modular slugs cleanly
   if (slug === 'zakat-calculator') {
-    return <ZakatWidget />;
+    return <ZakatWidget key={widgetKey} />;
   }
   if (slug === 'vat-calculator') {
-    return <VatWidget />;
+    return <VatWidget key={widgetKey} />;
   }
   if (slug === 'tip-calculator' || slug === 'discount-calculator' || slug === 'grade-calculator') {
-    return <EverydayWidget slug={slug} />;
+    return <EverydayWidget key={widgetKey} slug={slug} />;
   }
 
   switch (category) {
     case 'financial-calculators':
-      return <FinancialWidget slug={slug} />;
+      return <FinancialWidget key={widgetKey} slug={slug} />;
     case 'health-calculators':
-      return <HealthWidget slug={slug} />;
+      return <HealthWidget key={widgetKey} slug={slug} />;
     case 'math-calculators':
-      return <MathWidget slug={slug} />;
+      return <MathWidget key={widgetKey} slug={slug} />;
     case 'conversion-calculators':
-      return <ConversionWidget slug={slug} />;
+      return <ConversionWidget key={widgetKey} slug={slug} />;
     case 'date-calculators':
-      return <DateTimeWidget slug={slug} />;
+      return <DateTimeWidget key={widgetKey} slug={slug} />;
     case 'everyday-calculators':
-      return <EverydayWidget slug={slug} />;
+      return <EverydayWidget key={widgetKey} slug={slug} />;
     case 'science-calculators':
-      return <ScienceWidget slug={slug} />;
+      return <ScienceWidget key={widgetKey} slug={slug} />;
     default:
       return null;
   }

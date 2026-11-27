@@ -714,7 +714,7 @@ export function DateTimeWidget({ slug }: { slug: string }) {
   }
 
   // Time Zone Converter
-  const tzResult = useMemo(() => {
+  const tzResult = (() => {
     try {
       // Interpret tzDate + tzTime in srcZone using iterative Intl offset resolution
       const [y, m, d] = tzDate.split('-').map(Number);
@@ -763,7 +763,7 @@ export function DateTimeWidget({ slug }: { slug: string }) {
     } catch {
       return null;
     }
-  }, [tzDate, tzTime, srcZone, dstZone, lang]);
+  })();
 
   return (
     <CalcSplitLayout
