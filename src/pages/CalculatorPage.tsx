@@ -1,9 +1,10 @@
 import { useEffect, useMemo } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { Bookmark, ChevronRight, HelpCircle, Info } from 'lucide-react';
 import { getCalculatorBySlug, getCalculatorUrl, getCalculatorsByCategory } from '../data/calculators/index.ts';
 import { useAppContext } from '../context/AppContext.tsx';
 import { CalculatorWidgetRouter } from '../components/calculators/widgets/CalculatorWidgetRouter.tsx';
+import { EmbedCodeBox } from '../components/calculators/EmbedCodeBox.tsx';
 import { AdSlot } from '../components/ads/AdSlot.tsx';
 import { SeoHead } from '../components/seo/SeoHead.tsx';
 import { CategorySlug } from '../types/calculator.ts';
@@ -11,6 +12,8 @@ import { SITE_URL } from '../config/site.ts';
 
 export function CalculatorPage({ forcedCategory }: { forcedCategory?: CategorySlug }) {
   const params = useParams();
+  const location = useLocation();
+  const isEmbed = new URLSearchParams(location.search).get('embed') === '1';
   const categorySlug = (forcedCategory || params.category || '') as CategorySlug;
   const calcSlug = params.slug || '';
 
@@ -106,6 +109,49 @@ export function CalculatorPage({ forcedCategory }: { forcedCategory?: CategorySl
       ? ui.calculator.currencyDisclaimer
       : null;
 
+  if (isEmbed) {
+    const fullCalcUrl = `${origin}/${lang}${canonicalPath}`;
+    return (
+      <>
+        <SeoHead
+          title={calc.seoTitle}
+          description={calc.seoDescription}
+          canonicalPath={canonicalPath}
+          schemas={schemas}
+        />
+        <div className="max-w-4xl mx-auto px-3 sm:px-5 py-4 space-y-3">
+          <div className="flex items-center justify-between gap-2">
+            <h1 className="font-display text-lg sm:text-xl font-bold text-[#0F172A]">
+              {calc.name}
+            </h1>
+            <a
+              href={fullCalcUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-semibold text-[#2563EB] hover:underline shrink-0"
+            >
+              mysmartcalc.net
+            </a>
+          </div>
+          <section aria-label={calc.name}>
+            <CalculatorWidgetRouter slug={calc.slug} category={calc.category} />
+          </section>
+          <p className="text-[11px] text-[#64748B] text-center pt-1" dir="ltr">
+            Powered by{' '}
+            <a
+              href={fullCalcUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#2563EB] font-medium hover:underline"
+            >
+              mysmartcalc.net
+            </a>
+          </p>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <SeoHead
@@ -168,8 +214,9 @@ export function CalculatorPage({ forcedCategory }: { forcedCategory?: CategorySl
         {/* D & E: Interactive Calculator Input & Results + Desktop Sidebar */}
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
           <div className="xl:col-span-9 space-y-8">
-            <section aria-label={calc.name}>
+            <section aria-label={calc.name} className="space-y-3">
               <CalculatorWidgetRouter slug={calc.slug} category={calc.category} />
+              <EmbedCodeBox calcName={calc.name} canonicalPath={canonicalPath} lang={lang} />
             </section>
 
             {domainDisclaimer && (

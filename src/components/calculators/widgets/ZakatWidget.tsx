@@ -37,8 +37,21 @@ interface GoldRowState {
   weight: string;
 }
 
-const METALS_CACHE_KEY = 'mysmartcalc_metals_v1';
+const METALS_CACHE_KEY = 'mysmartcalc_metals_v2';
 const AUTO_REFRESH_SECONDS = 600; // 10 minutes live refresh
+
+function sanitizeZakatNumberInput(raw: string): string {
+  if (raw === '') return '';
+  return raw.replace(/^0+(?=\d)/, '');
+}
+
+function clearCachedMetals(): void {
+  try {
+    window.localStorage.removeItem(METALS_CACHE_KEY);
+  } catch {
+    // Ignore storage errors
+  }
+}
 
 function readCachedMetals(): LiveMetalPricesPayload | null {
   try {
@@ -96,7 +109,12 @@ export function ZakatWidget() {
   const fetchMetalPrices = async (forceRefresh = false) => {
     setMetalsLoading(true);
     setMetalsError(false);
-    const cached = readCachedMetals();
+
+    if (forceRefresh) {
+      clearCachedMetals();
+    }
+
+    const cached = forceRefresh ? null : readCachedMetals();
     if (!forceRefresh && cached && Date.now() - cached.fetchedAtMs < AUTO_REFRESH_SECONDS * 1000) {
       setMetalsPayload(cached);
       setMetalsLoading(false);
@@ -106,18 +124,38 @@ export function ZakatWidget() {
 
     try {
       let resolved: LiveMetalPricesPayload | null = null;
-      try {
-        const endpoint = forceRefresh ? '/api/metal-prices?refresh=1' : '/api/metal-prices';
-        const data = await safeFetchJson<LiveMetalPricesPayload>(endpoint, 5000);
-        if (data?.gold24kUsdPerGram > 0 && data?.silverUsdPerGram > 0 && data?.rates) {
-          resolved = data;
+      if (forceRefresh) {
+        try {
+          resolved = await fetchLiveMetalPricesDirect(true);
+        } catch {
+          resolved = null;
         }
-      } catch {
-        resolved = null;
+        if (!resolved) {
+          const data = await safeFetchJson<LiveMetalPricesPayload>(
+            '/api/metal-prices?refresh=1',
+            5000,
+            true
+          );
+          if (data?.gold24kUsdPerGram > 0 && data?.silverUsdPerGram > 0 && data?.rates) {
+            resolved = data;
+          }
+        }
+      } else {
+        try {
+          const data = await safeFetchJson<LiveMetalPricesPayload>('/api/metal-prices', 5000);
+          if (data?.gold24kUsdPerGram > 0 && data?.silverUsdPerGram > 0 && data?.rates) {
+            resolved = data;
+          }
+        } catch {
+          resolved = null;
+        }
+        if (!resolved) {
+          resolved = await fetchLiveMetalPricesDirect(false);
+        }
       }
 
       if (!resolved) {
-        resolved = await fetchLiveMetalPricesDirect();
+        throw new Error('Unable to load live metal prices');
       }
 
       setMetalsPayload(resolved);
@@ -232,9 +270,15 @@ export function ZakatWidget() {
               </span>
             ) : (
               <span>
-                {isAr
-                  ? `أسعار السوق العالمي المباشرة (${metalsPayload?.lastUpdatedUtc || ''}) · التحديث القادم خلال ${formatCountdown(secondsToNextRefresh)}`
-                  : `Live global market spot (${metalsPayload?.lastUpdatedUtc || ''}) · Next update in ${formatCountdown(secondsToNextRefresh)}`}
+                {(() => {
+                  const cleanSpotDate = (metalsPayload?.lastUpdatedUtc || '')
+                    .replace(/\s*\(Global Spot\)\s*/gi, '')
+                    .trim();
+                  const spotBadge = cleanSpotDate ? `${cleanSpotDate} (Global Spot)` : '(Global Spot)';
+                  return isAr
+                    ? `أسعار السوق العالمي المباشرة · ${spotBadge} · التحديث القادم خلال ${formatCountdown(secondsToNextRefresh)}`
+                    : `Live global market spot · ${spotBadge} · Next update in ${formatCountdown(secondsToNextRefresh)}`;
+                })()}
               </span>
             )}
             <button
@@ -350,7 +394,13 @@ export function ZakatWidget() {
                   }
                   prefix={currencySymbol}
                   value={moneyAmount}
-                  onChange={setMoneyAmount}
+                  onChange={(v) => setMoneyAmount(sanitizeZakatNumberInput(v))}
+                  onFocus={() => {
+                    if (moneyAmount === '0') setMoneyAmount('');
+                  }}
+                  onBlur={() => {
+                    if (moneyAmount === '') setMoneyAmount('0');
+                  }}
                   min={0}
                   step="any"
                 />
@@ -413,7 +463,13 @@ export function ZakatWidget() {
                           label={isAr ? 'وزن الذهب بالجرام' : 'Gold Weight (g)'}
                           suffix={isAr ? 'جم' : 'g'}
                           value={row.weight}
-                          onChange={(v) => updateGoldRow(row.id, { weight: v })}
+                          onChange={(v) => updateGoldRow(row.id, { weight: sanitizeZakatNumberInput(v) })}
+                          onFocus={() => {
+                            if (row.weight === '0') updateGoldRow(row.id, { weight: '' });
+                          }}
+                          onBlur={() => {
+                            if (row.weight === '') updateGoldRow(row.id, { weight: '0' });
+                          }}
                           min={0}
                           step="0.001"
                         />
@@ -503,7 +559,13 @@ export function ZakatWidget() {
                   label={isAr ? 'وزن الفضة بالجرام' : 'Silver Weight (grams)'}
                   suffix={isAr ? 'جم' : 'g'}
                   value={silverWeight}
-                  onChange={setSilverWeight}
+                  onChange={(v) => setSilverWeight(sanitizeZakatNumberInput(v))}
+                  onFocus={() => {
+                    if (silverWeight === '0') setSilverWeight('');
+                  }}
+                  onBlur={() => {
+                    if (silverWeight === '') setSilverWeight('0');
+                  }}
                   min={0}
                   step="0.001"
                 />

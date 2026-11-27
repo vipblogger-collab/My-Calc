@@ -71,6 +71,8 @@ export function NumberInput({
   hint,
   value,
   onChange,
+  onFocus,
+  onBlur,
   prefix,
   suffix,
   min,
@@ -83,6 +85,8 @@ export function NumberInput({
   hint?: string;
   value: string | number;
   onChange: (val: string) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
   prefix?: string;
   suffix?: string;
   min?: number;
@@ -110,6 +114,8 @@ export function NumberInput({
           type="number"
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          onFocus={onFocus}
+          onBlur={onBlur}
           min={min}
           max={max}
           step={step}

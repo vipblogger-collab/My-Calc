@@ -44,7 +44,9 @@ import {
 } from '../conversion.ts';
 import {
   ACTIVE_WORLD_CURRENCY_CODES,
+  TROY_OUNCE_IN_GRAMS,
   buildCurrencyCatalog,
+  fetchLiveMetalPricesDirect,
   formatCompactMoneyAxis,
   formatConvertedCurrency,
   formatMoney,
@@ -411,15 +413,18 @@ test('Financial: End-of-Service Gratuity (Kuwait, UAE, Saudi Arabia)', async () 
   approx(kwResign.gratuityAmount, (5 * 15 * (1000 / 26) + 1000) * (2 / 3), 0.01);
   approx(kwResign.leaveEncashment, 10 * (1000 / 26), 0.01);
 
-  // Kuwait 18-month cap on long termination (25 years @ 1000 KWD -> 5*15/26 + 20 = 22.88 mos -> capped at 18 mos)
+  // Kuwait 18-month cap on long termination (25 years @ 1000 KWD -> capped at 18 mos, + 10 unused leave days added on top)
   const kwCap = calculateEndOfService({
     jurisdiction: 'kuwait',
     reason: 'termination',
     monthlySalary: 1000,
     serviceYears: 25,
+    unusedLeaveDays: 10,
   });
   assert.equal(kwCap.capApplied, true);
   approx(kwCap.gratuityAmount, 18000, 0.01);
+  approx(kwCap.leaveEncashment, 10 * (1000 / 26), 0.01);
+  approx(kwCap.totalFinalSettlement, 18000 + 10 * (1000 / 26), 0.01);
 
   // UAE: 6 years @ 12000 AED basic -> 5*21*(400) + 1*30*(400) = 42000 + 12000 = 54000
   const uaeRes = calculateEndOfService({
@@ -613,9 +618,50 @@ test('i18n: All 100 calculators have Arabic names, How-to-Use steps, and FAQs', 
     );
   }
 });
+test('Financial: Live Metal Prices (jsDelivr xau.json & xag.json Troy Ounce conversion & clean date)', async () => {
+  const { getGoldPricesByKarat } = await import('../zakat.ts');
+  const originalFetch = globalThis.fetch;
+  try {
+    globalThis.fetch = async (input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url.includes('/currencies/xau.json')) {
+        return new Response(
+          JSON.stringify({
+            date: '2026-11-27',
+            xau: { usd: 3110.34768, kwd: 964.2077808, sar: 11663.8038 },
+          }),
+          { status: 200, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
+      if (url.includes('/currencies/xag.json')) {
+        return new Response(
+          JSON.stringify({
+            date: '2026-11-27',
+            xag: { usd: 31.1034768, kwd: 9.642077808 },
+          }),
+          { status: 200, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
+      return new Response(JSON.stringify({ result: 'success', rates: { USD: 1, KWD: 0.31, SAR: 3.75 } }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    };
 
+    const payload = await fetchLiveMetalPricesDirect(true);
+    approx(payload.gold24kUsdPerGram, 3110.34768 / TROY_OUNCE_IN_GRAMS, 0.0001);
+    approx(payload.silverUsdPerGram, 31.1034768 / TROY_OUNCE_IN_GRAMS, 0.0001);
+    approx(payload.rates.KWD, 0.31, 0.0001);
+    approx(payload.rates.SAR, 3.75, 0.0001);
+    assert.equal(payload.lastUpdatedUtc, '2026-11-27');
+    assert.ok(!payload.lastUpdatedUtc.includes('(('));
 
-
-
-
-
+    const karats = getGoldPricesByKarat(payload.gold24kUsdPerGram);
+    approx(karats[24], 100, 0.001);
+    approx(karats[22], (100 * 22) / 24, 0.001);
+    approx(karats[21], (100 * 21) / 24, 0.001);
+    approx(karats[18], (100 * 18) / 24, 0.001);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});

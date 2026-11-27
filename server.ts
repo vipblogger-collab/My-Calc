@@ -146,10 +146,11 @@ async function startServer() {
   // Live global Gold (24K XAU) & Silver (XAG) spot prices per gram in USD + 168 currency FX rates
   app.get('/api/metal-prices', async (req, res) => {
     const forceRefresh = req.query.refresh === '1' || req.query.refresh === 'true';
+    if (forceRefresh) {
+      metalsCache = null;
+    }
     const cacheAgeMs = metalsCache ? Date.now() - metalsCache.fetchedAtMs : Infinity;
-    const canUseCache =
-      metalsCache &&
-      (forceRefresh ? cacheAgeMs < FX_FORCE_COOLDOWN_MS : cacheAgeMs < FX_CACHE_TTL_MS);
+    const canUseCache = !forceRefresh && metalsCache && cacheAgeMs < FX_CACHE_TTL_MS;
 
     if (canUseCache && metalsCache) {
       res.json({ ...metalsCache, cached: true });
@@ -157,7 +158,7 @@ async function startServer() {
     }
 
     try {
-      metalsCache = await fetchLiveMetalPricesDirect();
+      metalsCache = await fetchLiveMetalPricesDirect(forceRefresh);
       res.json({ ...metalsCache, cached: false });
     } catch (err) {
       if (metalsCache) {

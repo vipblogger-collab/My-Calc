@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Plus, Trash2 } from 'lucide-react';
+import { Info, Plus, Trash2 } from 'lucide-react';
 import {
   AreaChart,
   Area,
@@ -1439,10 +1439,17 @@ export function FinancialWidget({ slug }: { slug: string }) {
               <StatTile label="Beyond 5 Years Accrual" value={fmtEos(res.after5YearsAmount)} />
             </div>
             {res.capApplied && res.capAmount !== null && (
-              <div className="rounded-lg border border-[#FDE68A] bg-[#FFFBEB] px-3.5 py-2.5 text-xs text-[#92400E]">
-                {isAr
-                  ? `تم تطبيق الحد الأقصى القانوني للمكافأة (${eosJurisdiction === 'kuwait' ? '18 شهراً' : '24 شهراً'}: ${fmtEos(res.capAmount)}).`
-                  : `Statutory maximum cap applied (${eosJurisdiction === 'kuwait' ? '18 months' : '24 months'}: ${fmtEos(res.capAmount)}).`}
+              <div className="rounded-lg border border-[#FDE68A] bg-[#FFFBEB] px-3.5 py-2.5 text-xs font-medium text-[#92400E] flex items-center gap-2">
+                <Info className="w-4 h-4 shrink-0 text-[#D97706]" />
+                <span>
+                  {eosJurisdiction === 'kuwait'
+                    ? isAr
+                      ? 'تم تطبيق الحد الأقصى القانوني للمكافأة (أجر 18 شهراً) وفقاً للمادة 51 من قانون العمل الكويتي.'
+                      : "Capped at the legal maximum of 18 months' salary per Article 51 of the Kuwait Labor Law."
+                    : isAr
+                    ? `تم تطبيق الحد الأقصى القانوني للمكافأة (24 شهراً: ${fmtEos(res.capAmount)}).`
+                    : `Statutory maximum cap applied (24 months: ${fmtEos(res.capAmount)}).`}
+                </span>
               </div>
             )}
             {!res.minimumServiceMet && (

@@ -69,9 +69,11 @@ function LocalizedAppShell() {
     return <Navigate to={localizePath(location.pathname, targetLang)} replace />;
   }
 
+  const isEmbed = new URLSearchParams(location.search).get('embed') === '1';
+
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAFC] text-[#1E293B]">
-      <Header />
+      {!isEmbed && <Header />}
       <main className="flex-1">
         <Routes>
           <Route index element={<HomePage />} />
@@ -100,7 +102,7 @@ function LocalizedAppShell() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
-      <Footer />
+      {!isEmbed && <Footer />}
     </div>
   );
 }

@@ -277,11 +277,18 @@ export interface LiveExchangeRatesPayload {
   fetchedAtMs: number;
 }
 
-export async function safeFetchJson<T>(url: string, timeoutMs = 7000): Promise<T> {
+export async function safeFetchJson<T>(
+  url: string,
+  timeoutMs = 7000,
+  bypassCache = false
+): Promise<T> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  const requestUrl = bypassCache
+    ? `${url}${url.includes('?') ? '&' : '?'}_=${Date.now()}`
+    : url;
   try {
-    const response = await fetch(url, {
+    const response = await fetch(requestUrl, {
       signal: controller.signal,
       headers: { Accept: 'application/json' },
     });
@@ -387,51 +394,85 @@ export interface LiveMetalPricesPayload {
   fetchedAtMs: number;
 }
 
-export async function fetchLiveMetalPricesDirect(): Promise<LiveMetalPricesPayload> {
-  const metalFeeds = [
+interface XauApiResponse {
+  date?: string;
+  xau?: Record<string, number>;
+}
+
+interface XagApiResponse {
+  date?: string;
+  xag?: Record<string, number>;
+}
+
+export async function fetchLiveMetalPricesDirect(bypassCache = false): Promise<LiveMetalPricesPayload> {
+  const goldEndpoints = [
     {
-      url: 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json',
-      provider: 'Global Spot Feed (XAU/XAG Market Rate)',
+      url: 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/xau.json',
+      provider: 'jsDelivr Global Spot (XAU/XAG)',
     },
     {
-      url: 'https://latest.currency-api.pages.dev/v1/currencies/usd.json',
-      provider: 'Global Spot Mirror (XAU/XAG Market Rate)',
+      url: 'https://latest.currency-api.pages.dev/v1/currencies/xau.json',
+      provider: 'Currency-API Mirror (XAU/XAG)',
     },
   ];
 
-  let usdRatesMap: Record<string, number> | null = null;
-  let dateStr = '';
-  let usedProvider = metalFeeds[0].provider;
+  const silverEndpoints = [
+    'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/xag.json',
+    'https://latest.currency-api.pages.dev/v1/currencies/xag.json',
+  ];
 
-  for (const feed of metalFeeds) {
-    try {
-      const data = await safeFetchJson<{
-        date?: string;
-        usd?: Record<string, number>;
-      }>(feed.url, 6000);
-      if (data?.usd?.xau && data?.usd?.xag && data.usd.xau > 0 && data.usd.xag > 0) {
-        usdRatesMap = data.usd;
-        dateStr = data.date || '';
-        usedProvider = feed.provider;
-        break;
+  const fetchGold = async (): Promise<{ map: Record<string, number>; date: string; provider: string } | null> => {
+    for (const endpoint of goldEndpoints) {
+      try {
+        const data = await safeFetchJson<XauApiResponse>(endpoint.url, 6000, bypassCache);
+        if (data?.xau?.usd && Number.isFinite(data.xau.usd) && data.xau.usd > 0) {
+          return {
+            map: data.xau,
+            date: (data.date || '').trim(),
+            provider: endpoint.provider,
+          };
+        }
+      } catch {
+        // try mirror
       }
-    } catch {
-      // try next feed
     }
-  }
+    return null;
+  };
 
-  if (!usdRatesMap || !usdRatesMap.xau || !usdRatesMap.xag) {
+  const fetchSilver = async (): Promise<{ map: Record<string, number>; date: string } | null> => {
+    for (const url of silverEndpoints) {
+      try {
+        const data = await safeFetchJson<XagApiResponse>(url, 6000, bypassCache);
+        if (data?.xag?.usd && Number.isFinite(data.xag.usd) && data.xag.usd > 0) {
+          return {
+            map: data.xag,
+            date: (data.date || '').trim(),
+          };
+        }
+      } catch {
+        // try mirror
+      }
+    }
+    return null;
+  };
+
+  const [goldResult, silverResult] = await Promise.all([fetchGold(), fetchSilver()]);
+
+  if (!goldResult || !silverResult) {
     throw new Error('Unable to retrieve live global gold and silver prices');
   }
 
-  const gold24kUsdPerGram = 1 / usdRatesMap.xau / TROY_OUNCE_IN_GRAMS;
-  const silverUsdPerGram = 1 / usdRatesMap.xag / TROY_OUNCE_IN_GRAMS;
+  const xauUsdPerOz = goldResult.map.usd;
+  const xagUsdPerOz = silverResult.map.usd;
+
+  const gold24kUsdPerGram = xauUsdPerOz / TROY_OUNCE_IN_GRAMS;
+  const silverUsdPerGram = xagUsdPerOz / TROY_OUNCE_IN_GRAMS;
 
   const rates: Record<string, number> = { USD: 1 };
   for (const code of ACTIVE_WORLD_CURRENCY_CODES) {
-    const val = usdRatesMap[code.toLowerCase()];
-    if (typeof val === 'number' && Number.isFinite(val) && val > 0) {
-      rates[code] = val;
+    const metalInTarget = goldResult.map[code.toLowerCase()];
+    if (typeof metalInTarget === 'number' && Number.isFinite(metalInTarget) && metalInTarget > 0) {
+      rates[code] = metalInTarget / xauUsdPerOz;
     }
   }
 
@@ -452,12 +493,14 @@ export async function fetchLiveMetalPricesDirect(): Promise<LiveMetalPricesPaylo
     // Ignore secondary FX supplement error
   }
 
+  const cleanDate = goldResult.date || silverResult.date || new Date().toISOString().slice(0, 10);
+
   return {
     gold24kUsdPerGram,
     silverUsdPerGram,
     rates,
-    lastUpdatedUtc: dateStr ? `${dateStr} (Global Spot)` : new Date().toUTCString(),
-    provider: usedProvider,
+    lastUpdatedUtc: cleanDate,
+    provider: goldResult.provider,
     fetchedAtMs: Date.now(),
   };
 }
