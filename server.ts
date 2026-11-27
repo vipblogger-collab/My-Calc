@@ -4,11 +4,12 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
-import { CATEGORIES } from './src/data/categories.ts';
-import { ALL_CALCULATORS, getCalculatorUrl } from './src/data/calculators/index.ts';
-import { ARTICLES } from './src/data/articles.ts';
-import { localizePath } from './src/i18n/routing.ts';
 import { injectSeoIntoHtml } from './src/seo/routeMeta.ts';
+import {
+  CANONICAL_SITEMAP_ORIGIN,
+  ROBOTS_TXT_CONTENT,
+  generateSitemapXml,
+} from './src/seo/sitemapXml.ts';
 import { SITE_NAME, SITE_URL } from './src/config/site.ts';
 import {
   fetchLiveGlobalRatesDirect,
@@ -174,66 +175,22 @@ async function startServer() {
     }
   });
 
-  // SEO robots.txt
+  // SEO robots.txt (matches static public/robots.txt)
   app.get('/robots.txt', (_req, res) => {
-    const baseUrl = (process.env.SITE_URL || SITE_URL).replace(/\/$/, '');
+    const staticRobots = path.resolve(__dirname, 'public/robots.txt');
     res.type('text/plain');
-    res.send(
-      `User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /en/admin\nDisallow: /ar/admin\n\nSitemap: ${baseUrl}/sitemap.xml\n`
-    );
+    if (fs.existsSync(staticRobots)) {
+      res.send(fs.readFileSync(staticRobots, 'utf-8'));
+      return;
+    }
+    res.send(ROBOTS_TXT_CONTENT);
   });
 
-  // Dynamic Bilingual XML Sitemap (/en/... & /ar/... with xhtml:link hreflang alternates)
+  // Bilingual XML Sitemap (/en/... & /ar/... with xhtml:link hreflang alternates)
   app.get('/sitemap.xml', (_req, res) => {
-    const baseUrl = (process.env.SITE_URL || SITE_URL).replace(/\/$/, '');
-    const today = new Date().toISOString().slice(0, 10);
-
-    const neutralPages: { path: string; priority: string; changefreq: string }[] = [
-      { path: '/', priority: '1.0', changefreq: 'weekly' },
-      { path: '/guides/', priority: '0.8', changefreq: 'weekly' },
-      { path: '/about-us/', priority: '0.5', changefreq: 'monthly' },
-      { path: '/contact-us/', priority: '0.5', changefreq: 'monthly' },
-      { path: '/privacy-policy/', priority: '0.4', changefreq: 'yearly' },
-      { path: '/terms-of-service/', priority: '0.4', changefreq: 'yearly' },
-      { path: '/disclaimer/', priority: '0.4', changefreq: 'yearly' },
-      { path: '/cookie-policy/', priority: '0.4', changefreq: 'yearly' },
-      { path: '/sitemap/', priority: '0.5', changefreq: 'weekly' },
-    ];
-
-    for (const cat of CATEGORIES) {
-      neutralPages.push({ path: `/${cat.slug}/`, priority: '0.9', changefreq: 'weekly' });
-    }
-    for (const calc of ALL_CALCULATORS) {
-      neutralPages.push({ path: getCalculatorUrl(calc), priority: '0.8', changefreq: 'monthly' });
-    }
-    for (const art of ARTICLES) {
-      neutralPages.push({ path: `/guides/${art.slug}/`, priority: '0.7', changefreq: 'monthly' });
-    }
-
-    const entries: string[] = [];
-    for (const page of neutralPages) {
-      const enLoc = `${baseUrl}${localizePath(page.path, 'en')}`;
-      const arLoc = `${baseUrl}${localizePath(page.path, 'ar')}`;
-      const alternates =
-        `    <xhtml:link rel="alternate" hreflang="en" href="${enLoc}"/>\n` +
-        `    <xhtml:link rel="alternate" hreflang="ar" href="${arLoc}"/>\n` +
-        `    <xhtml:link rel="alternate" hreflang="x-default" href="${enLoc}"/>`;
-
-      for (const loc of [enLoc, arLoc]) {
-        entries.push(
-          `  <url>\n    <loc>${loc}</loc>\n${alternates}\n    <lastmod>${today}</lastmod>\n    <changefreq>${page.changefreq}</changefreq>\n    <priority>${page.priority}</priority>\n  </url>`
-        );
-      }
-    }
-
-    const xml =
-      `<?xml version="1.0" encoding="UTF-8"?>\n` +
-      `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n` +
-      `${entries.join('\n')}\n` +
-      `</urlset>`;
-
+    const baseUrl = (process.env.SITE_URL || CANONICAL_SITEMAP_ORIGIN).replace(/\/$/, '');
     res.type('application/xml');
-    res.send(xml);
+    res.send(generateSitemapXml(baseUrl));
   });
 
   if (process.env.NODE_ENV !== 'production') {

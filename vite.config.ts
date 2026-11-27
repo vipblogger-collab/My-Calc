@@ -3,6 +3,11 @@ import react from '@vitejs/plugin-react';
 import fs from 'fs';
 import path from 'path';
 import {defineConfig} from 'vite';
+import {
+  CANONICAL_SITEMAP_ORIGIN,
+  ROBOTS_TXT_CONTENT,
+  generateSitemapXml,
+} from './src/seo/sitemapXml.ts';
 
 const rootDir = import.meta.dirname ?? process.cwd();
 
@@ -12,6 +17,20 @@ export default defineConfig(() => {
     plugins: [
       react(),
       tailwindcss(),
+      {
+        name: 'generate-static-seo-files',
+        apply: 'build',
+        buildStart(): void {
+          const publicDir = path.resolve(rootDir, 'public');
+          fs.mkdirSync(publicDir, {recursive: true});
+          fs.writeFileSync(path.join(publicDir, 'robots.txt'), ROBOTS_TXT_CONTENT, 'utf-8');
+          fs.writeFileSync(
+            path.join(publicDir, 'sitemap.xml'),
+            generateSitemapXml(CANONICAL_SITEMAP_ORIGIN),
+            'utf-8'
+          );
+        },
+      },
       // Copies src/assets into dist/ so root-relative URLs like
       // "/src/assets/images/..." (e.g. generate_image output) still resolve
       // in production builds. Do not remove.

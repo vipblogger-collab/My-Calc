@@ -578,6 +578,25 @@ test('Date & Time: World Time Zones catalog covers all IANA zones and Arabic lab
   assert.ok(kwAr && kwAr.displayLabel.includes('الكويت') && kwAr.offsetLabel.startsWith('UTC'));
 });
 
+test('SEO: robots.txt and bilingual XML sitemap include EN/AR home, calculators, and legal pages', async () => {
+  const { ROBOTS_TXT_CONTENT, generateSitemapXml } = await import('../../../seo/sitemapXml.ts');
+
+  assert.equal(
+    ROBOTS_TXT_CONTENT.trim(),
+    'User-agent: *\nAllow: /\nSitemap: https://www.mysmartcalc.net/sitemap.xml'
+  );
+
+  const xml = generateSitemapXml();
+  assert.ok(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>'));
+  assert.ok(xml.includes('<loc>https://www.mysmartcalc.net/en/</loc>'));
+  assert.ok(xml.includes('<loc>https://www.mysmartcalc.net/ar/</loc>'));
+  assert.ok(xml.includes('<loc>https://www.mysmartcalc.net/en/financial-calculators/zakat-calculator/</loc>'));
+  assert.ok(xml.includes('<loc>https://www.mysmartcalc.net/ar/financial-calculators/vat-calculator/</loc>'));
+  assert.ok(xml.includes('<loc>https://www.mysmartcalc.net/en/privacy-policy/</loc>'));
+  assert.ok(xml.includes('<loc>https://www.mysmartcalc.net/ar/terms-of-service/</loc>'));
+});
+
+
 
 
 
