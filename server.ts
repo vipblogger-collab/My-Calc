@@ -175,6 +175,17 @@ async function startServer() {
     }
   });
 
+  // Google AdSense ads.txt
+  app.get('/ads.txt', (_req, res) => {
+    const staticAds = path.resolve(__dirname, 'public/ads.txt');
+    res.type('text/plain');
+    if (fs.existsSync(staticAds)) {
+      res.send(fs.readFileSync(staticAds, 'utf-8'));
+      return;
+    }
+    res.send('google.com, pub-7458608972568987, DIRECT, f08c47fec0942fa0\n');
+  });
+
   // SEO robots.txt (matches static public/robots.txt)
   app.get('/robots.txt', (_req, res) => {
     const staticRobots = path.resolve(__dirname, 'public/robots.txt');

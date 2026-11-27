@@ -32,7 +32,10 @@ export function AdSlot({
     if (!pubId) return;
 
     const scriptId = 'calcaxis-adsense-script';
-    if (!document.getElementById(scriptId)) {
+    const hasExistingScript =
+      document.getElementById(scriptId) ||
+      document.querySelector('script[src*="pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"]');
+    if (!hasExistingScript) {
       const s = document.createElement('script');
       s.id = scriptId;
       s.async = true;
